@@ -1,0 +1,33 @@
+.section {
+    padding: 8rem 0;
+    background-color: #fff;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.title {
+    font-family: var(--font-heritage);
+    font-size: 3rem;
+    color: var(--royal-purple);
+    margin-bottom: 2rem;
+    line-height: 1.2;
+}
+
+.text {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    color: var(--charcoal);
+    line-height: 1.8;
+    font-weight: 300;
+}
+
+@media (min-width: 768px) {
+    .title {
+        font-size: 4rem;
+    }
+}

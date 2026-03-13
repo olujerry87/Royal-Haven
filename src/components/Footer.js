@@ -1,0 +1,86 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Instagram, Facebook, Mail } from "lucide-react";
+import styles from "./Footer.module.css";
+
+export default function Footer() {
+    return (
+        <footer className={styles.footer}>
+            <div className={styles.container}>
+                <div className={styles.grid}>
+                    {/* Brand Column */}
+                    <div className={styles.column}>
+                        <div className={styles.brandWrapper}>
+                            <Image
+                                src="/logos/header-logo.png"
+                                alt="Wura & Ewa"
+                                width={315}
+                                height={60}
+                                className={styles.logo}
+                            />
+                        </div>
+                        <p className={styles.tagline}>
+                            Where heritage meets modern luxury. <br />
+                            Fashion & Artistry redefined.
+                        </p>
+                    </div>
+
+                    {/* Explore Column */}
+                    <div className={styles.column}>
+                        <h4>Explore</h4>
+                        <Link href="/shop" className={styles.link}>Shop Wura</Link>
+                        <Link href="/services" className={styles.link}>Book Ewa</Link>
+                        <Link href="/about" className={styles.link}>Our Heritage</Link>
+                        <Link href="/gift-card" className={styles.link}>Gift Cards</Link>
+                    </div>
+
+                    {/* Support Column */}
+                    <div className={styles.column}>
+                        <h4>Support</h4>
+                        <Link href="/services/book" className={styles.link}>Contact Us</Link>
+                        <Link href="/shipping" className={styles.link}>Shipping & Returns</Link>
+                        <Link href="/#faq" className={styles.link}>FAQ</Link>
+                    </div>
+
+                    {/* Legal Column */}
+                    <div className={styles.column}>
+                        <h4>Legal</h4>
+                        <Link href="/accessibility" className={styles.link}>Accessibility</Link>
+                        <Link href="/terms" className={styles.link}>Terms of Use</Link>
+                        <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
+                    </div>
+
+                    {/* Social/Newsletter Column */}
+                    <div className={styles.column}>
+                        <h4>Connect</h4>
+                        <div className={styles.socials}>
+                            <a href="#" aria-label="Instagram"><Instagram size={20} /></a>
+                            <a href="#" aria-label="Facebook"><Facebook size={20} /></a>
+                            <a href="mailto:hello@wuraewa.com" aria-label="Email"><Mail size={20} /></a>
+                        </div>
+                        <div className={styles.newsletter}>
+                            <p>Subscribe for exclusive updates.</p>
+                            <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+                                <input type="email" placeholder="Your email" className={styles.input} />
+                                <button type="submit" className={styles.btn}>Join</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.bottom}>
+                    <p className={styles.scripture}>
+                        "She is clothed with strength and dignity; she can laugh at the days to come." — Proverbs 31:25
+                    </p>
+                    <p className={styles.scripture}>
+                        "Finally, brothers and sisters, whatever is true, whatever is noble, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think about such things." — Philippians 4:8
+                    </p>
+                    <br />
+                    <p>&copy; {new Date().getFullYear()} MidasMark. All rights reserved. | a Bezaleel Group Subsidiary</p>
+                </div>
+            </div>
+        </footer>
+    );
+}

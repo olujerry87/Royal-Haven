@@ -1,0 +1,182 @@
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 6rem 2rem;
+}
+
+/* Intro Section */
+.intro {
+    text-align: center;
+    margin-bottom: 6rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title {
+    font-family: var(--font-heritage);
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--royal-purple);
+}
+
+.text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--charcoal);
+    margin-bottom: 2.5rem;
+}
+
+/* Portfolio Grid */
+.portfolioSection {
+    margin-bottom: 8rem;
+}
+
+.sectionHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.sectionHeader h2 {
+    font-family: var(--font-heritage);
+    font-size: 2.5rem;
+    color: var(--obsidian);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.gridItem {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.gridImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.gridItem:hover .gridImage {
+    transform: scale(1.05);
+}
+
+.caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    color: var(--off-white);
+    font-family: var(--font-body);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.gridItem:hover .caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Love Notes / Testimonials */
+.loveNotesSection {
+    background-color: var(--royal-purple);
+    color: var(--off-white);
+    padding: 6rem 2rem;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    text-align: center;
+}
+
+.notesGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: var(--max-width);
+    margin: 3rem auto 0;
+}
+
+.noteCard {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quote {
+    font-family: var(--font-heritage);
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.author {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+/* Service Menu */
+.menuSection {
+    margin: 8rem 0;
+    text-align: center;
+}
+
+.menuList {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.menuItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--stone);
+    padding: 1.5rem 0;
+}
+
+.itemTitle {
+    font-family: var(--font-heritage);
+    font-size: 1.5rem;
+    color: var(--royal-purple);
+}
+
+.itemPrice {
+    font-family: var(--font-body);
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gridItem:nth-child(3n) {
+        grid-column: span 2;
+        /* Create masonry feel */
+    }
+
+    .notesGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .title {
+        font-size: 4rem;
+    }
+}

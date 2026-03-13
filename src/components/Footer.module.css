@@ -1,0 +1,157 @@
+.footer {
+    background: rgba(20, 20, 20, 0.65);
+    /* More translucent for "liquid" feel */
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    color: var(--off-white);
+    padding: 4rem 0 2rem 0;
+    margin-top: auto;
+    /* Push to bottom if content is short */
+    position: relative;
+    z-index: 10;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.column h4 {
+    font-family: var(--font-heritage);
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+/* Brand adjustments */
+.brandWrapper {
+    margin-bottom: 1.5rem;
+}
+
+.logo {
+    height: 60px;
+    /* Adjust based on logo aspect ratio */
+    width: auto;
+    object-fit: contain;
+    /* Invert filter if the logo is black text and needs to be white on dark bg */
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.tagline {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.link {
+    display: block;
+    font-family: var(--font-body);
+    margin-bottom: 0.8rem;
+    opacity: 0.7;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.link:hover {
+    opacity: 1;
+    color: var(--gold);
+    padding-left: 5px;
+}
+
+.socials {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.socials a {
+    transition: color 0.2s;
+}
+
+.socials a:hover {
+    color: var(--gold);
+}
+
+.newsletter p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.form {
+    display: flex;
+    border-bottom: 1px solid var(--stone);
+}
+
+.input {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+    color: var(--off-white);
+    flex: 1;
+    font-family: var(--font-body);
+}
+
+.input:focus {
+    outline: none;
+}
+
+.btn {
+    background: none;
+    border: none;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+.bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+.scripture {
+    font-family: var(--font-heritage);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    color: var(--gold);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .column {
+        flex: 1;
+    }
+
+    /* Give slightly more weight to Brand and Connect columns */
+    .column:first-child,
+    .column:last-child {
+        flex: 1.5;
+    }
+}

@@ -1,0 +1,177 @@
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 6rem 2rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+}
+
+/* Left: Info */
+.infoSection {
+    padding-right: 0;
+}
+
+.sectionTitle {
+    font-family: var(--font-heritage);
+    font-size: 2.5rem;
+    color: var(--royal-purple);
+    margin-bottom: 1.5rem;
+}
+
+.lead {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--charcoal);
+    margin-bottom: 3rem;
+}
+
+.contactDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contactItem {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.iconWrapper {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(212, 175, 55, 0.1);
+    /* Gold tint */
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.contactItem h3 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 1.1rem;
+}
+
+.contactItem p {
+    color: var(--charcoal);
+    font-size: 1rem;
+}
+
+/* Right: Form */
+.formSection {
+    background-color: var(--off-white);
+    padding: 3rem;
+    border-radius: 8px;
+    border: 1px solid var(--stone);
+}
+
+.wpPlaceholder {
+    /* Styles mimicking where the WP plugin would sit */
+}
+
+.formTitle {
+    font-family: var(--font-heritage);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--obsidian);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background-color: white;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--royal-purple);
+}
+
+.select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right .7rem top 50%;
+    background-size: .65rem auto;
+}
+
+.dateGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--charcoal);
+}
+
+.note {
+    font-size: 0.8rem;
+    text-align: center;
+    color: #888;
+    margin-top: 1rem;
+}
+
+.widgetContainer {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.widgetNote {
+    margin-bottom: 2rem;
+    color: var(--charcoal);
+    font-size: 0.95rem;
+}
+
+.calendarWidget {
+    min-height: 400px;
+    background: #fdfdfd;
+    border: 1px dashed var(--stone);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .infoSection {
+        padding-right: 4rem;
+    }
+}

@@ -1,0 +1,60 @@
+.main {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--header-height) 1rem 4rem;
+    overflow: hidden;
+    background-color: var(--obsidian);
+}
+
+.glassBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 10%, rgba(75, 0, 130, 0.3) 0%, rgba(11, 11, 11, 1) 70%);
+    z-index: 1;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--obsidian);
+    color: var(--off-white);
+    padding: 2rem;
+}
+
+.card {
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    padding: 3rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: var(--glass-shadow);
+}
+
+.card h2 {
+    color: var(--gold);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.card p {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    opacity: 0.8;
+}

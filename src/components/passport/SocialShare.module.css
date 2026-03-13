@@ -1,0 +1,192 @@
+.shareContainer {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.heading {
+    font-family: var(--font-heritage);
+    font-size: 1.2rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.shareButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.whatsapp {
+    background-color: #25D366;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp:hover {
+    background-color: #128C7E;
+    transform: translateY(-2px);
+}
+
+.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3);
+}
+
+.instagram:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* Instagram Story Card */
+.igCardWrapper {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.helperText {
+    font-size: 0.85rem;
+    color: var(--stone);
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.igCard {
+    width: 300px;
+    height: 533px; /* 9:16 aspect ratio scaled down */
+    background: var(--obsidian);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), var(--glass-shadow);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.cardGlow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.cardHeader, .cardBody, .cardFooter {
+    position: relative;
+    z-index: 1;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    font-family: var(--font-heritage);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+}
+
+.verifiedBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(212, 175, 55, 0.15);
+    padding: 0.4rem 0.6rem;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.cardBody {
+    text-align: center;
+    margin: auto 0;
+}
+
+.cardBody h5 {
+    font-family: var(--font-heritage);
+    font-size: 2.2rem;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+}
+
+.collection {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--stone);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.cardFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.qrMock {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 8px;
+    padding: 4px;
+    position: relative;
+}
+
+.qrMock::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--obsidian),
+        var(--obsidian) 4px,
+        transparent 4px,
+        transparent 8px
+    );
+}
+
+.id {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,167 @@
+.stylingContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.weatherContext {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .weatherContext {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+    }
+}
+
+.weatherBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.weatherIcon {
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+}
+
+.temp {
+    font-family: var(--font-heritage);
+    font-size: 1.8rem;
+    color: var(--off-white);
+    line-height: 1;
+}
+
+.logicNote {
+    flex: 1;
+}
+
+.logicNote p {
+    font-size: 1.1rem;
+    color: var(--stone);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.locationForm {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+@media (max-width: 768px) {
+    .locationForm {
+        margin: 0.8rem auto 0;
+    }
+}
+
+.locationForm svg {
+    color: var(--gold);
+}
+
+.locationInput {
+    background: transparent;
+    border: none;
+    color: var(--off-white);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    width: 120px;
+}
+
+.locationInput:focus {
+    outline: none;
+}
+
+.locationBtn {
+    background: var(--gold);
+    color: var(--obsidian);
+    border: none;
+    border-radius: 12px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.recommendationsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .recommendationsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.recCard {
+    background: rgba(11, 11, 11, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.recCard:hover {
+    transform: translateY(-5px);
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(11, 11, 11, 0.6);
+}
+
+.recCard h4 {
+    font-family: var(--font-heritage);
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.recCard p {
+    font-size: 0.9rem;
+    color: var(--off-white);
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+.loadingContainer, .errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    color: var(--stone);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.spinner {
+    color: var(--gold);
+    margin-bottom: 1rem;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

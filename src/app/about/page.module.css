@@ -1,0 +1,173 @@
+.main {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: var(--off-white);
+    color: var(--obsidian);
+}
+
+/* Common Section */
+.section {
+    padding: 6rem 2rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+/* Branding / Duality Section */
+.dualityContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.dualityContent {
+    text-align: center;
+    max-width: 800px;
+}
+
+.heading {
+    font-family: var(--font-heritage);
+    font-size: 3rem;
+    color: var(--royal-purple);
+    margin-bottom: 2rem;
+}
+
+.text {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--charcoal);
+    margin-bottom: 1.5rem;
+}
+
+.lead {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--obsidian);
+}
+
+.imageGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    width: 100%;
+}
+
+.imageWrapper {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.imageWrapper:hover .image {
+    transform: scale(1.05);
+}
+
+/* Values Grid */
+.valuesSection {
+    background-color: var(--obsidian);
+    color: var(--off-white);
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 6rem 2rem;
+}
+
+.valuesContainer {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    text-align: center;
+}
+
+.valueItem h3 {
+    font-family: var(--font-heritage);
+    font-size: 2rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.valueItem p {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+/* Journey / Timeline (Simplified) */
+.journeySection {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.blockquote {
+    font-family: var(--font-heritage);
+    font-size: 2rem;
+    font-style: italic;
+    color: var(--royal-purple);
+    margin: 3rem 0;
+    line-height: 1.4;
+}
+
+/* CTA */
+.ctaSection {
+    padding: 6rem 2rem;
+    text-align: center;
+    background-color: var(--royal-lilac);
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    /* opacity: 0.1;  <-- Removed this as it hides the text */
+    background: linear-gradient(135deg, rgba(200, 162, 200, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+    background-color: var(--off-white);
+    /* Ensure light background for dark text */
+}
+
+.ctaContent {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.ctaButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+    .imageGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .valuesContainer {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .ctaButtons {
+        flex-direction: row;
+    }
+
+    .heading {
+        font-size: 4rem;
+    }
+}

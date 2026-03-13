@@ -1,0 +1,107 @@
+.shopContainer {
+    /* No top padding needed as Hero sits under nav */
+    min-height: 100vh;
+    background-color: var(--off-white);
+}
+
+/* Header styles removed as we now use Hero component */
+
+.layout {
+    display: flex;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem 4rem 2rem;
+    gap: 3rem;
+    flex-direction: column;
+    /* Mobile First: Stacked */
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+    border-bottom: 1px solid var(--stone);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filterTitle {
+    display: none;
+    /* Hide title on mobile/horizontal view */
+}
+
+.categoryList {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--charcoal);
+    padding-bottom: 5px;
+    transition: all 0.3s;
+}
+
+.filterBtn:hover,
+.active {
+    color: var(--gold);
+    border-bottom: 1px solid var(--gold);
+}
+
+/* Grid Styles */
+.grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem 1.5rem;
+}
+
+
+/* Desktop Styles */
+@media (min-width: 900px) {
+    .layout {
+        flex-direction: column;
+        /* Stacked even on desktop */
+    }
+
+    /* Keep Sidebar as Horizontal Bar on Desktop */
+    .sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--stone);
+        margin-bottom: 2rem;
+    }
+
+    .filterTitle {
+        display: none;
+        /* Keep hidden on desktop too for cleaner look */
+    }
+
+    .categoryList {
+        flex-direction: row;
+        justify-content: center;
+        gap: 3rem;
+    }
+
+    .filterBtn {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

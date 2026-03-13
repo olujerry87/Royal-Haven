@@ -1,0 +1,100 @@
+.banner {
+    background-color: var(--gold);
+    padding: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 350px;
+    /* Mobile */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.slideContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imageLink {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.bannerImage {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--obsidian);
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.text {
+    font-family: var(--font-heritage);
+    font-size: 2rem;
+    /* Mobile */
+    color: var(--obsidian);
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.link {
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-decoration: underline;
+    text-transform: uppercase;
+    color: var(--obsidian);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.dots {
+    position: absolute;
+    bottom: 1.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    z-index: 10;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--obsidian);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.activeDot {
+    background: var(--obsidian);
+}
+
+@media (min-width: 768px) {
+    .banner {
+        min-height: 500px;
+    }
+
+    .text {
+        font-size: 4.5rem;
+    }
+}
