@@ -18,7 +18,7 @@ export default function SocialShare({ garment, context = "activation" }) {
         if (context === "activation") {
             text = `Just activated my unique ${garment.garment_name} from Royal Haven! Check out my style here: ${url}`;
         } else {
-            text = `Exploring styling for my ${garment.garment_name} from Royal Haven. Take a look: ${url}`;
+            text = `Just activated my unique ${garment.garment_name} from Royal Haven! Check out my style here: ${url}`;
         }
 
         const encodedText = encodeURIComponent(text);

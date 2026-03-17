@@ -1,10 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldCheck, Info, Sparkles, Droplets } from "lucide-react";
+import { ShieldCheck, Info, Droplets } from "lucide-react";
 import styles from "./PassportDetails.module.css";
-import SocialShare from "./SocialShare";
-import WeatherStyling from "./WeatherStyling";
 
 export default function PassportDetails({ garment }) {
     return (
@@ -46,19 +44,6 @@ export default function PassportDetails({ garment }) {
                         <p>{garment.care_instructions || "Dry clean only. Store in a cool, dry place. Handle with the dignity it commands."}</p>
                     </div>
                 </div>
-            </div>
-
-            {/* Weather Styling Intelligence */}
-            <div className={styles.fullWidthSection}>
-                <div className={styles.sectionHeader}>
-                    <Sparkles size={20} className={styles.icon} />
-                    <h2>Styling Intelligence</h2>
-                </div>
-                <WeatherStyling garmentName={garment.garment_name} />
-            </div>
-
-            <div className={styles.footer}>
-                <SocialShare garment={garment} context="passport" />
             </div>
         </motion.div>
     );

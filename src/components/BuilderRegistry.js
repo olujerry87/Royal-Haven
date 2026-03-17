@@ -2,8 +2,11 @@
 import { builder } from "@builder.io/react";
 import "@/builder-registry";
 
-// Initialize Builder with API Key
-builder.init("25e5eaee7d1c42fb84ae738159147ca4");
+// Initialize Builder with API Key from env
+const BUILDER_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
+if (BUILDER_KEY && BUILDER_KEY !== "your_builder_public_key_here") {
+    builder.init(BUILDER_KEY);
+}
 
 export default function BuilderRegistry() {
     return null;

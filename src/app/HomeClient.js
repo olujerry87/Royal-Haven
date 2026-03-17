@@ -13,23 +13,35 @@ import FAQ from "@/components/FAQ";
 import Reviews from "@/components/Reviews";
 import ScrollProgress from "@/components/ScrollProgress";
 
-export default function HomeClient({ acf }) {
+export default function HomeClient({ 
+    acf,
+    wuraSubtitle,
+    wuraBgVideo,
+    wuraBgImage,
+    ewaSubtitle,
+    ewaBgVideo,
+    ewaBgImage,
+    spotlight1Title,
+    spotlight1Desc,
+    spotlight1Image,
+    spotlight2Image,
+}) {
     const [hoveredSection, setHoveredSection] = useState(null);
 
-    // Fallback data if ACF is missing/empty
+    // Fallback data if ACF/Builder is missing/empty
     const data = {
         wura: {
-            bgImage: acf?.wura_bg_image || "/images/wura-idle.jpg",
-            bgVideo: acf?.wura_bg_video || "/videos/wura-bg.mp4",
+            bgImage: wuraBgImage || acf?.wura_bg_image || "/images/wura-idle.jpg",
+            bgVideo: wuraBgVideo || acf?.wura_bg_video || "/videos/wura-bg.mp4",
             logo: acf?.wura_logo || "/logos/wura-logo.png",
-            subtitle: acf?.wura_subtitle || "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
+            subtitle: wuraSubtitle || acf?.wura_subtitle || "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
             link: acf?.wura_link || "/shop"
         },
         ewa: {
-            bgImage: acf?.ewa_bg_image || "/images/ewa-idle.jpg",
-            bgVideo: acf?.ewa_bg_video || "/videos/ewa-bg.mp4",
+            bgImage: ewaBgImage || acf?.ewa_bg_image || "/images/ewa-idle.jpg",
+            bgVideo: ewaBgVideo || acf?.ewa_bg_video || "/videos/ewa-bg.mp4",
             logo: acf?.ewa_logo || "/logos/ewa-logo.png",
-            subtitle: acf?.ewa_subtitle || "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
+            subtitle: ewaSubtitle || acf?.ewa_subtitle || "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
             link: acf?.ewa_link || "/services"
         },
         heritage: {
@@ -45,13 +57,13 @@ export default function HomeClient({ acf }) {
             link: slide.link || "/shop"
         })) : undefined, // undefined triggers default in component
         spotlight1: {
-            title: acf?.spotlight_1_title || "Set For Effortless Intentions",
-            description: acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed for moments of pure clarity.",
-            image: acf?.spotlight_1_image || "/images/spotlight.jpg",
+            title: spotlight1Title || acf?.spotlight_1_title || "Set For Effortless Intentions",
+            description: spotlight1Desc || acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed for moments of pure clarity.",
+            image: spotlight1Image || acf?.spotlight_1_image || "/images/spotlight.jpg",
             link: acf?.spotlight_1_link || "/shop"
         },
         spotlight2: {
-            image: acf?.spotlight_2_image || "/images/journal.jpg",
+            image: spotlight2Image || acf?.spotlight_2_image || "/images/journal.jpg",
             link: acf?.spotlight_2_link || null
         }
     };

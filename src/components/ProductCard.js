@@ -6,8 +6,19 @@ import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import styles from "./ProductCard.module.css";
 
-export default function ProductCard({ product }) {
+// Normalize WooCommerce image format: can be { src: '...' } objects or plain strings
+function getImageSrc(img) {
+    if (!img) return "/images/spotlight.jpg";
+    return typeof img === "string" ? img : img.src || "/images/spotlight.jpg";
+}
+
+export default function ProductCard({ product, productId }) {
     const [isHovered, setIsHovered] = useState(false);
+    if (!product) return null;
+
+    const img0 = getImageSrc(product.images?.[0]);
+    const img1 = getImageSrc(product.images?.[1]);
+    const price = typeof product.price === "number" ? `$${product.price}` : `$${product.price}`;
 
     return (
         <div
@@ -20,7 +31,7 @@ export default function ProductCard({ product }) {
                     {/* Primary Image */}
                     <div className={styles.imgWrapper}>
                         <Image
-                            src={product.images[0]}
+                            src={img0}
                             alt={product.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -29,10 +40,10 @@ export default function ProductCard({ product }) {
                     </div>
 
                     {/* Secondary Image (Revealed on Hover) */}
-                    {product.images[1] && (
+                    {img1 && (
                         <div className={`${styles.imgWrapper} ${styles.secondaryWrapper} ${isHovered ? styles.visible : ''}`}>
                             <Image
-                                src={product.images[1]}
+                                src={img1}
                                 alt={`${product.name} alternate view`}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -49,7 +60,7 @@ export default function ProductCard({ product }) {
 
                 <div className={styles.details}>
                     <h3 className={styles.name}>{product.name}</h3>
-                    <p className={styles.price}>${product.price}</p>
+                    <p className={styles.price}>{price}</p>
                 </div>
             </Link>
         </div>

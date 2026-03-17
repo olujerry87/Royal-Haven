@@ -5,35 +5,20 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./PromoBanner.module.css";
 
-const defaultSlides = [
-    {
-        type: "text",
-        content: "THE DRAW IS FINALLY OPEN",
-        sub: "Shop the Exclusive Drop"
-    },
-    {
-        type: "image",
-        image: "/images/banner-1.jpg", // Placeholder
-        alt: "New Season Collection",
-        link: "/shop"
-    },
-    {
-        type: "image",
-        image: "/images/banner-2.jpeg", // New User Banner
-        alt: "Exclusive Draw",
-        link: "/shop"
-    }
-];
-
-export default function PromoBanner({ slides = defaultSlides }) {
+export default function PromoBanner({ slides = [] }) {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
+        if (!slides || slides.length === 0) return;
         const timer = setInterval(() => {
             setIndex((prev) => (prev + 1) % slides.length);
         }, 5000); // 5 seconds for better viewing of images
         return () => clearInterval(timer);
-    }, [slides.length]);
+    }, [slides]);
+
+    if (!slides || slides.length === 0) {
+        return null; // Don't try to render if Builder hasn't passed slides yet
+    }
 
     return (
         <section className={styles.banner}>
@@ -72,15 +57,17 @@ export default function PromoBanner({ slides = defaultSlides }) {
             </AnimatePresence>
 
             {/* Indicators */}
-            <div className={styles.dots}>
-                {slides.map((_, i) => (
-                    <button
-                        key={i}
-                        className={`${styles.dot} ${i === index ? styles.activeDot : ''}`}
-                        onClick={() => setIndex(i)}
-                    />
-                ))}
-            </div>
+            {slides.length > 1 && (
+                <div className={styles.dots}>
+                    {slides.map((_, i) => (
+                        <button
+                            key={i}
+                            className={`${styles.dot} ${i === index ? styles.activeDot : ''}`}
+                            onClick={() => setIndex(i)}
+                        />
+                    ))}
+                </div>
+            )}
         </section>
     );
 }

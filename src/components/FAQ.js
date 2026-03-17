@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import styles from "./FAQ.module.css";
 
-const faqData = [
+const defaultFaqs = [
     {
         question: "How do I book an appointment with Ewa?",
         answer: "You can book directly through our Services page. Select your desired service and choose a time that works for you via our booking calendar."
@@ -24,7 +24,7 @@ const faqData = [
     }
 ];
 
-export default function FAQ() {
+export default function FAQ({ faqs = defaultFaqs }) {
     const [activeIndex, setActiveIndex] = useState(null);
 
     const toggleIndex = (index) => {
@@ -44,7 +44,7 @@ export default function FAQ() {
                 </motion.h2>
 
                 <div className={styles.grid}>
-                    {faqData.map((item, index) => (
+                    {faqs.map((item, index) => (
                         <div key={index} className={styles.item}>
                             <button
                                 className={styles.question}

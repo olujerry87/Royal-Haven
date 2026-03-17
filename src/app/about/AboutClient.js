@@ -5,6 +5,8 @@ import Link from "next/link";
 import Hero from "@/components/Hero";
 import HeritageAnimation from "@/components/HeritageAnimation";
 import styles from "./page.module.css";
+import WeatherStyling from "@/components/passport/WeatherStyling";
+import SocialShare from "@/components/passport/SocialShare";
 
 export default function AboutClient({ page }) {
     // Fallback data
@@ -146,6 +148,31 @@ export default function AboutClient({ page }) {
 
             {/* Living Heritage Animation */}
             <HeritageAnimation />
+
+            {/* Styling Intelligence (Migrated from Passport) */}
+            <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', borderTop: '1px solid rgba(212, 175, 55, 0.2)'}}>
+                <div className={styles.journeySection}>
+                    <h2 className={styles.heading} style={{ color: 'var(--gold)' }}>Styling Intelligence</h2>
+                    <p className={styles.text} style={{ color: 'var(--off-white)', marginBottom: '3rem' }}>
+                        Our dynamic styling engine curates the perfect pairing of Wura garments and Ewa artistry based on your local elements.
+                    </p>
+                    <WeatherStyling garmentName="Signature Wura Silk" />
+                </div>
+            </section>
+
+            {/* Social Sharing */}
+             <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', paddingBottom: '4rem' }}>
+                <div className={styles.journeySection}>
+                     <SocialShare 
+                        garment={{ 
+                            garment_name: "Signature Wura Silk", 
+                            collection: "Heritage", 
+                            id: "royal-haven-exclusive" 
+                        }} 
+                        context="heritage" 
+                    />
+                </div>
+            </section>
 
             {/* CTA */}
             <section className={styles.ctaSection}>

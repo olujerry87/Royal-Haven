@@ -1,195 +1,150 @@
-// WooCommerce REST API using native fetch
-// This approach is more reliable than the @woocommerce/woocommerce-rest-api package
+/**
+ * WooCommerce REST API Utility
+ * Uses @woocommerce/woocommerce-rest-api package for authenticated requests.
+ * All functions are server-side only — API keys are never exposed to the client.
+ */
+import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 
-const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://localhost:8080';
-const CONSUMER_KEY = process.env.WC_CONSUMER_KEY || '';
-const CONSUMER_SECRET = process.env.WC_CONSUMER_SECRET || '';
+const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL;
+const WC_KEY = process.env.WC_CONSUMER_KEY;
+const WC_SECRET = process.env.WC_CONSUMER_SECRET;
+
+if (!WP_URL || !WC_KEY || !WC_SECRET) {
+    console.warn("[WooCommerce] Missing env vars: NEXT_PUBLIC_WORDPRESS_URL, WC_CONSUMER_KEY, or WC_CONSUMER_SECRET");
+}
+
+const api = new WooCommerceRestApi({
+    url: WP_URL,
+    consumerKey: WC_KEY,
+    consumerSecret: WC_SECRET,
+    version: "wc/v3",
+    queryStringAuth: true, // Bypass Hostinger stripping the Authorization header
+});
 
 /**
- * Build WooCommerce API URL with authentication
- * @param {string} endpoint - API endpoint (e.g., "products", "orders")
- * @param {object} params - Query parameters
+ * Fetch all products from WooCommerce.
+ * ISR: Cached by Next.js fetch, revalidated by webhook at /api/revalidate.
+ * @param {object} params - Query parameters (per_page, page, category, etc.)
  */
-function buildWCUrl(endpoint, params = {}) {
-    const url = new URL(`${WP_URL}/wp-json/wc/v3/${endpoint}`);
-
-    // Add authentication
-    url.searchParams.append('consumer_key', CONSUMER_KEY);
-    url.searchParams.append('consumer_secret', CONSUMER_SECRET);
-
-    // Add other params
-    Object.keys(params).forEach(key => {
-        url.searchParams.append(key, params[key]);
-    });
-
-    return url.toString();
+export async function getProducts(params = {}) {
+    try {
+        const { data } = await api.get("products", { per_page: 100, status: "publish", ...params });
+        return data;
+    } catch (error) {
+        console.error("[WooCommerce] getProducts failed:", error.response?.data || error.message);
+        return [];
+    }
 }
 
 /**
- * Generic fetch function for WooCommerce API
+ * Fetch a single product by slug.
+ * @param {string} slug
  */
-async function fetchWC(endpoint, params = {}, options = {}) {
-    const url = buildWCUrl(endpoint, params);
-
-    // Debug: Check if keys are present (only log on server or if explicit debug flag is set)
-    if (!CONSUMER_KEY || !CONSUMER_SECRET) {
-        console.error("⚠️ WooCommerce API Keys are missing! Check WC_CONSUMER_KEY and WC_CONSUMER_SECRET in .env.local");
-    }
-
+export async function getProductBySlug(slug) {
     try {
-        const res = await fetch(url, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            ...options,
-        });
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(`WooCommerce API error: ${res.status} ${res.statusText} - ${errorText}`);
-        }
-
-        return res.json();
+        const { data } = await api.get("products", { slug });
+        return data[0] || null;
     } catch (error) {
-        console.error(`Error fetching from WooCommerce: ${endpoint}`, error);
+        console.error(`[WooCommerce] getProductBySlug(${slug}) failed:`, error.response?.data || error.message);
+        return null;
+    }
+}
+
+/**
+ * Fetch a single product by ID.
+ * @param {number} productId
+ */
+export async function getProductById(productId) {
+    try {
+        const { data } = await api.get(`products/${productId}`);
+        return data;
+    } catch (error) {
+        console.error(`[WooCommerce] getProductById(${productId}) failed:`, error.response?.data || error.message);
+        return null;
+    }
+}
+
+/**
+ * Fetch product categories.
+ */
+export async function getProductCategories() {
+    try {
+        const { data } = await api.get("products/categories");
+        return data;
+    } catch (error) {
+        console.error("[WooCommerce] getProductCategories failed:", error.response?.data || error.message);
+        return [];
+    }
+}
+
+/**
+ * Fetch products by category ID.
+ * @param {number} categoryId
+ */
+export async function getProductsByCategory(categoryId, params = {}) {
+    try {
+        const { data } = await api.get("products", { category: categoryId, ...params });
+        return data;
+    } catch (error) {
+        console.error(`[WooCommerce] getProductsByCategory(${categoryId}) failed:`, error.response?.data || error.message);
+        return [];
+    }
+}
+
+/**
+ * Create an order in WooCommerce.
+ * @param {object} orderData
+ */
+export async function createOrder(orderData) {
+    try {
+        const { data } = await api.post("orders", orderData);
+        return data;
+    } catch (error) {
+        console.error("[WooCommerce] createOrder failed:", error.response?.data || error.message);
         throw error;
     }
 }
 
 /**
- * Fetch all products from WooCommerce
- * @param {object} params - Query parameters (per_page, page, category, etc.)
- */
-import { mockProducts } from './mockData';
-
-// ... (keep existing imports/code if any, but we are replacing the function)
-
-/**
- * Fetch all products from WooCommerce
- * @param {object} params - Query parameters (per_page, page, category, etc.)
- */
-export async function getProducts(params = {}) {
-    // TEMPORARY: Return mock data efficiently
-    console.log("Serving Mock Data for Products");
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // Return raw objects because consumers (ShopClient, ProductPage) expect [{ src: ... }]
-            resolve(mockProducts);
-        }, 500);
-    });
-    // return fetchWC('products', { per_page: 100, ...params });
-}
-
-/**
- * Fetch a single product by slug
- * @param {string} slug - Product slug
- */
-/**
- * Fetch a single product by slug
- * @param {string} slug - Product slug
- */
-export async function getProductBySlug(slug) {
-    console.log(`Serving Mock Data for Product Slug: ${slug}`);
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const product = mockProducts.find(p => p.slug === slug);
-            resolve(product || null);
-        }, 300);
-    });
-    // const products = await fetchWC('products', { slug });
-    // return products[0] || null;
-}
-
-/**
- * Fetch a single product by ID
- * @param {number} productId - Product ID
- */
-export async function getProductById(productId) {
-    // console.log(`Serving Mock Data for Product ID: ${productId}`);
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const product = mockProducts.find(p => p.id === parseInt(productId));
-            resolve(product || null);
-        }, 300);
-    });
-    // return fetchWC(`products/${productId}`);
-}
-
-/**
- * Fetch product categories
- */
-export async function getProductCategories() {
-    return fetchWC('products/categories');
-}
-
-/**
- * Fetch products by category
- * @param {number} categoryId - Category ID
- */
-export async function getProductsByCategory(categoryId, params = {}) {
-    return fetchWC('products', { category: categoryId, ...params });
-}
-
-/**
- * Create an order in WooCommerce
- * @param {object} orderData - Order data (line_items, billing, shipping, etc.)
- */
-export async function createOrder(orderData) {
-    return fetchWC('orders', {}, {
-        method: 'POST',
-        body: JSON.stringify(orderData),
-    });
-}
-
-/**
- * Get order by ID
- * @param {number} orderId - Order ID
+ * Get an order by ID.
+ * @param {number} orderId
  */
 export async function getOrderById(orderId) {
-    return fetchWC(`orders/${orderId}`);
+    try {
+        const { data } = await api.get(`orders/${orderId}`);
+        return data;
+    } catch (error) {
+        console.error(`[WooCommerce] getOrderById(${orderId}) failed:`, error.response?.data || error.message);
+        return null;
+    }
 }
 
 /**
- * Convert cart items to WooCommerce order format
- * @param {array} cartItems - Array of cart items from CartContext
- * @param {object} customerData - Customer billing/shipping info
+ * Convert cart items to WooCommerce order format.
+ * @param {array} cartItems
+ * @param {object} customerData
  */
 export function formatOrderData(cartItems, customerData) {
     const lineItems = cartItems.map(item => ({
         product_id: item.id,
         quantity: item.quantity,
-        // Add variation_id if using product variations for sizes
-        meta_data: [
-            {
-                key: 'Size',
-                value: item.size
-            }
-        ]
+        meta_data: [{ key: "Size", value: item.size }],
     }));
 
     const order = {
-        payment_method: "bacs", // Bank transfer (change as needed)
+        payment_method: "bacs",
         payment_method_title: "Direct Bank Transfer",
         set_paid: false,
         billing: customerData.billing,
         shipping: customerData.shipping,
         line_items: lineItems,
         shipping_lines: [
-            {
-                method_id: "flat_rate",
-                method_title: "Flat Rate",
-                total: "0.00" // Update with actual shipping cost
-            }
-        ]
+            { method_id: "flat_rate", method_title: "Flat Rate", total: "0.00" },
+        ],
     };
 
-    // Add coupon if present
     if (customerData.couponCode) {
-        order.coupon_lines = [
-            {
-                code: customerData.couponCode
-            }
-        ];
+        order.coupon_lines = [{ code: customerData.couponCode }];
     }
 
     return order;

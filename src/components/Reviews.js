@@ -4,8 +4,8 @@ import { Star } from "lucide-react";
 import styles from "./Reviews.module.css";
 import { motion } from "framer-motion";
 
-// Mock Data Structure matching typical Google Place API response
-const reviews = [
+// Default Data Structure matching typical Google Place API response
+const defaultReviews = [
     {
         id: 1,
         author_name: "Sarah Jenkins",
@@ -40,7 +40,7 @@ const reviews = [
     }
 ];
 
-export default function Reviews() {
+export default function Reviews({ reviews = defaultReviews }) {
     return (
         <section className={styles.section}>
             <div className={styles.container}>
