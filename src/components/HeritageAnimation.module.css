@@ -88,20 +88,21 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .container {
-        min-height: 100vh;
+        min-height: 60vh;
+        padding: 3rem 1rem;
+    }
+
+    .stickyWrapper {
+        height: 50vh;
     }
 
     .modelPlaceholder {
-        width: 200px;
-        height: 400px;
+        width: 180px;
+        height: 360px;
     }
 
+    /* Hide floating cards on mobile — they overflow off-screen due to pixel-based positioning */
     .glassCard {
-        width: 140px;
-        padding: 1rem;
-    }
-
-    .cardText {
-        font-size: 0.7rem;
+        display: none;
     }
 }

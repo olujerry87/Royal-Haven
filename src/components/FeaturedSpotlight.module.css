@@ -138,3 +138,25 @@
         line-height: 1.6;
     }
 }
+
+/* ── Mobile Overrides ─────────────────────────────────────── */
+@media (max-width: 640px) {
+    .parallaxContainer {
+        height: 70vh;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .description {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+    }
+
+    .glassContent,
+    .transparentContent {
+        padding: 1.2rem;
+    }
+}

@@ -144,3 +144,24 @@
     /* Larger logos on desktop */
   }
 }
+
+/* ── Mobile Overrides ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .splitSection {
+    height: 50vh;
+  }
+
+  .content p {
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .logo {
+    max-width: 180px;
+  }
+
+  /* Ensure the background image fills the section on mobile */
+  .bgContainer {
+    overflow: hidden;
+  }
+}
