@@ -1,0 +1,205 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import VibeCheck from "./VibeCheck";
+import ClosetBuilder from "./ClosetBuilder";
+import OutfitResult from "./OutfitResult";
+import NudgeCard from "./NudgeCard";
+import styles from "./WardrobeWidget.module.css";
+
+// Generate or retrieve anonymous wardrobe UUID
+function getWardrobeId() {
+    if (typeof window === "undefined") return null;
+    let id = localStorage.getItem("wardrobe_id");
+    if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem("wardrobe_id", id);
+    }
+    return id;
+}
+
+const SCREENS = ["vibe", "closet", "outfit"];
+
+export default function WardrobeWidget() {
+    const [screen, setScreen] = useState("vibe");
+    const [wardrobeId, setWardrobeId] = useState(null);
+    const [vibe, setVibe] = useState(null);
+    const [weather, setWeather] = useState(null);
+    const [event, setEvent] = useState("casual");
+    const [items, setItems] = useState([]);   // Closet template items
+    const [closetIds, setClosetIds] = useState(new Set());
+    const [recommendation, setRecommendation] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [recLoading, setRecLoading] = useState(false);
+
+    // Init wardrobe ID + fetch weather on mount
+    useEffect(() => {
+        const id = getWardrobeId();
+        setWardrobeId(id);
+
+        // If user already has a vibe stored, skip the quiz
+        const storedVibe = localStorage.getItem("wardrobe_vibe");
+        if (storedVibe) {
+            setVibe(storedVibe);
+            setScreen("outfit");
+        }
+
+        // Fetch weather (via server route, using geolocation if available)
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                () => fetchWeather(51.5074, -0.1278) // London fallback
+            );
+        } else {
+            fetchWeather(51.5074, -0.1278);
+        }
+    }, []);
+
+    const fetchWeather = async (lat, lon) => {
+        try {
+            const res = await fetch(`/api/wardrobe/weather?lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            setWeather(data);
+        } catch {
+            setWeather({ temp: 18, condition: "clear" });
+        }
+    };
+
+    // Step 1: Vibe selected → init closet
+    const handleVibeSelect = async (selectedVibe) => {
+        setVibe(selectedVibe);
+        localStorage.setItem("wardrobe_vibe", selectedVibe);
+        setLoading(true);
+        setScreen("closet");
+
+        try {
+            const res = await fetch("/api/wardrobe/init", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ wardrobe_id: wardrobeId, vibe: selectedVibe }),
+            });
+            const data = await res.json();
+            setItems(data.items || []);
+            setClosetIds(new Set((data.items || []).map((i) => i.id)));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Toggle item in closet
+    const handleToggle = async (templateId, currentlyOwned) => {
+        const action = currentlyOwned ? "remove" : "add";
+        setClosetIds((prev) => {
+            const next = new Set(prev);
+            action === "add" ? next.add(templateId) : next.delete(templateId);
+            return next;
+        });
+        await fetch("/api/wardrobe/closet", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ wardrobe_id: wardrobeId, template_id: templateId, action }),
+        });
+    };
+
+    // Step 2: Done with closet → get recommendation
+    const handleClosetDone = () => {
+        setScreen("outfit");
+        fetchRecommendation();
+    };
+
+    // Fetch recommendation (re-runs when event changes too)
+    const fetchRecommendation = async (overrideEvent = event) => {
+        if (!weather || !wardrobeId) return;
+        setRecLoading(true);
+        try {
+            const res = await fetch("/api/wardrobe/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ wardrobe_id: wardrobeId, weather, event: overrideEvent }),
+            });
+            const data = await res.json();
+            setRecommendation(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setRecLoading(false);
+        }
+    };
+
+    const handleEventChange = (newEvent) => {
+        setEvent(newEvent);
+        fetchRecommendation(newEvent);
+    };
+
+    return (
+        <div className={styles.widget}>
+            {/* Step indicator */}
+            <div className={styles.steps}>
+                {SCREENS.map((s, i) => (
+                    <span
+                        key={s}
+                        className={`${styles.step} ${screen === s ? styles.activeStep : ""} ${SCREENS.indexOf(screen) > i ? styles.doneStep : ""}`}
+                    />
+                ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+                {screen === "vibe" && (
+                    <motion.div key="vibe" {...slide}>
+                        <VibeCheck onSelect={handleVibeSelect} />
+                    </motion.div>
+                )}
+
+                {screen === "closet" && (
+                    <motion.div key="closet" {...slide}>
+                        <ClosetBuilder
+                            items={items}
+                            closetIds={closetIds}
+                            onToggle={handleToggle}
+                            onDone={handleClosetDone}
+                            loading={loading}
+                        />
+                    </motion.div>
+                )}
+
+                {screen === "outfit" && (
+                    <motion.div key="outfit" {...slide}>
+                        <OutfitResult
+                            weather={weather}
+                            event={event}
+                            onEventChange={handleEventChange}
+                            items={recommendation?.matchedItems || []}
+                            loading={recLoading}
+                        />
+                        {recommendation?.missingCategory && (
+                            <NudgeCard
+                                missingCategory={recommendation.missingCategory}
+                                product={recommendation.nudgeProduct}
+                            />
+                        )}
+                        <button
+                            className={styles.resetBtn}
+                            onClick={() => {
+                                localStorage.removeItem("wardrobe_vibe");
+                                setScreen("vibe");
+                                setRecommendation(null);
+                            }}
+                        >
+                            Change my vibe
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+const slide = {
+    initial: { opacity: 0, x: 30 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -30 },
+    transition: { duration: 0.35 },
+};
