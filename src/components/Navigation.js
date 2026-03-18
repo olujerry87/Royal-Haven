@@ -75,9 +75,9 @@ export default function Navigation() {
                             <div className={styles.megaContent}>
                                 <div className={styles.column}>
                                     <h3>Services</h3>
-                                    <Link href="/services/makeup">Bridal Makeup</Link>
-                                    <Link href="/services/editorial">Editorial</Link>
-                                    <Link href="/services/hair">Hair Artistry</Link>
+                                    <Link href="/services/makeup">Makeup</Link>
+                                    <Link href="/services/hair">Hair</Link>
+                                    <Link href="/services/gele">Gele</Link>
                                 </div>
                                 <div className={styles.column}>
                                     <h3>Studio</h3>
@@ -85,7 +85,7 @@ export default function Navigation() {
                                     <Link href="/services/portfolio">Portfolio</Link>
                                 </div>
                                 <div className={styles.promoImage}>
-                                    <div className={styles.placeholder}>Bridal Glam</div>
+                                    <div className={styles.placeholder}>Glam</div>
                                 </div>
                             </div>
                         </div>

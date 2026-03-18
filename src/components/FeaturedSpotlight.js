@@ -10,7 +10,7 @@ export default function FeaturedSpotlight({
     imagePath = "/images/spotlight.jpg",
     title = "Set For Effortless Intentions",
     description = "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed for moments of pure clarity.",
-    ctaText = "Explore The Collection",
+    ctaText = "Explore",
     ctaLink = "/shop/unisex",
     hasGlassCard = true
 }) {

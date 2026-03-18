@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CloudRain, Sun, Cloud, Snowflake, Loader2 } from "lucide-react";
+import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin } from "lucide-react";
 import styles from "./OutfitResult.module.css";
 
 const EVENTS = ["work", "casual", "date", "gym"];
@@ -15,29 +15,50 @@ const WEATHER_ICONS = {
     warm: Sun,
 };
 
-export default function OutfitResult({ weather, event, onEventChange, items, loading }) {
+export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning }) {
     const WeatherIcon = WEATHER_ICONS[weather?.condition] || Sun;
 
     return (
         <div className={styles.container}>
-            {/* Weather + Event Controls */}
-            <div className={styles.context}>
-                <div className={styles.weatherBadge}>
-                    <WeatherIcon size={22} className={styles.weatherIcon} />
-                    <span>{weather?.temp ?? "--"}°C</span>
+            {/* Rich Weather Panel */}
+            <div className={styles.weatherPanel}>
+                <div className={styles.weatherMain}>
+                    <span className={styles.weatherEmoji}>{weather?.emoji || "☀️"}</span>
+                    <div>
+                        <p className={styles.weatherTemp}>{weather?.temp ?? "--"}°C</p>
+                        <p className={styles.conditionLabel}>{weather?.conditionLabel || "Clear Skies"}</p>
+                    </div>
                 </div>
+                <div className={styles.weatherMeta}>
+                    {weather?.cityName && (
+                        <span className={styles.metaChip}>
+                            <MapPin size={12} /> {weather.cityName}
+                        </span>
+                    )}
+                    {weather?.humidity != null && (
+                        <span className={styles.metaChip}>
+                            <Droplets size={12} /> {weather.humidity}% humidity
+                        </span>
+                    )}
+                    {weather?.windspeed != null && (
+                        <span className={styles.metaChip}>
+                            <Wind size={12} /> {weather.windspeed} km/h
+                        </span>
+                    )}
+                </div>
+            </div>
 
-                <div className={styles.eventToggle}>
-                    {EVENTS.map((e) => (
-                        <button
-                            key={e}
-                            className={`${styles.eventBtn} ${event === e ? styles.active : ""}`}
-                            onClick={() => onEventChange(e)}
-                        >
-                            {e.charAt(0).toUpperCase() + e.slice(1)}
-                        </button>
-                    ))}
-                </div>
+            {/* Event Controls */}
+            <div className={styles.eventToggle}>
+                {EVENTS.map((e) => (
+                    <button
+                        key={e}
+                        className={`${styles.eventBtn} ${event === e ? styles.active : ""}`}
+                        onClick={() => onEventChange(e)}
+                    >
+                        {e.charAt(0).toUpperCase() + e.slice(1)}
+                    </button>
+                ))}
             </div>
 
             {/* Outfit Items */}
@@ -76,6 +97,19 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                             <p className={styles.itemName}>{item.name}</p>
                         </motion.div>
                     ))}
+                </motion.div>
+            )}
+
+            {/* Why This Look */}
+            {reasoning && (
+                <motion.div
+                    className={styles.reasoning}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                    <p className={styles.reasoningLabel}>Why this look?</p>
+                    <p className={styles.reasoningText}>{reasoning}</p>
                 </motion.div>
             )}
         </div>

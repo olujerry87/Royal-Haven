@@ -27,11 +27,13 @@ export default function WardrobeWidget() {
     const [vibe, setVibe] = useState(null);
     const [weather, setWeather] = useState(null);
     const [event, setEvent] = useState("casual");
-    const [items, setItems] = useState([]);   // Closet template items
+    const [items, setItems] = useState([]);
     const [closetIds, setClosetIds] = useState(new Set());
     const [recommendation, setRecommendation] = useState(null);
     const [loading, setLoading] = useState(false);
     const [recLoading, setRecLoading] = useState(false);
+    const [cityInput, setCityInput] = useState("");
+    const [cityLoading, setCityLoading] = useState(false);
 
     // Init wardrobe ID + fetch weather on mount
     useEffect(() => {
@@ -56,13 +58,32 @@ export default function WardrobeWidget() {
         }
     }, []);
 
-    const fetchWeather = async (lat, lon) => {
+    const fetchWeather = async (lat, lon, city = null) => {
         try {
-            const res = await fetch(`/api/wardrobe/weather?lat=${lat}&lon=${lon}`);
+            const params = city
+                ? `city=${encodeURIComponent(city)}`
+                : `lat=${lat}&lon=${lon}`;
+            const res = await fetch(`/api/wardrobe/weather?${params}`);
             const data = await res.json();
             setWeather(data);
+            return data;
         } catch {
-            setWeather({ temp: 18, condition: "clear" });
+            const fallback = { temp: 18, condition: "clear", conditionLabel: "Clear Skies", emoji: "☀️", cityName: "Unknown" };
+            setWeather(fallback);
+            return fallback;
+        }
+    };
+
+    const handleCitySearch = async (e) => {
+        e.preventDefault();
+        if (!cityInput.trim()) return;
+        setCityLoading(true);
+        const newWeather = await fetchWeather(null, null, cityInput.trim());
+        setCityInput("");
+        setCityLoading(false);
+        // Re-fetch recommendation with new weather
+        if (screen === "outfit" && wardrobeId) {
+            fetchRecommendation(event, newWeather);
         }
     };
 
@@ -111,14 +132,14 @@ export default function WardrobeWidget() {
     };
 
     // Fetch recommendation (re-runs when event changes too)
-    const fetchRecommendation = async (overrideEvent = event) => {
-        if (!weather || !wardrobeId) return;
+    const fetchRecommendation = async (overrideEvent = event, overrideWeather = weather) => {
+        if (!overrideWeather || !wardrobeId) return;
         setRecLoading(true);
         try {
             const res = await fetch("/api/wardrobe/recommend", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ wardrobe_id: wardrobeId, weather, event: overrideEvent }),
+                body: JSON.stringify({ wardrobe_id: wardrobeId, weather: overrideWeather, event: overrideEvent }),
             });
             const data = await res.json();
             setRecommendation(data);
@@ -167,11 +188,26 @@ export default function WardrobeWidget() {
 
                 {screen === "outfit" && (
                     <motion.div key="outfit" {...slide}>
+                        {/* City Search */}
+                        <form onSubmit={handleCitySearch} className={styles.cityForm}>
+                            <input
+                                type="text"
+                                placeholder="Search city (e.g. Lagos, Toronto)"
+                                value={cityInput}
+                                onChange={(e) => setCityInput(e.target.value)}
+                                className={styles.cityInput}
+                            />
+                            <button type="submit" className={styles.cityBtn} disabled={cityLoading}>
+                                {cityLoading ? "..." : "Update"}
+                            </button>
+                        </form>
+
                         <OutfitResult
                             weather={weather}
                             event={event}
                             onEventChange={handleEventChange}
                             items={recommendation?.matchedItems || []}
+                            reasoning={recommendation?.reasoning || null}
                             loading={recLoading}
                         />
                         {recommendation?.missingCategory && (

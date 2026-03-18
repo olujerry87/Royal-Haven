@@ -127,9 +127,45 @@ export async function POST(request) {
             missingCategory: missingCategory || null,
             nudgeProduct,
             tip: `For ${event} in ${weather.temp}°C ${condition} weather — here is your look.`,
+            reasoning: buildReasoning(weather, event, condition, matchedItems, missingCategory),
         });
     } catch (err) {
         console.error("[recommend]", err.message);
         return Response.json({ error: "Recommendation failed" }, { status: 500 });
     }
+}
+
+function buildReasoning(weather, event, condition, matchedItems, missingCategory) {
+    const condLabel = weather.conditionLabel || condition;
+    const temp = weather.temp;
+    const city = weather.cityName ? ` in ${weather.cityName}` : "";
+    const humidity = weather.humidity ? `, ${weather.humidity}% humidity` : "";
+    const wind = weather.windspeed ? ` with ${weather.windspeed} km/h winds` : "";
+
+    const weatherSentence = `It\'s ${temp}°C and ${condLabel.toLowerCase()}${city}${humidity}${wind}.`;
+
+    const eventReasons = {
+        work:   "For a work setting, we\'ve prioritised polished, professional pieces that keep you structured and sharp.",
+        casual: "A casual day calls for comfort-first styling — relaxed fits that still look intentional.",
+        date:   "For a date, we went with a balanced look: elevated but effortless. You want to look like you tried without looking like you tried.",
+        gym:    "Your gym look is all about performance and ease — breathable, flexible, and still put-together.",
+    };
+
+    const conditionReasons = {
+        rain:   " Given the rain, we prioritised weather-resistant and darker tones that won\'t show water.",
+        snow:   " With snow expected, layering and warm fabrics take priority without sacrificing the look.",
+        cold:   " The cool temperature calls for structured layers to trap warmth while maintaining your silhouette.",
+        cloudy: " An overcast day suits richer, deeper tones that pop against neutral skies.",
+        clear:  " Clear skies mean you can lean into lighter, more breathable fabrics and bolder colour.",
+    };
+
+    const matched = matchedItems.length > 0
+        ? ` We found ${matchedItems.length} item${matchedItems.length > 1 ? "s" : ""} in your closet that fit perfectly.`
+        : " We\'re working with your current closet to build the best possible look.";
+
+    const nudge = missingCategory
+        ? ` One missing piece — ${missingCategory.replace(/_/g, " ")} — could complete the look.`
+        : " Your closet has everything needed for this outfit.";
+
+    return `${weatherSentence} ${eventReasons[event] || ""} ${conditionReasons[condition] || ""}${matched}${nudge}`;
 }
