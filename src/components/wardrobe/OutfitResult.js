@@ -1,8 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin } from "lucide-react";
+import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin, Shirt, Archive, Layers, Footprints } from "lucide-react";
 import styles from "./OutfitResult.module.css";
+
+const CATEGORY_ICONS_SMALL = {
+    trousers: Archive,
+    slim_jeans: Archive,
+    chinos: Archive,
+    cargo_pants: Archive,
+    joggers: Archive,
+    shorts: Archive,
+    trenchcoat: Layers,
+    blazer: Layers,
+    black_blazer: Layers,
+    hoodie: Layers,
+    sneakers: Footprints,
+    white_sneakers: Footprints,
+    dress_shoes: Footprints,
+    loafers: Footprints,
+    ankle_boots: Footprints,
+};
 
 const EVENTS = ["work", "casual", "date", "gym"];
 
@@ -114,7 +132,12 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={item.image_url} alt={item.name} className={styles.itemImg} />
                                 ) : (
-                                    <span>👕</span>
+                                    <span>
+                                        {(() => {
+                                            const Icon = CATEGORY_ICONS_SMALL[item.category] || Shirt;
+                                            return <Icon size={24} />;
+                                        })()}
+                                    </span>
                                 )}
                             </div>
                             <p className={styles.itemName}>{item.name}</p>

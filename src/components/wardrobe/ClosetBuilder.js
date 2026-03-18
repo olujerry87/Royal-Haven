@@ -1,7 +1,30 @@
 "use client";
 import { motion } from "framer-motion";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Shirt, Archive, Layers, Footprints } from "lucide-react";
 import styles from "./ClosetBuilder.module.css";
+
+const CATEGORY_ICONS = {
+    trousers: Archive,
+    slim_jeans: Archive,
+    chinos: Archive,
+    cargo_pants: Archive,
+    joggers: Archive,
+    shorts: Archive,
+    trenchcoat: Layers,
+    blazer: Layers, 
+    black_blazer: Layers,
+    hoodie: Layers,
+    sneakers: Footprints,
+    white_sneakers: Footprints,
+    dress_shoes: Footprints,
+    loafers: Footprints,
+    ankle_boots: Footprints,
+};
+
+function getIcon(category) {
+    const Icon = CATEGORY_ICONS[category] || Shirt;
+    return <Icon size={24} />;
+}
 
 export default function ClosetBuilder({ items, closetIds, onToggle, onDone, loading }) {
     if (loading) {
@@ -43,7 +66,7 @@ export default function ClosetBuilder({ items, closetIds, onToggle, onDone, load
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={item.image_url} alt={item.name} className={styles.itemImg} />
                                 ) : (
-                                    <span className={styles.placeholder}>👕</span>
+                                    <span className={styles.placeholder}>{getIcon(item.category)}</span>
                                 )}
                             </div>
                             <span className={styles.itemName}>{item.name}</span>
