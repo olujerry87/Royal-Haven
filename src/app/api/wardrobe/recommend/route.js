@@ -24,32 +24,86 @@ const woo = new WooCommerceRestApi({
     queryStringAuth: true,
 });
 
-// Weather + Event → Required Category Map
-const OUTFIT_MAP = {
-    "rain+work":    ["trenchcoat", "trousers", "dress_shirt", "loafers"],
-    "rain+casual":  ["hoodie", "joggers", "sneakers"],
-    "rain+date":    ["trenchcoat", "slim_jeans", "ankle_boots"],
-    "rain+gym":     ["athletic_top", "shorts", "sneakers"],
-    "cold+work":    ["blazer", "dress_shirt", "trousers", "dress_shoes"],
-    "cold+casual":  ["black_blazer", "slim_jeans", "white_sneakers"],
-    "cold+date":    ["blazer", "chinos", "loafers"],
-    "cold+gym":     ["hoodie", "joggers", "sneakers"],
-    "warm+work":    ["dress_shirt", "chinos", "loafers"],
-    "warm+casual":  ["white_tee", "slim_jeans", "white_sneakers"],
-    "warm+date":    ["linen_shirt", "chinos", "loafers"],
-    "warm+gym":     ["athletic_top", "shorts", "sneakers"],
-    "clear+work":   ["dress_shirt", "chinos", "loafers"],
-    "clear+casual": ["white_tee", "slim_jeans", "white_sneakers"],
-    "clear+date":   ["linen_shirt", "chinos", "loafers"],
-    "clear+gym":    ["athletic_top", "shorts", "sneakers"],
-    "snow+work":    ["blazer", "trousers", "dress_shoes"],
-    "snow+casual":  ["hoodie", "slim_jeans", "sneakers"],
-    "snow+date":    ["black_blazer", "chinos", "ankle_boots"],
-    "snow+gym":     ["hoodie", "joggers", "sneakers"],
-    "cloudy+work":  ["blazer", "dress_shirt", "trousers", "loafers"],
-    "cloudy+casual":["white_tee", "slim_jeans", "sneakers"],
-    "cloudy+date":  ["blazer", "chinos", "loafers"],
-    "cloudy+gym":   ["athletic_top", "shorts", "sneakers"],
+// ── Outfit Formula Engine ──────────────────────────────────────────
+// Vibe + Event + Weather → Formula
+const OUTFIT_FORMULAS = {
+    // MINIMALIST VIBE
+    "minimalist+work": {
+        name: "The Corporate Minimalist",
+        base: ["white_tee", "trousers"],
+        layer: "blazer",
+        shoes: "loafers",
+        advice: "Neutral tones and clean lines are your power move. It conveys authority without shouting."
+    },
+    "minimalist+casual": {
+        name: "Elevated Daily",
+        base: ["white_tee", "slim_jeans"],
+        layer: "hoodie", // if cold
+        shoes: "white_sneakers",
+        advice: "Focus on the fit. A perfectly weighted tee and slim denim is the ultimate uniform."
+    },
+    "minimalist+date": {
+        name: "The Soft Silhouette",
+        base: ["linen_shirt", "chinos"],
+        layer: "blazer",
+        shoes: "loafers",
+        advice: "Subtle textures like linen and cotton create a high-end feel that's approachable."
+    },
+
+    // EXPRESSIVE VIBE
+    "expressive+work": {
+        name: "The Creative Professional",
+        base: ["graphic_tee", "trousers"],
+        layer: "black_blazer",
+        shoes: "sneakers",
+        advice: "Breaking the rules, intentionally. The blazer keeps it professional; the tee keeps it you."
+    },
+    "expressive+casual": {
+        name: "Street Heritage",
+        base: ["graphic_tee", "cargo_pants"],
+        layer: "hoodie",
+        shoes: "sneakers",
+        advice: "Volume and contrast. Don't be afraid to mix your textures today."
+    },
+    "expressive+date": {
+        name: "Midnight Maven",
+        base: ["satin_blouse", "slim_jeans"],
+        layer: "black_blazer",
+        shoes: "ankle_boots",
+        advice: "Rich fabrics and slightly edgy pairings make for a look they won't forget."
+    },
+
+    // SHARP VIBE
+    "sharp+work": {
+        name: "The Executive",
+        base: ["dress_shirt", "trousers"],
+        layer: "blazer",
+        shoes: "dress_shoes",
+        advice: "Crisp, ironed, and intentional. This look demands the room's attention."
+    },
+    "sharp+casual": {
+        name: "Weekend Tailored",
+        base: ["linen_shirt", "chinos"],
+        layer: null,
+        shoes: "loafers",
+        advice: "Even off the clock, you stay polished. Tucking in the shirt is the key here."
+    },
+    "sharp+date": {
+        name: "The Dapper Gent/Lady",
+        base: ["dress_shirt", "slim_jeans"],
+        layer: "blazer",
+        shoes: "dress_shoes",
+        advice: "High-low styling: Formal on top, versatile on the bottom. Perfect for a changing evening."
+    }
+};
+
+// Fallback logic for gym across any vibe
+const GYM_FORMULA = {
+    name: "Performance First",
+    base: ["athletic_top", "shorts"],
+    layer: "hoodie",
+    shoes: "sneakers",
+    advice: "Functional, breathable, and focused. Let the gear do the work."
 };
 
 // Category → WooCommerce product search term
@@ -75,16 +129,24 @@ const CATEGORY_TO_SEARCH = {
 
 export async function POST(request) {
     try {
-        const { wardrobe_id, weather, event } = await request.json();
+        const { wardrobe_id, weather, event, vibe = "minimalist" } = await request.json();
 
         if (!wardrobe_id || !weather || !event) {
             return Response.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        // Simplify weather condition to cold/warm/rain/snow/clear/cloudy
+        // Simplify weather
         const condition = weather.temp < 15 ? "cold" : weather.condition || "clear";
-        const key = `${condition}+${event}`;
-        const neededCategories = OUTFIT_MAP[key] || OUTFIT_MAP["clear+casual"];
+        
+        // Select Formula
+        const formulaKey = event === "gym" ? "gym" : `${vibe}+${event}`;
+        const formula = event === "gym" ? GYM_FORMULA : (OUTFIT_FORMULAS[formulaKey] || OUTFIT_FORMULAS["minimalist+casual"]);
+
+        // Build list of categories we need for this look
+        let neededCategories = [...formula.base, formula.shoes];
+        if (condition === "cold" || condition === "rain" || condition === "snow") {
+            if (formula.layer) neededCategories.unshift(formula.layer);
+        }
 
         // Fetch user's closet
         const { data, error: cErr } = await supabase
@@ -97,12 +159,11 @@ export async function POST(request) {
         const userItems = (data || []).map((r) => r.item_templates).filter(Boolean);
         const userCategories = new Set(userItems.map((i) => i.category));
 
-        // Match owned items to needed categories
+        // Match items
         const matchedItems = neededCategories
             .map((cat) => userItems.find((i) => i.category === cat))
             .filter(Boolean);
 
-        // Identify the first missing category
         const missingCategory = neededCategories.find((cat) => !userCategories.has(cat));
 
         let nudgeProduct = null;
@@ -121,13 +182,12 @@ export async function POST(request) {
         }
 
         return Response.json({
-            key,
-            neededCategories,
+            formulaName: formula.name,
             matchedItems,
             missingCategory: missingCategory || null,
             nudgeProduct,
-            tip: `For ${event} in ${weather.temp}°C ${condition} weather — here is your look.`,
-            reasoning: buildReasoning(weather, event, condition, matchedItems, missingCategory),
+            stylistAdvice: formula.advice,
+            reasoning: buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula),
         });
     } catch (err) {
         console.error("[recommend]", err.message);
@@ -135,37 +195,19 @@ export async function POST(request) {
     }
 }
 
-function buildReasoning(weather, event, condition, matchedItems, missingCategory) {
-    const condLabel = weather.conditionLabel || condition;
+function buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula) {
     const temp = weather.temp;
-    const city = weather.cityName ? ` in ${weather.cityName}` : "";
-    const humidity = weather.humidity ? `, ${weather.humidity}% humidity` : "";
-    const wind = weather.windspeed ? ` with ${weather.windspeed} km/h winds` : "";
+    const condLabel = weather.conditionLabel || condition;
+    
+    let summary = `Our recommendation for **${formula.name}** is based on the ${temp}°C and ${condLabel.toLowerCase()} weather. `;
+    
+    if (missingCategory) {
+        summary += `You're just one piece away — adding a ${missingCategory.replace(/_/g, " ")} to your closet would complete this look perfectly. `;
+    } else {
+        summary += `Great news: you have every piece of this formula ready to go. `;
+    }
 
-    const weatherSentence = `It\'s ${temp}°C and ${condLabel.toLowerCase()}${city}${humidity}${wind}.`;
+    const whyItWorks = `The pairing of the ${formula.base.join(" and ").replace(/_/g, " ")} provides the core structure, while the stylist chosen ${formula.shoes.replace(/_/g, " ")} grounds the silhouette for a ${event} setting.`;
 
-    const eventReasons = {
-        work:   "For a work setting, we\'ve prioritised polished, professional pieces that keep you structured and sharp.",
-        casual: "A casual day calls for comfort-first styling — relaxed fits that still look intentional.",
-        date:   "For a date, we went with a balanced look: elevated but effortless. You want to look like you tried without looking like you tried.",
-        gym:    "Your gym look is all about performance and ease — breathable, flexible, and still put-together.",
-    };
-
-    const conditionReasons = {
-        rain:   " Given the rain, we prioritised weather-resistant and darker tones that won\'t show water.",
-        snow:   " With snow expected, layering and warm fabrics take priority without sacrificing the look.",
-        cold:   " The cool temperature calls for structured layers to trap warmth while maintaining your silhouette.",
-        cloudy: " An overcast day suits richer, deeper tones that pop against neutral skies.",
-        clear:  " Clear skies mean you can lean into lighter, more breathable fabrics and bolder colour.",
-    };
-
-    const matched = matchedItems.length > 0
-        ? ` We found ${matchedItems.length} item${matchedItems.length > 1 ? "s" : ""} in your closet that fit perfectly.`
-        : " We\'re working with your current closet to build the best possible look.";
-
-    const nudge = missingCategory
-        ? ` One missing piece — ${missingCategory.replace(/_/g, " ")} — could complete the look.`
-        : " Your closet has everything needed for this outfit.";
-
-    return `${weatherSentence} ${eventReasons[event] || ""} ${conditionReasons[condition] || ""}${matched}${nudge}`;
+    return `${summary}\n\n**Why it works:** ${whyItWorks}`;
 }

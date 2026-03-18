@@ -2,6 +2,66 @@
     padding: 0.5rem 0 1.5rem;
 }
 
+.formulaHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.vibeLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+
+.formulaTitle {
+    font-family: var(--font-heritage);
+    font-size: 1.8rem;
+    color: var(--off-white);
+    margin-bottom: 0.75rem;
+}
+
+.reasoning {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border-left: 3px solid var(--gold);
+}
+
+.reasoningLabel {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+}
+
+.reasoningText {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.reasoningText b {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.stylistAdvice {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
 .context {
     display: flex;
     align-items: center;

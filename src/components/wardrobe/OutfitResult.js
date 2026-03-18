@@ -15,7 +15,7 @@ const WEATHER_ICONS = {
     warm: Sun,
 };
 
-export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning }) {
+export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning, formulaName, stylistAdvice }) {
     const WeatherIcon = WEATHER_ICONS[weather?.condition] || Sun;
 
     return (
@@ -60,6 +60,15 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                     </button>
                 ))}
             </div>
+
+            {/* Formula Header */}
+            {formulaName && (
+                <div className={styles.formulaHeader}>
+                    <p className={styles.vibeLabel}>Stylist Rec:</p>
+                    <h3 className={styles.formulaTitle}>{formulaName}</h3>
+                    {stylistAdvice && <p className={styles.stylistAdvice}>&ldquo;{stylistAdvice}&rdquo;</p>}
+                </div>
+            )}
 
             {/* Outfit Items */}
             {loading ? (
@@ -108,8 +117,8 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
                 >
-                    <p className={styles.reasoningLabel}>Why this look?</p>
-                    <p className={styles.reasoningText}>{reasoning}</p>
+                    <p className={styles.reasoningLabel}>Strategic Breakdown</p>
+                    <div className={styles.reasoningText} dangerouslySetInnerHTML={{ __html: reasoning?.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br/>') }} />
                 </motion.div>
             )}
         </div>

@@ -139,7 +139,12 @@ export default function WardrobeWidget() {
             const res = await fetch("/api/wardrobe/recommend", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ wardrobe_id: wardrobeId, weather: overrideWeather, event: overrideEvent }),
+                body: JSON.stringify({ 
+                    wardrobe_id: wardrobeId, 
+                    weather: overrideWeather, 
+                    event: overrideEvent,
+                    vibe: vibe // Pass the stored vibe
+                }),
             });
             const data = await res.json();
             setRecommendation(data);
@@ -208,6 +213,8 @@ export default function WardrobeWidget() {
                             onEventChange={handleEventChange}
                             items={recommendation?.matchedItems || []}
                             reasoning={recommendation?.reasoning || null}
+                            formulaName={recommendation?.formulaName || null}
+                            stylistAdvice={recommendation?.stylistAdvice || null}
                             loading={recLoading}
                         />
                         {recommendation?.missingCategory && (

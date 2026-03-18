@@ -14,40 +14,46 @@ const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET;
 
 export async function POST(request) {
     try {
-        // 1. Verify the secret token sent by WordPress webhook
-        const secret = request.headers.get("x-wc-webhook-secret");
-        if (REVALIDATE_SECRET && secret !== REVALIDATE_SECRET) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        const { searchParams } = new URL(request.url);
+        const manualSecret = searchParams.get("secret");
+        
+        // 1. Check if it's a manual/Builder.io call via URL secret
+        if (manualSecret && REVALIDATE_SECRET && manualSecret === REVALIDATE_SECRET) {
+            const path = searchParams.get("path") || "/";
+            revalidatePath(path);
+            console.log(`[ISR] Manual revalidation for: ${path}`);
+            return NextResponse.json({ revalidated: true, path });
         }
 
-        const body = await request.json().catch(() => ({}));
-
-        // 2. Purge the shop pages and individual product if we can
-        revalidatePath("/shop");
-        revalidateTag("woocommerce-products");
-
-        if (body?.slug) {
-            revalidatePath(`/shop/${body.slug}`);
+        // 2. Check if it's a WooCommerce Webhook (uses header secret)
+        const wcSecret = request.headers.get("x-wc-webhook-secret");
+        if (REVALIDATE_SECRET && wcSecret === REVALIDATE_SECRET) {
+            const body = await request.json().catch(() => ({}));
+            revalidatePath("/shop");
+            revalidateTag("woocommerce-products");
+            if (body?.slug) revalidatePath(`/shop/${body.slug}`);
+            console.log("[ISR] WooCommerce revalidated.");
+            return NextResponse.json({ revalidated: true });
         }
 
-        console.log("[ISR] Revalidated /shop and product pages via webhook.");
-        return NextResponse.json({ revalidated: true, timestamp: Date.now() });
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     } catch (err) {
         console.error("[ISR] Revalidation error:", err);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
 }
 
-// Also support GET for easy manual testing: /api/revalidate?secret=xxx&path=/shop
+// GET remains for easy browser testing
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get("secret");
-    const path = searchParams.get("path") || "/shop";
+    const path = searchParams.get("path") || "/";
 
     if (REVALIDATE_SECRET && secret !== REVALIDATE_SECRET) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     revalidatePath(path);
-    return NextResponse.json({ revalidated: true, path, timestamp: Date.now() });
+    console.log(`[ISR] GET revalidation for: ${path}`);
+    return NextResponse.json({ revalidated: true, path });
 }
