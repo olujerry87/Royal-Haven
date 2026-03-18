@@ -60,6 +60,41 @@
     max-width: 500px;
     margin: 0 auto;
     line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+.matchBarContainer {
+    width: 100%;
+    max-width: 300px;
+    margin: 1.5rem auto 0;
+}
+
+.matchBarLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.matchBarLabel span {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.matchBar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.matchFill {
+    height: 100%;
+    background: var(--gold);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 }
 
 .context {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import VibeCheck from "./VibeCheck";
 import ClosetBuilder from "./ClosetBuilder";
+import ContextPicker from "./ContextPicker";
 import OutfitResult from "./OutfitResult";
 import NudgeCard from "./NudgeCard";
 import styles from "./WardrobeWidget.module.css";
@@ -19,7 +20,7 @@ function getWardrobeId() {
     return id;
 }
 
-const SCREENS = ["vibe", "closet", "outfit"];
+const SCREENS = ["vibe", "closet", "context", "outfit"];
 
 export default function WardrobeWidget() {
     const [screen, setScreen] = useState("vibe");
@@ -44,7 +45,7 @@ export default function WardrobeWidget() {
         const storedVibe = localStorage.getItem("wardrobe_vibe");
         if (storedVibe) {
             setVibe(storedVibe);
-            setScreen("outfit");
+            setScreen("context"); // Skip to context if vibe is already known
         }
 
         // Fetch weather (via server route, using geolocation if available)
@@ -125,10 +126,16 @@ export default function WardrobeWidget() {
         });
     };
 
-    // Step 2: Done with closet → get recommendation
+    // Step 2: Done with closet → go to context
     const handleClosetDone = () => {
+        setScreen("context");
+    };
+
+    // Step 3: Context selected → get recommendation
+    const handleContextComplete = (selectedEvent) => {
+        setEvent(selectedEvent);
         setScreen("outfit");
-        fetchRecommendation();
+        fetchRecommendation(selectedEvent);
     };
 
     // Fetch recommendation (re-runs when event changes too)
@@ -191,22 +198,19 @@ export default function WardrobeWidget() {
                     </motion.div>
                 )}
 
+                {screen === "context" && (
+                    <motion.div key="context" {...slide}>
+                        <ContextPicker 
+                            weather={weather}
+                            onEventSelect={handleContextComplete}
+                            onCitySearch={(city) => fetchWeather(null, null, city)}
+                            loading={cityLoading}
+                        />
+                    </motion.div>
+                )}
+
                 {screen === "outfit" && (
                     <motion.div key="outfit" {...slide}>
-                        {/* City Search */}
-                        <form onSubmit={handleCitySearch} className={styles.cityForm}>
-                            <input
-                                type="text"
-                                placeholder="Search city (e.g. Lagos, Toronto)"
-                                value={cityInput}
-                                onChange={(e) => setCityInput(e.target.value)}
-                                className={styles.cityInput}
-                            />
-                            <button type="submit" className={styles.cityBtn} disabled={cityLoading}>
-                                {cityLoading ? "..." : "Update"}
-                            </button>
-                        </form>
-
                         <OutfitResult
                             weather={weather}
                             event={event}
@@ -215,6 +219,7 @@ export default function WardrobeWidget() {
                             reasoning={recommendation?.reasoning || null}
                             formulaName={recommendation?.formulaName || null}
                             stylistAdvice={recommendation?.stylistAdvice || null}
+                            matchRate={recommendation?.matchRate || 0}
                             loading={recLoading}
                         />
                         {recommendation?.missingCategory && (

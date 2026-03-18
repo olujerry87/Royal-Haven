@@ -1,0 +1,164 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem 0;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.icon {
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.header h2 {
+    font-family: var(--font-heritage);
+    font-size: 2rem;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+}
+
+/* Weather Card */
+.weatherCard {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gold);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.temp {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.degree {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--off-white);
+}
+
+.condition {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.searchForm {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 0.5rem;
+}
+
+.searchForm input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: white;
+    font-size: 0.85rem;
+}
+
+.searchForm button {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.searchForm button:hover {
+    background: var(--gold);
+    color: black;
+}
+
+/* Event Grid */
+.eventGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.eventCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+.eventIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--brand-color);
+    transition: all 0.3s;
+}
+
+.eventCard span {
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.eventCard:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--brand-color);
+    transform: translateY(-5px);
+}
+
+.eventCard:hover .eventIcon {
+    background: var(--brand-color);
+    color: black;
+    box-shadow: 0 0 20px var(--brand-color);
+}
+
+@media (max-width: 480px) {
+    .eventGrid {
+        gap: 1rem;
+    }
+    
+    .eventCard {
+        padding: 1.5rem 1rem;
+    }
+}

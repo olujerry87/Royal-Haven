@@ -164,6 +164,7 @@ export async function POST(request) {
             .map((cat) => userItems.find((i) => i.category === cat))
             .filter(Boolean);
 
+        const matchRate = Math.round((matchedItems.length / neededCategories.length) * 100);
         const missingCategory = neededCategories.find((cat) => !userCategories.has(cat));
 
         let nudgeProduct = null;
@@ -183,11 +184,12 @@ export async function POST(request) {
 
         return Response.json({
             formulaName: formula.name,
+            matchRate,
             matchedItems,
             missingCategory: missingCategory || null,
             nudgeProduct,
             stylistAdvice: formula.advice,
-            reasoning: buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula),
+            reasoning: buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate),
         });
     } catch (err) {
         console.error("[recommend]", err.message);
@@ -195,16 +197,16 @@ export async function POST(request) {
     }
 }
 
-function buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula) {
+function buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate) {
     const temp = weather.temp;
     const condLabel = weather.conditionLabel || condition;
     
     let summary = `Our recommendation for **${formula.name}** is based on the ${temp}°C and ${condLabel.toLowerCase()} weather. `;
     
-    if (missingCategory) {
-        summary += `You're just one piece away — adding a ${missingCategory.replace(/_/g, " ")} to your closet would complete this look perfectly. `;
+    if (matchRate === 100) {
+        summary += `Great news: you have every piece of this formula ready to go (100% Match). `;
     } else {
-        summary += `Great news: you have every piece of this formula ready to go. `;
+        summary += `You're at ${matchRate}% capacity for this look. Adding a ${missingCategory.replace(/_/g, " ")} would complete it perfectly. `;
     }
 
     const whyItWorks = `The pairing of the ${formula.base.join(" and ").replace(/_/g, " ")} provides the core structure, while the stylist chosen ${formula.shoes.replace(/_/g, " ")} grounds the silhouette for a ${event} setting.`;

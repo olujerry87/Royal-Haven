@@ -15,7 +15,7 @@ const WEATHER_ICONS = {
     warm: Sun,
 };
 
-export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning, formulaName, stylistAdvice }) {
+export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning, formulaName, stylistAdvice, matchRate }) {
     const WeatherIcon = WEATHER_ICONS[weather?.condition] || Sun;
 
     return (
@@ -67,6 +67,20 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                     <p className={styles.vibeLabel}>Stylist Rec:</p>
                     <h3 className={styles.formulaTitle}>{formulaName}</h3>
                     {stylistAdvice && <p className={styles.stylistAdvice}>&ldquo;{stylistAdvice}&rdquo;</p>}
+                    
+                    <div className={styles.matchBarContainer}>
+                        <div className={styles.matchBarLabel}>
+                            Closet Capacity: <span>{matchRate}%</span>
+                        </div>
+                        <div className={styles.matchBar}>
+                            <motion.div 
+                                className={styles.matchFill} 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${matchRate}%` }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
 
