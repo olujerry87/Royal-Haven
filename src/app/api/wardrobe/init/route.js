@@ -19,9 +19,44 @@ const VIBE_CATEGORIES = {
     formal:     ["dress_shirt", "trousers", "blazer", "dress_shoes", "tie", "chinos"],
 };
 
+export async function GET(request) {
+    const { searchParams } = new URL(request.url);
+    const wardrobe_id = searchParams.get("wardrobe_id");
+
+    if (!wardrobe_id) {
+        return Response.json({ error: "wardrobe_id is required" }, { status: 400 });
+    }
+
+    try {
+        // Fetch ALL templates (frontend will filter by gender)
+        const { data: templates, error: tErr } = await supabase
+            .from("item_templates")
+            .select("id, name, category, image_url, gender");
+
+        if (tErr) throw tErr;
+
+        // Fetch user's closet IDs
+        const { data: closet, error: cErr } = await supabase
+            .from("user_closets")
+            .select("template_id")
+            .eq("wardrobe_id", wardrobe_id);
+
+        if (cErr) throw cErr;
+
+        const closetIds = (closet || []).map(row => row.template_id);
+
+        return Response.json({ templates, closetIds });
+    } catch (err) {
+        console.error("[wardrobe/init GET]", err.message);
+        return Response.json({ error: "Failed to fetch wardrobe data" }, { status: 500 });
+    }
+}
+
 export async function POST(request) {
     try {
         const { wardrobe_id, vibe } = await request.json();
+...
+
 
         if (!wardrobe_id || !vibe) {
             return Response.json({ error: "wardrobe_id and vibe are required" }, { status: 400 });
