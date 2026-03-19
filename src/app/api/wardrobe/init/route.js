@@ -47,8 +47,12 @@ export async function GET(request) {
 
         return Response.json({ templates, closetIds });
     } catch (err) {
-        console.error("[wardrobe/init GET]", err.message);
-        return Response.json({ error: "Failed to fetch wardrobe data" }, { status: 500 });
+        console.error("[wardrobe/init GET] Full Error:", err);
+        return Response.json({ 
+            error: "Failed to fetch wardrobe data", 
+            details: err.message,
+            stack: err.stack
+        }, { status: 500 });
     }
 }
 
