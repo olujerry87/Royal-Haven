@@ -91,7 +91,7 @@ export default function Navigation() {
                         </div>
                     </div>
 
-                    <Link href="/about" className={styles.link}>
+                    <Link href="/heritage" className={styles.link}>
                         Heritage
                     </Link>
                 </div>
@@ -138,7 +138,7 @@ export default function Navigation() {
                     <div className={styles.mobileLinks}>
                         <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Wura</Link>
                         <Link href="/services" onClick={() => setIsMobileMenuOpen(false)}>Book Ewa</Link>
-                        <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>Our Heritage</Link>
+                        <Link href="/heritage" onClick={() => setIsMobileMenuOpen(false)}>Our Heritage</Link>
                     </div>
                 </div>
             )}
