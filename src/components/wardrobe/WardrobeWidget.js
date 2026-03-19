@@ -10,12 +10,20 @@ import OutfitResult from "./OutfitResult";
 import NudgeCard from "./NudgeCard";
 import styles from "./WardrobeWidget.module.css";
 
-// Generate or retrieve anonymous wardrobe UUID
+// Generate or retrieve anonymous wardrobe UUID with fallback
 function getWardrobeId() {
     if (typeof window === "undefined") return null;
     let id = localStorage.getItem("wardrobe_id");
     if (!id) {
-        id = crypto.randomUUID();
+        try {
+            id = crypto.randomUUID();
+        } catch (e) {
+            // Fallback for older browsers
+            id = 'xxxx-xxxx-4xxx-yxxx-xxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
         localStorage.setItem("wardrobe_id", id);
     }
     return id;
@@ -37,6 +45,7 @@ export default function WardrobeWidget() {
     const [recLoading, setRecLoading] = useState(false);
     const [cityInput, setCityInput] = useState("");
     const [cityLoading, setCityLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     // Init wardrobe ID + fetch weather on mount
     useEffect(() => {
@@ -64,8 +73,11 @@ export default function WardrobeWidget() {
             );
         } else {
             fetchWeather(51.5074, -0.1278);
-        }
+        // ... weather fetch ...
+        setMounted(true);
     }, []);
+
+    if (!mounted) return <div className={styles.loadingWidget}>Loading Digital Closet...</div>;
 
     const fetchWeather = async (lat, lon, city = null) => {
         try {
