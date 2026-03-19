@@ -22,13 +22,31 @@ const ITEMS = [
 
 export async function GET() {
     try {
-        const { data, error } = await supabase
+        // 1. Fetch existing names to avoid duplicates manually
+        const { data: existing } = await supabase.from("item_templates").select("name");
+        const existingNames = new Set(existing?.map(i => i.name) || []);
+
+        const toInsert = ITEMS.filter(i => !existingNames.has(i.name));
+        
+        if (toInsert.length > 0) {
+            const { error: iErr } = await supabase.from("item_templates").insert(toInsert);
+            if (iErr) throw iErr;
+        }
+
+        // 2. Update existing items to be 'unisex' if they have no tag
+        // (This ensures existing items don't disappear from the UI)
+        const { error: uErr } = await supabase
             .from("item_templates")
-            .upsert(ITEMS, { onConflict: 'name' });
+            .update({ weather_tags: "unisex" })
+            .is("weather_tags", null);
+        
+        if (uErr) console.warn("Update existing warning:", uErr.message);
 
-        if (error) throw error;
-
-        return Response.json({ success: true, seeded: ITEMS.length });
+        return Response.json({ 
+            success: true, 
+            inserted: toInsert.length,
+            message: "Database synchronized with robust items."
+        });
     } catch (err) {
         return Response.json({ error: err.message }, { status: 500 });
     }
