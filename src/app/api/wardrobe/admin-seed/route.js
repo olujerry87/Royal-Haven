@@ -6,18 +6,18 @@ const supabase = createClient(
 );
 
 const ITEMS = [
-  { "name": "Oversized Wool Sweater", "category": "sweater", "weather_tags": "unisex" },
-  { "name": "Cashmere Turtleneck", "category": "turtleneck", "weather_tags": "unisex" },
-  { "name": "Wide-Leg Pleated Trousers", "category": "big_pants", "weather_tags": "unisex" },
-  { "name": "Baggy Heritage Jeans", "category": "big_jeans", "weather_tags": "unisex" },
-  { "name": "Slim Fit Pleated Chinos", "category": "chinos", "weather_tags": "male" },
-  { "name": "Ribbed Knit Crop-Top", "category": "crop_top", "weather_tags": "female" },
-  { "name": "High-Waist Palazzo Pants", "category": "big_pants", "weather_tags": "female" },
-  { "name": "Boxy Graphic Hoodie", "category": "hoodie", "weather_tags": "unisex" },
-  { "name": "Relaxed Cotton Joggers", "category": "joggers", "weather_tags": "unisex" },
-  { "name": "Classic Cotton T-Shirt", "category": "white_tee", "weather_tags": "unisex" },
-  { "name": "Denim Trucker Jacket", "category": "layers", "weather_tags": "unisex" },
-  { "name": "Tailored Wool Blazer", "category": "blazer", "weather_tags": "unisex" }
+  { "name": "Oversized Wool Sweater", "category": "sweater", "weather_tags": ["unisex"] },
+  { "name": "Cashmere Turtleneck", "category": "turtleneck", "weather_tags": ["unisex"] },
+  { "name": "Wide-Leg Pleated Trousers", "category": "big_pants", "weather_tags": ["unisex"] },
+  { "name": "Baggy Heritage Jeans", "category": "big_jeans", "weather_tags": ["unisex"] },
+  { "name": "Slim Fit Pleated Chinos", "category": "chinos", "weather_tags": ["male"] },
+  { "name": "Ribbed Knit Crop-Top", "category": "crop_top", "weather_tags": ["female"] },
+  { "name": "High-Waist Palazzo Pants", "category": "big_pants", "weather_tags": ["female"] },
+  { "name": "Boxy Graphic Hoodie", "category": "hoodie", "weather_tags": ["unisex"] },
+  { "name": "Relaxed Cotton Joggers", "category": "joggers", "weather_tags": ["unisex"] },
+  { "name": "Classic Cotton T-Shirt", "category": "white_tee", "weather_tags": ["unisex"] },
+  { "name": "Denim Trucker Jacket", "category": "layers", "weather_tags": ["unisex"] },
+  { "name": "Tailored Wool Blazer", "category": "blazer", "weather_tags": ["unisex"] }
 ];
 
 export async function GET() {
@@ -34,10 +34,9 @@ export async function GET() {
         }
 
         // 2. Update existing items to be 'unisex' if they have no tag
-        // (This ensures existing items don't disappear from the UI)
         const { error: uErr } = await supabase
             .from("item_templates")
-            .update({ weather_tags: "unisex" })
+            .update({ weather_tags: ["unisex"] })
             .is("weather_tags", null);
         
         if (uErr) console.warn("Update existing warning:", uErr.message);
