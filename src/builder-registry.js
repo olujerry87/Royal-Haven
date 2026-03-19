@@ -159,3 +159,8 @@ Builder.registerComponent(FAQ, {
         }
     ],
 });
+
+Builder.registerComponent(WardrobeWidget, {
+  name: "Styling Intelligence (Pro)",
+  inputs: [],
+});
