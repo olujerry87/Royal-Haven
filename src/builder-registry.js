@@ -11,6 +11,7 @@ import Reviews from "./components/Reviews";
 import HomeClient from "./app/HomeClient";
 import FeaturedSpotlight from "./components/FeaturedSpotlight";
 import FAQ from "./components/FAQ";
+import WardrobeWidget from "./components/wardrobe/WardrobeWidget";
 
 // Register components for Builder.io Visual Editor
 Builder.registerComponent(HomeClient, {
