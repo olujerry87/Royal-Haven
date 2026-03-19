@@ -26,27 +26,38 @@ export async function GET() {
         const { data: existing } = await supabase.from("item_templates").select("name");
         const existingNames = new Set(existing?.map(i => i.name) || []);
 
-        const toInsert = ITEMS.filter(i => !existingNames.has(i.name));
-        
+        // 1. Insert new items
+        let insertedCount = 0;
         if (toInsert.length > 0) {
+            console.log(`Attempting to insert ${toInsert.length} items...`);
             const { error: iErr } = await supabase.from("item_templates").insert(toInsert);
-            if (iErr) throw iErr;
+            if (iErr) {
+                console.error("Insert Error:", iErr.message);
+                throw new Error(`Insert failed: ${iErr.message}`);
+            }
+            insertedCount = toInsert.length;
         }
 
-        // 2. Update existing items to be 'unisex' if they have no tag
+        // 2. Update existing items
+        console.log("Attempting to update existing items to unisex...");
         const { error: uErr } = await supabase
             .from("item_templates")
             .update({ weather_tags: ["unisex"] })
             .is("weather_tags", null);
         
-        if (uErr) console.warn("Update existing warning:", uErr.message);
+        if (uErr) {
+            console.error("Update Error:", uErr.message);
+            // Don't throw here, just log it so we can see if inserts worked
+        }
 
         return Response.json({ 
             success: true, 
-            inserted: toInsert.length,
+            inserted: insertedCount,
+            updateError: uErr ? uErr.message : null,
             message: "Database synchronized with robust items."
         });
     } catch (err) {
+        console.error("Admin Seed Catch:", err.message);
         return Response.json({ error: err.message }, { status: 500 });
     }
 }
