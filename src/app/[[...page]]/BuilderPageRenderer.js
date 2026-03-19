@@ -17,7 +17,7 @@ if (BUILDER_KEY && BUILDER_KEY !== "your_builder_public_key_here" && BUILDER_KEY
     builder.init(BUILDER_KEY);
 }
 
-export default function BuilderPageRenderer({ content, urlPath }) {
+export default function BuilderPageRenderer({ content, urlPath, fallback }) {
     // isPreviewing is TRUE when the Builder.io editor has your site open
     const isPreviewing = useIsPreviewing();
 
@@ -40,7 +40,12 @@ export default function BuilderPageRenderer({ content, urlPath }) {
         );
     }
 
-    // No content and not in editor — show a clear diagnostic message
+    // If we have a fallback (like HomeClient), use it!
+    if (fallback) {
+        return fallback;
+    }
+
+    // No content, no fallback, and not in editor — show a clear diagnostic message
     return (
         <div style={{
             display: "flex",

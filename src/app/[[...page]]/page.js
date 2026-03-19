@@ -11,6 +11,8 @@
  */
 import { builder } from "@builder.io/sdk";
 import BuilderPageRenderer from "./BuilderPageRenderer";
+import HomeClient from "../HomeClient";
+import { getHomePageData } from "@/lib/wordpress";
 
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 const KEY_IS_VALID =
@@ -86,9 +88,23 @@ export default async function Page({ params }) {
         );
     }
 
+    // --- Fallback Data for Homepage (/) ---
+    let acfData = null;
+    if (urlPath === "/") {
+        try {
+            acfData = await getHomePageData();
+        } catch (e) {
+            console.warn("[WP] Could not fetch homepage fallback data", e.message);
+        }
+    }
+
     return (
         <main>
-            <BuilderPageRenderer content={content} urlPath={urlPath} />
+            <BuilderPageRenderer 
+                content={content} 
+                urlPath={urlPath} 
+                fallback={<HomeClient acf={acfData} />} 
+            />
         </main>
     );
 }
