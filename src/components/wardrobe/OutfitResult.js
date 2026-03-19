@@ -45,8 +45,12 @@ export default function OutfitResult({
     stylistAdvice, 
     matchRate,
     stylingTips,
-    colorPalette
+    colorPalette,
+    onResetVibe,
+    onStartOver
 }) {
+    const { RefreshCcw, RotateCcw } = require("lucide-react");
+
     const WeatherIcon = WEATHER_ICONS[weather?.condition] || Sun;
 
     return (
@@ -193,6 +197,26 @@ export default function OutfitResult({
                     ))}
                 </div>
             )}
+
+            {/* Footer Actions */}
+            <div className={styles.footerActions}>
+                <motion.button
+                    className={`${styles.actionBtn} ${styles.vibeBtn}`}
+                    onClick={onResetVibe}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <RefreshCcw size={16} /> Change Aesthetic
+                </motion.button>
+                <motion.button
+                    className={`${styles.actionBtn} ${styles.startOverBtn}`}
+                    onClick={onStartOver}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <RotateCcw size={16} /> Start Over
+                </motion.button>
+            </div>
         </div>
     );
 }

@@ -32,7 +32,7 @@ export async function POST(request) {
         // Fetch templates matching this vibe's categories
         const { data: templates, error: tErr } = await supabase
             .from("item_templates")
-            .select("id, name, category, image_url")
+            .select("id, name, category, image_url, gender")
             .in("category", categories);
 
         if (tErr) throw tErr;

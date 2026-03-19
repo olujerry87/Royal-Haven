@@ -126,11 +126,15 @@ export default function WardrobeWidget() {
             const res = await fetch(`/api/wardrobe/init?wardrobe_id=${id}`);
             const data = await res.json();
             
-            // Filter templates based on gender
-            const filtered = data.templates?.filter(item => 
-                item.gender === 'unisex' || item.gender === filterGender
-            ) || [];
+            console.log(`[Wardrobe] Fetched ${data.templates?.length} items. Filtering for: ${filterGender}`);
             
+            // Filter templates based on gender focus
+            const filtered = data.templates?.filter(item => {
+                const match = item.gender === 'unisex' || item.gender === filterGender;
+                return match;
+            }) || [];
+            
+            console.log(`[Wardrobe] Done. Showing ${filtered.length} items.`);
             setItems(filtered);
             setClosetIds(new Set(data.closetIds || []));
         } catch (err) {
@@ -138,6 +142,30 @@ export default function WardrobeWidget() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleResetVibe = () => {
+        localStorage.removeItem("wardrobe_vibe");
+        setVibe(null);
+        setRecommendation(null);
+        setScreen("vibe");
+    };
+
+    const handleStartOver = () => {
+        localStorage.removeItem("wardrobe_gender");
+        localStorage.removeItem("wardrobe_vibe");
+        localStorage.removeItem("wardrobe_id"); // Force unique ID if starting fresh
+        setGender(null);
+        setVibe(null);
+        setWardrobeId(null);
+        setRecommendation(null);
+        setItems([]);
+        setClosetIds(new Set());
+        setScreen("identity");
+        
+        // Regenerate ID immediately
+        const newId = getWardrobeId();
+        setWardrobeId(newId);
     };
 
     const handleVibeSelect = (v) => {
@@ -265,6 +293,8 @@ export default function WardrobeWidget() {
                             stylingTips={recommendation?.stylingTips || []}
                             colorPalette={recommendation?.colorPalette || null}
                             loading={recLoading}
+                            onResetVibe={handleResetVibe}
+                            onStartOver={handleStartOver}
                         />
                         {recommendation?.missingCategory && (
                             <NudgeCard
@@ -272,16 +302,6 @@ export default function WardrobeWidget() {
                                 product={recommendation.nudgeProduct}
                             />
                         )}
-                        <button
-                            className={styles.resetBtn}
-                            onClick={() => {
-                                localStorage.removeItem("wardrobe_vibe");
-                                setScreen("vibe");
-                                setRecommendation(null);
-                            }}
-                        >
-                            Change my vibe
-                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
