@@ -128,9 +128,9 @@ export default function WardrobeWidget() {
             
             console.log(`[Wardrobe] Fetched ${data.templates?.length} items. Filtering for: ${filterGender}`);
             
-            // Filter templates based on gender focus
+            // Filter templates based on gender focus (using weather_tags proxy)
             const filtered = data.templates?.filter(item => {
-                const match = item.gender === 'unisex' || item.gender === filterGender;
+                const match = item.weather_tags === 'unisex' || item.weather_tags === filterGender;
                 return match;
             }) || [];
             

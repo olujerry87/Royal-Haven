@@ -28,10 +28,10 @@ export async function GET(request) {
     }
 
     try {
-        // Fetch ALL templates (frontend will filter by gender)
+        // Fetch ALL templates (frontend will filter by gender via weather_tags)
         const { data: templates, error: tErr } = await supabase
             .from("item_templates")
-            .select("id, name, category, image_url, gender");
+            .select("id, name, category, image_url, weather_tags");
 
         if (tErr) throw tErr;
 
@@ -47,12 +47,8 @@ export async function GET(request) {
 
         return Response.json({ templates, closetIds });
     } catch (err) {
-        console.error("[wardrobe/init GET] Full Error:", err);
-        return Response.json({ 
-            error: "Failed to fetch wardrobe data", 
-            details: err.message,
-            stack: err.stack
-        }, { status: 500 });
+        console.error("[wardrobe/init GET]", err.message);
+        return Response.json({ error: "Failed to fetch wardrobe data" }, { status: 500 });
     }
 }
 
@@ -69,7 +65,7 @@ export async function POST(request) {
         // Fetch templates matching this vibe's categories
         const { data: templates, error: tErr } = await supabase
             .from("item_templates")
-            .select("id, name, category, image_url, gender")
+            .select("id, name, category, image_url, weather_tags")
             .in("category", categories);
 
         if (tErr) throw tErr;

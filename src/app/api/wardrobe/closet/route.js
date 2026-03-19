@@ -24,7 +24,7 @@ export async function GET(request) {
     try {
         const { data, error } = await supabase
             .from("user_closets")
-            .select("template_id, item_templates(id, name, category, image_url, gender, weather_tags, event_tags)")
+            .select("template_id, item_templates(id, name, category, image_url, weather_tags, event_tags)")
             .eq("wardrobe_id", wardrobe_id);
 
         if (error) throw error;
