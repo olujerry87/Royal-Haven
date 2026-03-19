@@ -1,0 +1,100 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 3.5rem;
+}
+
+.icon {
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.header h2 {
+    font-family: var(--font-heritage);
+    font-size: 2.2rem;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.selectionGrid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.optionCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    width: 200px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    color: var(--off-white);
+    transition: all 0.3s;
+}
+
+.iconCircle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    transition: all 0.3s;
+}
+
+.optionCard span {
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.optionCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.optionCard:hover .iconCircle {
+    background: var(--gold);
+    color: black;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.footerNote {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 500px) {
+    .selectionGrid {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .optionCard {
+        width: 100%;
+        max-width: 280px;
+        padding: 2rem;
+    }
+}

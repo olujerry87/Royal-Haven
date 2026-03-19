@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin, Shirt, Archive, Layers, Footprints } from "lucide-react";
+import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin, Shirt, Archive, Layers, Footprints, Crown } from "lucide-react";
 import styles from "./OutfitResult.module.css";
 
 const CATEGORY_ICONS_SMALL = {
@@ -20,6 +20,7 @@ const CATEGORY_ICONS_SMALL = {
     dress_shoes: Footprints,
     loafers: Footprints,
     ankle_boots: Footprints,
+    cap: Crown,
 };
 
 const EVENTS = ["work", "casual", "date", "gym"];
@@ -33,7 +34,19 @@ const WEATHER_ICONS = {
     warm: Sun,
 };
 
-export default function OutfitResult({ weather, event, onEventChange, items, loading, reasoning, formulaName, stylistAdvice, matchRate }) {
+export default function OutfitResult({ 
+    weather, 
+    event, 
+    onEventChange, 
+    items, 
+    loading, 
+    reasoning, 
+    formulaName, 
+    stylistAdvice, 
+    matchRate,
+    stylingTips,
+    colorPalette
+}) {
     const WeatherIcon = WEATHER_ICONS[weather?.condition] || Sun;
 
     return (
@@ -86,6 +99,15 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                     <h3 className={styles.formulaTitle}>{formulaName}</h3>
                     {stylistAdvice && <p className={styles.stylistAdvice}>&ldquo;{stylistAdvice}&rdquo;</p>}
                     
+                    {colorPalette && (
+                        <div className={styles.palette}>
+                            <div className={styles.swatch} style={{ background: colorPalette.primary }} title="Primary" />
+                            <div className={styles.swatch} style={{ background: colorPalette.secondary }} title="Secondary" />
+                            <div className={styles.swatch} style={{ background: colorPalette.accent }} title="Accent" />
+                            <span className={styles.paletteName}>{colorPalette.name}</span>
+                        </div>
+                    )}
+
                     <div className={styles.matchBarContainer}>
                         <div className={styles.matchBarLabel}>
                             Closet Capacity: <span>{matchRate}%</span>
@@ -157,6 +179,19 @@ export default function OutfitResult({ weather, event, onEventChange, items, loa
                     <p className={styles.reasoningLabel}>Strategic Breakdown</p>
                     <div className={styles.reasoningText} dangerouslySetInnerHTML={{ __html: reasoning?.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br/>') }} />
                 </motion.div>
+            )}
+
+            {/* Styling Checklist */}
+            {stylingTips && stylingTips.length > 0 && (
+                <div className={styles.checklist}>
+                    <p className={styles.checklistLabel}>Stylist Checklist</p>
+                    {stylingTips.map((tip, idx) => (
+                        <div key={idx} className={styles.checkItem}>
+                             <div className={styles.checkIcon}>✓</div>
+                             <p dangerouslySetInnerHTML={{ __html: tip.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') }} />
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );

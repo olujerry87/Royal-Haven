@@ -19,6 +19,7 @@ const CATEGORY_ICONS = {
     dress_shoes: Footprints,
     loafers: Footprints,
     ankle_boots: Footprints,
+    cap: Crown,
 };
 
 function getIcon(category) {

@@ -182,14 +182,19 @@ export async function POST(request) {
             }
         }
 
+        // Determine Stylist Rules and Tips based on Vibe and Event
+        const { stylingTips, colorPalette, stylingPersona } = getStylistAdvice(vibe, event, gender, matchedItems);
+
         return Response.json({
             formulaName: formula.name,
             matchRate,
             matchedItems,
             missingCategory: missingCategory || null,
             nudgeProduct,
-            stylistAdvice: formula.advice,
-            reasoning: buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate),
+            stylistAdvice: stylingPersona || formula.advice,
+            stylingTips,
+            colorPalette,
+            reasoning: buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate, stylingTips),
         });
     } catch (err) {
         console.error("[recommend]", err.message);
@@ -197,19 +202,61 @@ export async function POST(request) {
     }
 }
 
-function buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate) {
+function getStylistAdvice(vibe, event, gender, items) {
+    const tips = [];
+    let palette = { primary: "#E5E5E5", secondary: "#1A1A1A", accent: "#D4AF37" }; // Default
+    let persona = "Elegance is refusal.";
+
+    // 1. Apply Sandwich Rule (if we have tops and shoes)
+    const hasTop = items.some(i => i.category.includes('shirt') || i.category.includes('tee') || i.category.includes('blouse'));
+    const hasShoes = items.some(i => i.category === 'shoes' || i.category.includes('sneakers') || i.category.includes('boots'));
+    if (hasTop && hasShoes) {
+        tips.push("Apply the **Sandwich Rule**: Ensure your shoes match the color or 'visual weight' of your top or accessories.");
+    }
+
+    // 2. Third Piece Rule
+    const hasLayer = items.some(i => i.category === 'blazer' || i.category === 'trenchcoat' || i.category === 'hoodie');
+    if (hasLayer) {
+        tips.push("The **Third Piece Rule**: Your outerwear isn't just for warmth; it completes the silhouette.");
+    } else {
+        tips.push("Consider a **Third Piece**: Adding a lightweight blazer or cardigan would transition this from 'clothed' to 'styled'.");
+    }
+
+    // 3. Proportion & Tucking
+    if (gender === 'female' && event === 'date') {
+        tips.push("Try a **French Tuck**: Just the front center of your top to define the waist without bulk.");
+    } else if (gender === 'male' && event === 'work') {
+        tips.push("Go for a **Full Tuck**: It anchors the look and highlights the belt line for a sharper executive presence.");
+    }
+
+    // 4. Color Palettes (Elevated Trends)
+    const palettes = [
+        { name: "Camel & Navy", primary: "#C19A6B", secondary: "#000080", accent: "#FFFFFF", tip: "The gold standard for classic, Vogue-style elevation." },
+        { name: "Chocolate & Ice Blue", primary: "#3D2B1F", secondary: "#99CCFF", accent: "#E5E5E5", tip: "A modern, expensive pairing that's trending now." },
+        { name: "Monochrome Grey & Red", primary: "#808080", secondary: "#A9A9A9", accent: "#FF0000", tip: "Use a single bold red accessory to ground the grey look." }
+    ];
+    
+    // Pick palette based on vibe
+    const selectedPalette = vibe === 'minimalist' ? palettes[0] : vibe === 'sharp' ? palettes[1] : palettes[2];
+    palette = selectedPalette;
+    persona = selectedPalette.tip;
+
+    return { stylingTips: tips, colorPalette: selectedPalette, stylingPersona: persona };
+}
+
+function buildRobustReasoning(weather, event, condition, matchedItems, missingCategory, formula, matchRate, tips) {
     const temp = weather.temp;
     const condLabel = weather.conditionLabel || condition;
     
-    let summary = `Our recommendation for **${formula.name}** is based on the ${temp}°C and ${condLabel.toLowerCase()} weather. `;
+    let summary = `Our recommendation for **${formula.name}** is optimized for **${temp}°C** and **${condLabel.toLowerCase()}** weather. `;
     
     if (matchRate === 100) {
-        summary += `Great news: you have every piece of this formula ready to go (100% Match). `;
+        summary += `You have the full 3-piece structure ready (100% Match). `;
     } else {
-        summary += `You're at ${matchRate}% capacity for this look. Adding a ${missingCategory.replace(/_/g, " ")} would complete it perfectly. `;
+        summary += `You're at ${matchRate}% capacity. A ${missingCategory?.replace(/_/g, " ")} would bridge the gap. `;
     }
 
-    const whyItWorks = `The pairing of the ${formula.base.join(" and ").replace(/_/g, " ")} provides the core structure, while the stylist chosen ${formula.shoes.replace(/_/g, " ")} grounds the silhouette for a ${event} setting.`;
+    const tipSummary = tips.length > 0 ? `\n\n**Stylist Rules Applied:**\n- ${tips.join('\n- ')}` : "";
 
-    return `${summary}\n\n**Why it works:** ${whyItWorks}`;
+    return `${summary}${tipSummary}`;
 }

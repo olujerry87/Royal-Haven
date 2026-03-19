@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import IdentityPicker from "./IdentityPicker";
 import VibeCheck from "./VibeCheck";
 import ClosetBuilder from "./ClosetBuilder";
 import ContextPicker from "./ContextPicker";
@@ -20,11 +21,12 @@ function getWardrobeId() {
     return id;
 }
 
-const SCREENS = ["vibe", "closet", "context", "outfit"];
+const SCREENS = ["identity", "vibe", "closet", "context", "outfit"];
 
 export default function WardrobeWidget() {
-    const [screen, setScreen] = useState("vibe");
+    const [screen, setScreen] = useState("identity"); 
     const [wardrobeId, setWardrobeId] = useState(null);
+    const [gender, setGender] = useState(null); 
     const [vibe, setVibe] = useState(null);
     const [weather, setWeather] = useState(null);
     const [event, setEvent] = useState("casual");
@@ -41,11 +43,16 @@ export default function WardrobeWidget() {
         const id = getWardrobeId();
         setWardrobeId(id);
 
-        // If user already has a vibe stored, skip the quiz
+        const storedIdent = localStorage.getItem("wardrobe_gender");
         const storedVibe = localStorage.getItem("wardrobe_vibe");
-        if (storedVibe) {
+
+        if (storedIdent && storedVibe) {
+            setGender(storedIdent);
             setVibe(storedVibe);
-            setScreen("context"); // Skip to context if vibe is already known
+            setScreen("context");
+        } else if (storedIdent) {
+            setGender(storedIdent);
+            setScreen("vibe");
         }
 
         // Fetch weather (via server route, using geolocation if available)
@@ -88,27 +95,42 @@ export default function WardrobeWidget() {
         }
     };
 
-    // Step 1: Vibe selected → init closet
-    const handleVibeSelect = async (selectedVibe) => {
-        setVibe(selectedVibe);
-        localStorage.setItem("wardrobe_vibe", selectedVibe);
-        setLoading(true);
-        setScreen("closet");
+    const handleIdentitySelect = (selectedGender) => {
+        setGender(selectedGender);
+        localStorage.setItem("wardrobe_gender", selectedGender);
+        setScreen("vibe");
+        
+        // Fetch items now that we have gender focus
+        const storedId = localStorage.getItem("wardrobe_id") || getWardrobeId();
+        setWardrobeId(storedId);
+        fetchItems(storedId, selectedGender);
+    };
 
+    // Updated fetchItems to handle gender filtering locally or via API
+    const fetchItems = async (id, filterGender) => {
+        setLoading(true);
         try {
-            const res = await fetch("/api/wardrobe/init", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ wardrobe_id: wardrobeId, vibe: selectedVibe }),
-            });
+            const res = await fetch(`/api/wardrobe/init?wardrobe_id=${id}`);
             const data = await res.json();
-            setItems(data.items || []);
-            setClosetIds(new Set((data.items || []).map((i) => i.id)));
+            
+            // Filter templates based on gender
+            const filtered = data.templates?.filter(item => 
+                item.gender === 'unisex' || item.gender === filterGender
+            ) || [];
+            
+            setItems(filtered);
+            setClosetIds(new Set(data.closetIds || []));
         } catch (err) {
-            console.error(err);
+            console.error("Init failed", err);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleVibeSelect = (v) => {
+        setVibe(v);
+        localStorage.setItem("wardrobe_vibe", v);
+        setScreen("closet");
     };
 
     // Toggle item in closet
@@ -150,7 +172,8 @@ export default function WardrobeWidget() {
                     wardrobe_id: wardrobeId, 
                     weather: overrideWeather, 
                     event: overrideEvent,
-                    vibe: vibe // Pass the stored vibe
+                    gender, // Pass gender focus
+                    vibe: vibe 
                 }),
             });
             const data = await res.json();
@@ -180,6 +203,12 @@ export default function WardrobeWidget() {
             </div>
 
             <AnimatePresence mode="wait">
+                {screen === "identity" && (
+                    <motion.div key="identity" {...slide}>
+                        <IdentityPicker onSelect={handleIdentitySelect} />
+                    </motion.div>
+                )}
+
                 {screen === "vibe" && (
                     <motion.div key="vibe" {...slide}>
                         <VibeCheck onSelect={handleVibeSelect} />
@@ -220,6 +249,8 @@ export default function WardrobeWidget() {
                             formulaName={recommendation?.formulaName || null}
                             stylistAdvice={recommendation?.stylistAdvice || null}
                             matchRate={recommendation?.matchRate || 0}
+                            stylingTips={recommendation?.stylingTips || []}
+                            colorPalette={recommendation?.colorPalette || null}
                             loading={recLoading}
                         />
                         {recommendation?.missingCategory && (
