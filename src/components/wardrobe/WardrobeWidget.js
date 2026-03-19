@@ -40,6 +40,7 @@ export default function WardrobeWidget() {
 
     // Init wardrobe ID + fetch weather on mount
     useEffect(() => {
+        console.log("Royal Haven Styling - v2.1 (Gender/Color Pro)");
         const id = getWardrobeId();
         setWardrobeId(id);
 
