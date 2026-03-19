@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Plus, Check, Shirt, Archive, Layers, Footprints } from "lucide-react";
+import { Plus, Check, Shirt, Archive, Layers, Footprints, Crown } from "lucide-react";
 import styles from "./ClosetBuilder.module.css";
 
 const CATEGORY_ICONS = {
