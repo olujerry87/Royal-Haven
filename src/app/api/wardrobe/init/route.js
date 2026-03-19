@@ -55,8 +55,6 @@ export async function GET(request) {
 export async function POST(request) {
     try {
         const { wardrobe_id, vibe } = await request.json();
-...
-
 
         if (!wardrobe_id || !vibe) {
             return Response.json({ error: "wardrobe_id and vibe are required" }, { status: 400 });
