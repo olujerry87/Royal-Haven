@@ -3,11 +3,20 @@ import { motion } from "framer-motion";
 import styles from "./ColorPicker.module.css";
 
 const PALETTE_OPTIONS = [
+    // Neutrals
     { id: "black", name: "Black", hex: "#1A1A1A" },
-    { id: "white", name: "White", hex: "#F5F5F5" },
-    { id: "navy", name: "Navy/Denim", hex: "#2C3E50" },
-    { id: "earth", name: "Earth Tones", hex: "#8B5A2B" },
-    { id: "bright", name: "Bright", hex: "#E74C3C" }
+    { id: "white", name: "White/Cream", hex: "#F5F5F5" },
+    { id: "grey", name: "Grey", hex: "#808080" },
+    { id: "earth", name: "Brown/Khaki", hex: "#8B5A2B" },
+    { id: "navy", name: "Navy", hex: "#2C3E50" },
+    // Primary
+    { id: "red", name: "Red", hex: "#D32F2F" },
+    { id: "blue", name: "Blue", hex: "#1976D2" },
+    { id: "yellow", name: "Yellow", hex: "#FBC02D" },
+    // Secondary/Complementary
+    { id: "green", name: "Green", hex: "#388E3C" },
+    { id: "orange", name: "Orange", hex: "#F57C00" },
+    { id: "purple", name: "Purple", hex: "#7B1FA2" },
 ];
 
 export default function ColorPicker({ items, closetIds, itemColors, onChange, onDone }) {
@@ -32,7 +41,7 @@ export default function ColorPicker({ items, closetIds, itemColors, onChange, on
                 Color Profiling
             </motion.h3>
             <p className={styles.subtitle}>
-                What colors dominate your closet pieces? (Optional)
+                Pick a color that is closest to the clothing you have for best combination results. (Optional)
             </p>
 
             <div className={styles.list}>

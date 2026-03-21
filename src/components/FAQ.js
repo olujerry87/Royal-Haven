@@ -15,12 +15,12 @@ const defaultFaqs = [
         answer: "Yes, we ship globally. Shipping times vary by location, but typically range from 5-10 business days for international orders."
     },
     {
-        question: "Can I request custom measurements?",
-        answer: "Absolutely. Many of our Heritage pieces can be tailored. Please contact us directly for bespoke inquiries."
+        question: "Can I request custom measurements and full customized outfits?",
+        answer: "Absolutely. Many of our Heritage pieces can be tailored, and we also offer full customized outfits from scratch. Please contact us directly for bespoke inquiries."
     },
     {
         question: "What is your return policy?",
-        answer: "We offer returns within 14 days of receipt for unworn items with tags attached. Custom pieces are final sale."
+        answer: "We offer returns within 7 days of receipt for unworn items with tags attached. Custom pieces are final sale."
     }
 ];
 
