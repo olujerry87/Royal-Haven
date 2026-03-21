@@ -10,40 +10,40 @@ export default function SocialShare({ garment, context = "activation" }) {
     const cardRef = useRef(null);
     const [showCard, setShowCard] = useState(false);
 
-    // Share logic for WhatsApp
-    const handleWhatsAppShare = () => {
+    // Native Web Share API (Best for Instagram/OS Share Sheets)
+    const handleNativeShare = async () => {
         const url = window.location.href;
-        let text = "";
-
-        if (context === "activation") {
-            text = `Just activated my unique ${garment.garment_name} from Royal Haven! Check out my style here: ${url}`;
+        const text = `Just secured my ${garment.garment_name} from Royal Haven! Check out my style:`;
+        
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Royal Haven Fit Check',
+                    text: text,
+                    url: url
+                });
+            } catch (error) {
+                console.log('Error sharing', error);
+            }
         } else {
-            text = `Just activated my unique ${garment.garment_name} from Royal Haven! Check out my style here: ${url}`;
+            // Fallback to WhatsApp if Web Share API is not supported (e.g. some desktop browsers)
+            const encodedText = encodeURIComponent(text + " " + url);
+            window.open(`https://wa.me/?text=${encodedText}`, "_blank");
         }
-
-        const encodedText = encodeURIComponent(text);
-        window.open(`https://wa.me/?text=${encodedText}`, "_blank");
     };
 
     return (
         <div className={styles.shareContainer}>
-            <h3 className={styles.heading}>Invite the Kingdom</h3>
+            <h3 className={styles.heading}>Fit Check</h3>
             
             <div className={styles.buttons}>
                 <button 
-                    onClick={handleWhatsAppShare}
-                    className={`${styles.shareButton} ${styles.whatsapp}`}
-                >
-                    <MessageCircle size={18} />
-                    <span>Share on WhatsApp</span>
-                </button>
-
-                <button 
-                    onClick={() => setShowCard(!showCard)}
+                    onClick={handleNativeShare}
                     className={`${styles.shareButton} ${styles.instagram}`}
+                    style={{ width: '100%', justifyContent: 'center' }}
                 >
-                    <Instagram size={18} />
-                    <span>Create IG Card</span>
+                    <Share2 size={18} />
+                    <span>Share Look (IG, WhatsApp, etc)</span>
                 </button>
             </div>
 

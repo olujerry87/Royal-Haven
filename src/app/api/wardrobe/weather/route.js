@@ -36,7 +36,7 @@ export async function GET(request) {
 
     try {
         const res = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3`,
             { next: { revalidate: 1800 } }
         );
         if (!res.ok) throw new Error("Open-Meteo fetch failed");
@@ -55,10 +55,10 @@ export async function GET(request) {
 
         // WMO code → simplified condition + label
         let condition = "clear";
-        let conditionLabel = "Clear Skies";
+        let conditionLabel = "Sunny / Clear";
         let emoji = "☀️";
 
-        if (code === 0) { condition = "clear"; conditionLabel = "Clear Skies"; emoji = "☀️"; }
+        if (code === 0) { condition = "clear"; conditionLabel = "Sunny / Clear"; emoji = "☀️"; }
         else if (code <= 3) { condition = "cloudy"; conditionLabel = "Partly Cloudy"; emoji = "⛅"; }
         else if (code <= 48) { condition = "cloudy"; conditionLabel = "Overcast / Foggy"; emoji = "🌫️"; }
         else if (code <= 67) { condition = "rain"; conditionLabel = "Rainy"; emoji = "🌧️"; }

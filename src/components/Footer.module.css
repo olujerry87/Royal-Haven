@@ -128,7 +128,7 @@
 
 .scripture {
     font-family: var(--font-heritage);
-    font-size: 0.95rem;
+    font-size: 1.05rem; /* ~1px bigger than previous 0.95rem */
     line-height: 1.6;
     margin-bottom: 0.5rem;
     font-style: italic;

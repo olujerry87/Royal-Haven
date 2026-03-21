@@ -142,7 +142,9 @@
 /* ── Mobile Overrides ─────────────────────────────────────── */
 @media (max-width: 640px) {
     .parallaxContainer {
-        height: 70vh;
+        min-height: 80vh; /* Giving it more breathing room */
+        height: auto;
+        padding: 4rem 0;
     }
 
     .title {
