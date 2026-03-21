@@ -204,42 +204,98 @@ export async function POST(request) {
 
 function getStylistAdvice(vibe, event, gender, items) {
     const tips = [];
-    let palette = { primary: "#E5E5E5", secondary: "#1A1A1A", accent: "#D4AF37" }; // Default
+    let palette = { primary: "#E5E5E5", secondary: "#1A1A1A", accent: "#D4AF37" }; 
     let persona = "Elegance is refusal.";
 
-    // 1. Apply Sandwich Rule (if we have tops and shoes)
-    const hasTop = items.some(i => i.category.includes('shirt') || i.category.includes('tee') || i.category.includes('blouse'));
-    const hasShoes = items.some(i => i.category === 'shoes' || i.category.includes('sneakers') || i.category.includes('boots'));
+    // Helper to check categories
+    const hasCategory = (categories) => items.some(i => categories.some(c => i.category.includes(c)));
+
+    // 1. Sandwich Rule
+    const hasTop = hasCategory(['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top']);
+    const hasShoes = hasCategory(['shoes', 'sneakers', 'boots', 'loafers']);
     if (hasTop && hasShoes) {
-        tips.push("Apply the **Sandwich Rule**: Ensure your shoes match the color or 'visual weight' of your top or accessories.");
+        tips.push("**The Sandwich Rule**: Coordinate the color or 'vibe' of your top with your shoes. This 'sandwiches' the middle of your outfit and creates instant visual harmony.");
     }
 
     // 2. Third Piece Rule
-    const hasLayer = items.some(i => i.category === 'blazer' || i.category === 'trenchcoat' || i.category === 'hoodie');
+    const hasLayer = hasCategory(['blazer', 'layer', 'hoodie', 'trenchcoat']);
     if (hasLayer) {
-        tips.push("The **Third Piece Rule**: Your outerwear isn't just for warmth; it completes the silhouette.");
+        tips.push("**The Third Piece Rule**: Your outerwear elevates a basic top-and-bottom combination into an intentionally 'styled' outfit.");
     } else {
-        tips.push("Consider a **Third Piece**: Adding a lightweight blazer or cardigan would transition this from 'clothed' to 'styled'.");
+        tips.push("**The Third Piece Rule**: Add a third piece (blazer, cardigan, or statement belt) to transform this from a 'clothed' look into a 'styled' outfit.");
     }
 
-    // 3. Proportion & Tucking
-    if (gender === 'female' && event === 'date') {
-        tips.push("Try a **French Tuck**: Just the front center of your top to define the waist without bulk.");
-    } else if (gender === 'male' && event === 'work') {
-        tips.push("Go for a **Full Tuck**: It anchors the look and highlights the belt line for a sharper executive presence.");
+    // 3. Proportion Balance
+    const hasBigTop = hasCategory(['sweater', 'hoodie', 'layers']);
+    const hasBigBottom = hasCategory(['big_pants', 'big_jeans', 'cargo_pants']);
+    const hasSmallTop = hasCategory(['white_tee', 'turtleneck', 'crop_top', 'dress_shirt']);
+    const hasSmallBottom = hasCategory(['slim_jeans', 'chinos', 'trousers', 'shorts']);
+
+    if (hasBigTop && hasSmallBottom) {
+        tips.push("**Proportion Balance (Big-Small)**: An oversized top paired with slim-fitting bottoms creates a perfect modern silhouette.");
+    } else if (hasSmallTop && hasBigBottom) {
+        tips.push("**Proportion Balance (Small-Big)**: A fitted top paired with wide-leg bottoms beautifully highlights your waistline.");
     }
 
-    // 4. Color Palettes (Elevated Trends)
+    // 4. Practical Shoe Pairings
+    if (hasBigBottom) {
+        tips.push("**Shoe Pairing**: Always use a pointed or elongated toe (or sleek sneaker) with wide legs to prevent the silhouette from looking 'stumpy'.");
+    } else if (hasCategory(['slim_jeans'])) {
+        tips.push("**Shoe Pairing**: Straight or slim-leg jeans with loafers is the ultimate formula for a 'Normal but Elevated' daily uniform.");
+    }
+
+    // 5. Tucking & Belting Techniques
+    if (event === 'date' || event === 'casual') {
+        tips.push("**Tucking Technique**: Try the 'French Tuck' (tuck only the front center to define the waistline without bulk). Add a statement belt to divide monochromatic looks.");
+    } else if (event === 'work') {
+        tips.push("**Tucking Technique**: Go for a 'Full Tuck' for a sharp, executive presence. Make sure to use a polished belt to transition the look.");
+    }
+
+    // 6. 7-Point Balance Rule
+    const itemPoints = {
+        white_tee: 1, slim_jeans: 1, chinos: 1, trousers: 1, dress_shirt: 1, turtleneck: 1, joggers: 1, shorts: 1, sneakers: 1, white_sneakers: 1,
+        athletic_top: 1,
+        blazer: 2, black_blazer: 2, hoodie: 2, graphic_tee: 2, cargo_pants: 2, loafers: 2, dress_shoes: 2, ankle_boots: 2, cap: 2,
+        sweater: 2, big_pants: 2, big_jeans: 2, crop_top: 2, layers: 2
+    };
+    
+    let score = 0;
+    items.forEach(i => { score += (itemPoints[i.category] || 1); });
+    
+    // Suggest 3-3-3 rule if items are few
+    if (items.length < 3) {
+        tips.push("**The 3-3-3 Capsule Rule**: Combat 'closet paralysis' by selecting 3 tops, 3 bottoms, and 3 pairs of shoes to generate 27+ intentional outfits.");
+    } else {
+        if (score < 5) {
+             tips.push(`**7-Point Balance (Score: ${score})**: Good basics, but try adding a statement item (bold color, pattern, heavy texture) to reach the sweet spot of 6-8 points.`);
+        } else if (score >= 5 && score <= 8) {
+             tips.push(`**7-Point Balance (Score: ${score})**: Perfect harmony! You've expertly balanced basic items (1pt) and statement pieces (2pts) preventing the look from being boring or overwhelming.`);
+        } else {
+             tips.push(`**7-Point Balance (Score: ${score})**: High-impact look! Just be careful not to overwhelm the eye; sometimes one statement piece is enough.`);
+        }
+    }
+
+    // 7. Elevated Color Pairings
     const palettes = [
-        { name: "Camel & Navy", primary: "#C19A6B", secondary: "#000080", accent: "#FFFFFF", tip: "The gold standard for classic, Vogue-style elevation." },
-        { name: "Chocolate & Ice Blue", primary: "#3D2B1F", secondary: "#99CCFF", accent: "#E5E5E5", tip: "A modern, expensive pairing that's trending now." },
-        { name: "Monochrome Grey & Red", primary: "#808080", secondary: "#A9A9A9", accent: "#FF0000", tip: "Use a single bold red accessory to ground the grey look." }
+        { name: "Camel & Navy", primary: "#C19A6B", secondary: "#000080", accent: "#FFFFFF", tip: "The gold standard for classic, 'Vogue-style' elevation." },
+        { name: "Chocolate & Ice Blue", primary: "#3D2B1F", secondary: "#99CCFF", accent: "#E5E5E5", tip: "The 'it' pairing for a modern, expensive look." },
+        { name: "Monochrome Grey & Red", primary: "#808080", secondary: "#A9A9A9", accent: "#FF0000", tip: "Use a single bold red item (socks, bag, or lip) to ground a monochrome grey look." },
+        { name: "Chocolate & Earthy Green", primary: "#3D2B1F", secondary: "#556B2F", accent: "#F5F5DC", tip: "Earthy but fresh pairing for a grounded aesthetic." }
     ];
     
-    // Pick palette based on vibe
-    const selectedPalette = vibe === 'minimalist' ? palettes[0] : vibe === 'sharp' ? palettes[1] : palettes[2];
+    let selectedPalette;
+    if (vibe === 'minimalist' && event === 'work') {
+        selectedPalette = palettes[0]; // Camel & Navy
+    } else if (vibe === 'expressive' || vibe === 'sharp') {
+        selectedPalette = palettes[1]; // Chocolate & Ice Blue
+    } else if (vibe === 'minimalist' && event === 'casual') {
+        selectedPalette = palettes[2]; // Grey & Red
+    } else {
+        selectedPalette = palettes[3]; // Chocolate & Green
+    }
+    
     palette = selectedPalette;
-    persona = selectedPalette.tip;
+    persona = `Color Theory: ${selectedPalette.name} - ${selectedPalette.tip} Let's apply the 60-30-10 Rule: 60% dominant neutral, 30% secondary, 10% bold pop.`;
 
     return { stylingTips: tips, colorPalette: selectedPalette, stylingPersona: persona };
 }
@@ -256,7 +312,7 @@ function buildRobustReasoning(weather, event, condition, matchedItems, missingCa
         summary += `You're at ${matchRate}% capacity. A ${missingCategory?.replace(/_/g, " ")} would bridge the gap. `;
     }
 
-    const tipSummary = tips.length > 0 ? `\n\n**Stylist Rules Applied:**\n- ${tips.join('\n- ')}` : "";
-
-    return `${summary}${tipSummary}`;
+    // We no longer append styling tips to the reasoning text, 
+    // as the frontend 'OutfitResult' component renders them in a dedicated minimalist checklist.
+    return summary;
 }
