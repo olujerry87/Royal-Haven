@@ -55,10 +55,10 @@ export async function GET(request) {
 
         // WMO code → simplified condition + label
         let condition = "clear";
-        let conditionLabel = "Sunny / Clear";
+        let conditionLabel = "Sunny";
         let emoji = "☀️";
 
-        if (code === 0) { condition = "clear"; conditionLabel = "Sunny / Clear"; emoji = "☀️"; }
+        if (code === 0) { condition = "clear"; conditionLabel = "Sunny"; emoji = "☀️"; }
         else if (code <= 3) { condition = "cloudy"; conditionLabel = "Partly Cloudy"; emoji = "⛅"; }
         else if (code <= 48) { condition = "cloudy"; conditionLabel = "Overcast / Foggy"; emoji = "🌫️"; }
         else if (code <= 67) { condition = "rain"; conditionLabel = "Rainy"; emoji = "🌧️"; }
