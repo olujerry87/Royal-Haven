@@ -4,23 +4,27 @@ import { motion } from "framer-motion";
 import { CloudRain, Sun, Cloud, Snowflake, Loader2, Droplets, Wind, MapPin, Shirt, Archive, Layers, Footprints, Crown } from "lucide-react";
 import styles from "./OutfitResult.module.css";
 
-const CATEGORY_ICONS_SMALL = {
-    trousers: Archive,
-    slim_jeans: Archive,
-    chinos: Archive,
-    cargo_pants: Archive,
-    joggers: Archive,
-    shorts: Archive,
-    trenchcoat: Layers,
-    blazer: Layers,
-    black_blazer: Layers,
-    hoodie: Layers,
-    sneakers: Footprints,
-    white_sneakers: Footprints,
-    dress_shoes: Footprints,
-    loafers: Footprints,
-    ankle_boots: Footprints,
-    cap: Crown,
+const CATEGORY_EMOJIS = {
+    trousers: "👖",
+    slim_jeans: "👖",
+    chinos: "👖",
+    cargo_pants: "👖",
+    joggers: "👖",
+    shorts: "🩳",
+    trenchcoat: "🧥",
+    blazer: "🧥",
+    black_blazer: "🧥",
+    hoodie: "🧥",
+    sneakers: "👟",
+    white_sneakers: "👟",
+    dress_shoes: "👞",
+    loafers: "👞",
+    ankle_boots: "👢",
+    cap: "🧢",
+    sweater: "🧥",
+    big_pants: "👖",
+    big_jeans: "👖",
+    crop_top: "👚",
 };
 
 const EVENTS = ["work", "casual", "date", "gym"];
@@ -70,14 +74,24 @@ export default function OutfitResult({
                             <MapPin size={12} /> {weather.cityName}
                         </span>
                     )}
+                    {weather?.feels_like != null && (
+                        <span className={styles.metaChip}>
+                            Feels like {weather.feels_like}°C
+                        </span>
+                    )}
+                    {weather?.temp_min != null && weather?.temp_max != null && (
+                        <span className={styles.metaChip}>
+                            H:{weather.temp_max}° / L:{weather.temp_min}°
+                        </span>
+                    )}
                     {weather?.humidity != null && (
                         <span className={styles.metaChip}>
-                            <Droplets size={12} /> {weather.humidity}% humidity
+                            <Droplets size={12} /> {weather.humidity}% Humidity
                         </span>
                     )}
                     {weather?.windspeed != null && (
                         <span className={styles.metaChip}>
-                            <Wind size={12} /> {weather.windspeed} km/h
+                            <Wind size={12} /> {weather.windspeed} km/h Wind
                         </span>
                     )}
                 </div>
@@ -158,11 +172,8 @@ export default function OutfitResult({
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={item.image_url} alt={item.name} className={styles.itemImg} />
                                 ) : (
-                                    <span>
-                                        {(() => {
-                                            const Icon = CATEGORY_ICONS_SMALL[item.category] || Shirt;
-                                            return <Icon size={24} />;
-                                        })()}
+                                    <span style={{ fontSize: '24px', lineHeight: 1 }}>
+                                        {CATEGORY_EMOJIS[item.category] || "👕"}
                                     </span>
                                 )}
                             </div>

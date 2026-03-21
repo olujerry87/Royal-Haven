@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import IdentityPicker from "./IdentityPicker";
 import VibeCheck from "./VibeCheck";
 import ClosetBuilder from "./ClosetBuilder";
+import ColorPicker from "./ColorPicker";
 import ContextPicker from "./ContextPicker";
 import OutfitResult from "./OutfitResult";
 import NudgeCard from "./NudgeCard";
@@ -29,7 +30,7 @@ function getWardrobeId() {
     return id;
 }
 
-const SCREENS = ["identity", "vibe", "closet", "context", "outfit"];
+const SCREENS = ["identity", "vibe", "closet", "colors", "context", "outfit"];
 
 export default function WardrobeWidget() {
     const [screen, setScreen] = useState("identity"); 
@@ -40,6 +41,7 @@ export default function WardrobeWidget() {
     const [event, setEvent] = useState("casual");
     const [items, setItems] = useState([]);
     const [closetIds, setClosetIds] = useState(new Set());
+    const [itemColors, setItemColors] = useState({});
     const [recommendation, setRecommendation] = useState(null);
     const [loading, setLoading] = useState(false);
     const [recLoading, setRecLoading] = useState(false);
@@ -162,6 +164,7 @@ export default function WardrobeWidget() {
         setRecommendation(null);
         setItems([]);
         setClosetIds(new Set());
+        setItemColors({});
         setScreen("identity");
         
         // Regenerate ID immediately
@@ -190,9 +193,18 @@ export default function WardrobeWidget() {
         });
     };
 
-    // Step 2: Done with closet → go to context
+    // Step 2: Done with closet → go to color picker
     const handleClosetDone = () => {
+        setScreen("colors");
+    };
+
+    // Step 3: Color picker done → go to context
+    const handleColorsDone = () => {
         setScreen("context");
+    };
+
+    const handleColorChange = (itemId, colorId) => {
+        setItemColors(prev => ({ ...prev, [itemId]: colorId }));
     };
 
     // Step 3: Context selected → get recommendation
@@ -215,7 +227,8 @@ export default function WardrobeWidget() {
                     weather: overrideWeather, 
                     event: overrideEvent,
                     gender, // Pass gender focus
-                    vibe: vibe 
+                    vibe: vibe,
+                    itemColors
                 }),
             });
             const data = await res.json();
@@ -265,6 +278,18 @@ export default function WardrobeWidget() {
                             onToggle={handleToggle}
                             onDone={handleClosetDone}
                             loading={loading}
+                        />
+                    </motion.div>
+                )}
+
+                {screen === "colors" && (
+                    <motion.div key="colors" {...slide}>
+                        <ColorPicker
+                            items={items}
+                            closetIds={closetIds}
+                            itemColors={itemColors}
+                            onChange={handleColorChange}
+                            onDone={handleColorsDone}
                         />
                     </motion.div>
                 )}

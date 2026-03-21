@@ -129,7 +129,7 @@ const CATEGORY_TO_SEARCH = {
 
 export async function POST(request) {
     try {
-        const { wardrobe_id, weather, event, vibe = "minimalist" } = await request.json();
+        const { wardrobe_id, weather, event, vibe = "minimalist", gender = "unisex", itemColors = {} } = await request.json();
 
         if (!wardrobe_id || !weather || !event) {
             return Response.json({ error: "Missing required fields" }, { status: 400 });
@@ -159,10 +159,49 @@ export async function POST(request) {
         const userItems = (data || []).map((r) => r.item_templates).filter(Boolean);
         const userCategories = new Set(userItems.map((i) => i.category));
 
-        // Match items
-        const matchedItems = neededCategories
-            .map((cat) => userItems.find((i) => i.category === cat))
+        const CATEGORY_FALLBACKS = {
+            blazer: ["black_blazer", "trenchcoat", "hoodie"],
+            black_blazer: ["blazer", "trenchcoat"],
+            trousers: ["chinos", "cargo_pants", "slim_jeans", "baggy_jeans"],
+            chinos: ["trousers", "slim_jeans", "cargo_pants"],
+            slim_jeans: ["trousers", "chinos", "baggy_jeans", "cargo_pants"],
+            dress_shirt: ["linen_shirt", "white_tee", "turtleneck", "shirt"],
+            linen_shirt: ["dress_shirt", "white_tee", "shirt"],
+            white_tee: ["graphic_tee", "athletic_top", "shirt"],
+            sneakers: ["white_sneakers", "loafers", "ankle_boots"],
+            loafers: ["dress_shoes", "ankle_boots", "sneakers"],
+            sweaters: ["hoodie", "layers"]
+        };
+
+        // Match items with fallbacks
+        let matchedItems = neededCategories
+            .map((cat) => {
+                let match = userItems.find((i) => i.category === cat);
+                if (!match) {
+                    const fallbacks = CATEGORY_FALLBACKS[cat] || [];
+                    for (let f of fallbacks) {
+                        match = userItems.find((i) => i.category === f);
+                        if (match) break;
+                    }
+                }
+                return match;
+            })
             .filter(Boolean);
+
+        // Fallback Base (Ensuring an outfit exists if they own at least 1 top and bottom)
+        const hasTop = matchedItems.some(i => ['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top', 'white_tee', 'graphic_tee', 'dress_shirt', 'linen_shirt', 'athletic_top'].includes(i.category));
+        const hasBottom = matchedItems.some(i => ['trousers', 'chinos', 'slim_jeans', 'cargo_pants', 'shorts', 'joggers', 'baggy_jeans', 'big_pants'].includes(i.category));
+        
+        if (!hasTop) {
+             const anyTop = userItems.find(i => ['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top', 'white_tee', 'graphic_tee', 'dress_shirt', 'linen_shirt', 'athletic_top'].includes(i.category));
+             if (anyTop) matchedItems.push(anyTop);
+        }
+        if (!hasBottom) {
+             const anyBottom = userItems.find(i => ['trousers', 'chinos', 'slim_jeans', 'cargo_pants', 'shorts', 'joggers', 'baggy_jeans', 'big_pants'].includes(i.category));
+             if (anyBottom) matchedItems.push(anyBottom);
+        }
+        
+        matchedItems = [...new Map(matchedItems.map(i => [i.id, i])).values()];
 
         const matchRate = Math.round((matchedItems.length / neededCategories.length) * 100);
         const missingCategory = neededCategories.find((cat) => !userCategories.has(cat));
@@ -183,7 +222,7 @@ export async function POST(request) {
         }
 
         // Determine Stylist Rules and Tips based on Vibe and Event
-        const { stylingTips, colorPalette, stylingPersona } = getStylistAdvice(vibe, event, gender, matchedItems);
+        const { stylingTips, colorPalette, stylingPersona } = getStylistAdvice(vibe, event, gender, matchedItems, weather, itemColors);
 
         return Response.json({
             formulaName: formula.name,
@@ -202,7 +241,7 @@ export async function POST(request) {
     }
 }
 
-function getStylistAdvice(vibe, event, gender, items) {
+function getStylistAdvice(vibe, event, gender, items, weather, itemColors) {
     const tips = [];
     let palette = { primary: "#E5E5E5", secondary: "#1A1A1A", accent: "#D4AF37" }; 
     let persona = "Elegance is refusal.";
@@ -284,7 +323,20 @@ function getStylistAdvice(vibe, event, gender, items) {
     ];
     
     let selectedPalette;
-    if (vibe === 'minimalist' && event === 'work') {
+    
+    // Check if user's items are heavily earth tones or navy based on ColorPicker
+    const colorCounts = { earth: 0, navy: 0, black: 0, white: 0, bright: 0 };
+    items.forEach(i => {
+        if (itemColors[i.id]) colorCounts[itemColors[i.id]]++;
+    });
+
+    if (colorCounts.earth >= 2) {
+        selectedPalette = palettes[3]; // Chocolate & Earthy Green
+        tips.push("**Elevated Pairings**: Your closet leans heavily into Earth Tones. These neutral browns and greens create an incredibly grounded and luxurious base.");
+    } else if (colorCounts.navy >= 1 && colorCounts.earth >= 1) {
+        selectedPalette = palettes[0]; // Camel & Navy
+        tips.push("**Elevated Pairings**: You've selected earth tones mapped with navy pieces. This Camel & Navy contrast is the gold standard for 'Vogue-style' elevation.");
+    } else if (vibe === 'minimalist' && event === 'work') {
         selectedPalette = palettes[0]; // Camel & Navy
     } else if (vibe === 'expressive' || vibe === 'sharp') {
         selectedPalette = palettes[1]; // Chocolate & Ice Blue
@@ -296,6 +348,17 @@ function getStylistAdvice(vibe, event, gender, items) {
     
     palette = selectedPalette;
     persona = `Color Theory: ${selectedPalette.name} - ${selectedPalette.tip} Let's apply the 60-30-10 Rule: 60% dominant neutral, 30% secondary, 10% bold pop.`;
+
+    // 8. Explicit Weather Protocols
+    if (weather.feels_like < 10) {
+        tips.push("**Weather Alert**: Because it feels like " + weather.feels_like + "°C, we highly recommend layering thermal tights or 'longjohns' under this outfit to stay warm without bulky outerwear.");
+    }
+    if (weather.condition === 'rain' || weather.condition === 'snow') {
+        tips.push("**Weather Alert**: Precipitation is expected today. Don't forget your raincoat or umbrella, and prioritize boots over canvas sneakers!");
+    }
+    if ((weather.condition === 'clear' || weather.conditionLabel === 'Clear Skies') && weather.temp_max > 25) {
+        tips.push("**Weather Alert**: It’s going to be hot today (up to " + weather.temp_max + "°C). Focus on breathable fabrics and don't forget your sunscreen and sunglasses.");
+    }
 
     return { stylingTips: tips, colorPalette: selectedPalette, stylingPersona: persona };
 }

@@ -30,17 +30,19 @@ export async function GET(request) {
 
     try {
         const res = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m&forecast_days=1`,
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
             { next: { revalidate: 1800 } }
         );
         if (!res.ok) throw new Error("Open-Meteo fetch failed");
         const data = await res.json();
 
-        const code = data.current_weather.weathercode;
-        const temp = Math.round(data.current_weather.temperature);
-        const windspeed = Math.round(data.current_weather.windspeed);
-        // Grab the first hourly humidity reading
-        const humidity = data.hourly?.relativehumidity_2m?.[0] ?? null;
+        const code = data.current.weather_code;
+        const temp = Math.round(data.current.temperature_2m);
+        const feels_like = Math.round(data.current.apparent_temperature);
+        const windspeed = Math.round(data.current.wind_speed_10m);
+        const humidity = data.current.relative_humidity_2m ?? null;
+        const temp_max = data.daily?.temperature_2m_max?.[0] ? Math.round(data.daily.temperature_2m_max[0]) : null;
+        const temp_min = data.daily?.temperature_2m_min?.[0] ? Math.round(data.daily.temperature_2m_min[0]) : null;
 
         // WMO code → simplified condition + label
         let condition = "clear";
@@ -57,6 +59,9 @@ export async function GET(request) {
 
         return Response.json({
             temp,
+            feels_like,
+            temp_max,
+            temp_min,
             condition,
             conditionLabel,
             emoji,
@@ -68,7 +73,7 @@ export async function GET(request) {
     } catch (err) {
         console.error("[weather route]", err.message);
         return Response.json(
-            { temp: 18, condition: "clear", conditionLabel: "Clear Skies", emoji: "☀️", humidity: 50, windspeed: 10, cityName: "Unknown", weathercode: 0, fallback: true },
+            { temp: 18, feels_like: 18, temp_max: 22, temp_min: 14, condition: "clear", conditionLabel: "Clear Skies", emoji: "☀️", humidity: 50, windspeed: 10, cityName: "Unknown", weathercode: 0, fallback: true },
             { status: 200 }
         );
     }

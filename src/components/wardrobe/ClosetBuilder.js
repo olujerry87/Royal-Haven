@@ -3,28 +3,32 @@ import { motion } from "framer-motion";
 import { Plus, Check, Shirt, Archive, Layers, Footprints, Crown } from "lucide-react";
 import styles from "./ClosetBuilder.module.css";
 
-const CATEGORY_ICONS = {
-    trousers: Archive,
-    slim_jeans: Archive,
-    chinos: Archive,
-    cargo_pants: Archive,
-    joggers: Archive,
-    shorts: Archive,
-    trenchcoat: Layers,
-    blazer: Layers, 
-    black_blazer: Layers,
-    hoodie: Layers,
-    sneakers: Footprints,
-    white_sneakers: Footprints,
-    dress_shoes: Footprints,
-    loafers: Footprints,
-    ankle_boots: Footprints,
-    cap: Crown,
+const CATEGORY_EMOJIS = {
+    trousers: "👖",
+    slim_jeans: "👖",
+    chinos: "👖",
+    cargo_pants: "👖",
+    joggers: "👖",
+    shorts: "🩳",
+    trenchcoat: "🧥",
+    blazer: "🧥", 
+    black_blazer: "🧥",
+    hoodie: "🧥",
+    sneakers: "👟",
+    white_sneakers: "👟",
+    dress_shoes: "👞",
+    loafers: "👞",
+    ankle_boots: "👢",
+    cap: "🧢",
+    sweater: "🧥",
+    big_pants: "👖",
+    big_jeans: "👖",
+    crop_top: "👚",
 };
 
 function getIcon(category) {
-    const Icon = CATEGORY_ICONS[category] || Shirt;
-    return <Icon size={24} />;
+    const emoji = CATEGORY_EMOJIS[category] || "👕";
+    return <span style={{ fontSize: '24px', lineHeight: 1 }}>{emoji}</span>;
 }
 
 export default function ClosetBuilder({ items, closetIds, onToggle, onDone, loading }) {
