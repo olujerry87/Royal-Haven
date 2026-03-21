@@ -234,11 +234,11 @@ export default function HomeClient({
                 ctaLink={data.spotlight1.link}
             />
 
-            <div style={{ height: '40px', backgroundColor: '#FFFFFF', width: '100%' }} className={styles.mobileDivider} />
+            <div style={{ height: '80px', backgroundColor: '#FFFFFF', width: '100%' }} className={styles.mobileDivider} />
 
             <FeaturedSpotlight
                 title="Your Personal AI Stylist"
-                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your aesthetic vibe to automatically build the perfect outfit. <br/><br/>The system applies professional styling rules (like the Sandwich Rule and Color Matching) to ensure you always step out looking impeccable."
+                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically."
                 ctaText="Start Styling"
                 ctaLink="/heritage#styling"
                 imagePath="/images/wura-idle.jpg"

@@ -13,10 +13,13 @@ export async function GET(request) {
     if (cityName && (!lat || !lon)) {
         try {
             const geoRes = await fetch(
-                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=5&language=en&format=json`
             );
             const geoData = await geoRes.json();
-            if (geoData.results?.[0]) {
+            if (geoData.results && geoData.results.length > 0) {
+                // Sort by population descending so major cities take precedence
+                geoData.results.sort((a, b) => (b.population || 0) - (a.population || 0));
+                
                 lat = geoData.results[0].latitude;
                 lon = geoData.results[0].longitude;
                 cityName = geoData.results[0].name + ", " + (geoData.results[0].country || "");

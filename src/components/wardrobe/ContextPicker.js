@@ -39,6 +39,9 @@ export default function ContextPicker({ weather, onEventSelect, onCitySearch, lo
                 <div className={styles.temp}>
                     <span className={styles.degree}>{weather?.temp}°C</span>
                     <span className={styles.condition}>{weather?.emoji} {weather?.conditionLabel}</span>
+                    {weather?.temp_max != null && weather?.temp_min != null && (
+                        <span className={styles.highLow}>H:{weather.temp_max}° L:{weather.temp_min}°</span>
+                    )}
                 </div>
                 
                 <form onSubmit={handleSearch} className={styles.searchForm}>

@@ -66,6 +66,13 @@
     color: rgba(255, 255, 255, 0.8);
 }
 
+.highLow {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    margin-left: -0.2rem;
+}
+
 .searchForm {
     display: flex;
     gap: 0.5rem;
