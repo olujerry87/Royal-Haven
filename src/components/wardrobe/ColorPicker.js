@@ -55,15 +55,18 @@ export default function ColorPicker({ items, closetIds, itemColors, onChange, on
                     >
                         <span className={styles.itemName}>{item.name}</span>
                         <div className={styles.swatchGroup}>
-                            {PALETTE_OPTIONS.map(color => (
-                                <button
-                                    key={color.id}
-                                    className={`${styles.swatch} ${itemColors[item.id] === color.id ? styles.selected : ""}`}
-                                    style={{ backgroundColor: color.hex }}
-                                    onClick={() => onChange(item.id, color.id)}
-                                    title={color.name}
-                                />
-                            ))}
+                            {PALETTE_OPTIONS.map(color => {
+                                const isSelected = (itemColors[item.id] || []).includes(color.id);
+                                return (
+                                    <button
+                                        key={color.id}
+                                        className={`${styles.swatch} ${isSelected ? styles.selected : ""}`}
+                                        style={{ backgroundColor: color.hex }}
+                                        onClick={() => onChange(item.id, color.id)}
+                                        title={color.name}
+                                    />
+                                );
+                            })}
                         </div>
                     </motion.div>
                 ))}

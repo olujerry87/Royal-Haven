@@ -324,10 +324,15 @@ function getStylistAdvice(vibe, event, gender, items, weather, itemColors) {
     
     let selectedPalette;
     
-    // Check if user's items are heavily earth tones or navy based on ColorPicker
+    // Check if user's items are heavily earth tones or navy based on ColorPicker arrays
     const colorCounts = { earth: 0, navy: 0, black: 0, white: 0, bright: 0 };
     items.forEach(i => {
-        if (itemColors[i.id]) colorCounts[itemColors[i.id]]++;
+        const colors = itemColors[i.id] || [];
+        colors.forEach(c => {
+            if (colorCounts[c] !== undefined) {
+                colorCounts[c]++;
+            }
+        });
     });
 
     if (colorCounts.earth >= 2) {

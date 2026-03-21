@@ -55,17 +55,10 @@ export default function WardrobeWidget() {
         const id = getWardrobeId();
         setWardrobeId(id);
 
+        // We intentionally DO NOT restore gender/vibe anymore so the user always starts fresh
         const storedIdent = localStorage.getItem("wardrobe_gender");
         const storedVibe = localStorage.getItem("wardrobe_vibe");
-
-        if (storedIdent && storedVibe) {
-            setGender(storedIdent);
-            setVibe(storedVibe);
-            setScreen("context");
-        } else if (storedIdent) {
-            setGender(storedIdent);
-            setScreen("vibe");
-        }
+        // State remains at 'identity' on initial load
 
         // Fetch weather (via server route, using geolocation if available)
         if ("geolocation" in navigator) {
@@ -204,7 +197,14 @@ export default function WardrobeWidget() {
     };
 
     const handleColorChange = (itemId, colorId) => {
-        setItemColors(prev => ({ ...prev, [itemId]: colorId }));
+        setItemColors(prev => {
+            const currentColors = prev[itemId] || [];
+            if (currentColors.includes(colorId)) {
+                return { ...prev, [itemId]: currentColors.filter(c => c !== colorId) };
+            } else {
+                return { ...prev, [itemId]: [...currentColors, colorId] };
+            }
+        });
     };
 
     // Step 3: Context selected → get recommendation

@@ -234,6 +234,15 @@ export default function HomeClient({
                 ctaLink={data.spotlight1.link}
             />
 
+            <FeaturedSpotlight
+                title="Your Personal AI Stylist"
+                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your aesthetic vibe to automatically build the perfect outfit. <br/><br/>The system applies professional styling rules (like the Sandwich Rule and Color Matching) to ensure you always step out looking impeccable."
+                ctaText="Start Styling"
+                ctaLink="/heritage"
+                imagePath="/images/ewa-idle.jpg"
+                hasGlassCard={true}
+            />
+
             <FAQ />
 
             <FeaturedSpotlight

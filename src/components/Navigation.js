@@ -94,6 +94,10 @@ export default function Navigation() {
                     <Link href="/heritage" className={styles.link}>
                         Heritage
                     </Link>
+
+                    <Link href="/heritage#styling" className={styles.link} style={{ color: 'var(--gold)', fontWeight: 600 }}>
+                        Styling Intelligence ✨
+                    </Link>
                 </div>
 
                 {/* Icons */}
@@ -139,6 +143,7 @@ export default function Navigation() {
                         <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Wura</Link>
                         <Link href="/services" onClick={() => setIsMobileMenuOpen(false)}>Book Ewa</Link>
                         <Link href="/heritage" onClick={() => setIsMobileMenuOpen(false)}>Our Heritage</Link>
+                        <Link href="/heritage#styling" onClick={() => setIsMobileMenuOpen(false)} style={{ color: 'var(--gold)' }}>Stylist AI</Link>
                     </div>
                 </div>
             )}

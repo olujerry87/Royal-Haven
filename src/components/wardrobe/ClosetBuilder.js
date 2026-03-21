@@ -4,26 +4,13 @@ import { Plus, Check, Shirt, Archive, Layers, Footprints, Crown } from "lucide-r
 import styles from "./ClosetBuilder.module.css";
 
 const CATEGORY_EMOJIS = {
-    trousers: "👖",
-    slim_jeans: "👖",
-    chinos: "👖",
-    cargo_pants: "👖",
-    joggers: "👖",
-    shorts: "🩳",
-    trenchcoat: "🧥",
-    blazer: "🧥", 
-    black_blazer: "🧥",
-    hoodie: "🧥",
-    sneakers: "👟",
-    white_sneakers: "👟",
-    dress_shoes: "👞",
-    loafers: "👞",
-    ankle_boots: "👢",
-    cap: "🧢",
-    sweater: "🧥",
-    big_pants: "👖",
-    big_jeans: "👖",
-    crop_top: "👚",
+    shirt: "👕", blouse: "👚", crop_top: "👚",
+    sweater: "🧥", athletic: "🎽",
+    trousers: "👖", jeans: "👖", shorts: "🩳",
+    skirt: "👗", jumpsuit: "🩱", suit: "👔",
+    dress: "👗", coat: "🧥", jacket: "🧥", blazer: "🧥",
+    hat: "🧢", shoes: "👟", accessory: "👔",
+    scarf: "🧣", underwear: "🩲", socks: "🧦",
 };
 
 function getIcon(category) {
