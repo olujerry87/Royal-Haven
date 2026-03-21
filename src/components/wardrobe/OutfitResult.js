@@ -14,6 +14,30 @@ const CATEGORY_EMOJIS = {
     scarf: "🧣", underwear: "🩲", socks: "🧦",
 };
 
+function getIcon(category, name) {
+    if (!name) return CATEGORY_EMOJIS[category] || "👕";
+    const lower = name.toLowerCase();
+    
+    if (lower.includes("boot")) return "👢";
+    if (lower.includes("sneaker")) return "👟";
+    if (lower.includes("sandal") || lower.includes("slide") || lower.includes("espadrille")) return "👡";
+    if (lower.includes("loafer") || lower.includes("oxford") || lower.includes("brogue") || lower.includes("monk")) return "👞";
+    if (lower.includes("stiletto") || lower.includes("pump") || lower.includes("heel")) return "👠";
+    
+    if (lower.includes("beanie") || lower.includes("trapper")) return "❄️🧢";
+    if (lower.includes("fedora") || lower.includes("top hat") || lower.includes("homburg")) return "🎩";
+    if (lower.includes("baseball") || lower.includes("snapback")) return "🧢";
+    if (lower.includes("cowboy")) return "🤠";
+    if (lower.includes("visor") || lower.includes("sun hat")) return "👒";
+    
+    if (lower.includes("tie") || lower.includes("cravat") || lower.includes("ascot")) return "👔";
+    if (lower.includes("scarf")) return "🧣";
+    if (lower.includes("jumpsuit") || lower.includes("romper") || lower.includes("dungaree")) return "🩱";
+    if (lower.includes("suit") || lower.includes("tuxedo")) return "🕴️";
+
+    return CATEGORY_EMOJIS[category] || CATEGORY_EMOJIS['shirt'];
+}
+
 const EVENTS = ["work", "casual", "date", "gym"];
 
 const WEATHER_ICONS = {
@@ -81,6 +105,11 @@ export default function OutfitResult({
                             <Wind size={12} /> {weather.windspeed} km/h Wind
                         </span>
                     )}
+                    {weather?.hourly && weather.hourly.length > 0 && (
+                        <span className={styles.metaChip} style={{ width: '100%', marginTop: '4px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                            <b>Next 24h:</b> {weather.hourly.filter((_, idx) => idx % 2 === 0).join('° ')}°
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -146,6 +175,9 @@ export default function OutfitResult({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >
+                    <p style={{ width: '100%', textAlign: 'center', fontSize: '0.8rem', color: 'var(--off-white)', opacity: 0.7, marginBottom: '1rem' }}>
+                        *Pro Tip: Tap any item name to quickly copy it to your clipboard.
+                    </p>
                     {items.map((item, i) => (
                         <motion.div
                             key={item.id}
@@ -160,11 +192,23 @@ export default function OutfitResult({
                                     <img src={item.image_url} alt={item.name} className={styles.itemImg} />
                                 ) : (
                                     <span style={{ fontSize: '24px', lineHeight: 1 }}>
-                                        {CATEGORY_EMOJIS[item.category] || "👕"}
+                                        {getIcon(item.category, item.name)}
                                     </span>
                                 )}
                             </div>
-                            <p className={styles.itemName}>{item.name}</p>
+                            <p 
+                                className={styles.itemName}
+                                title="Click to copy item name"
+                                style={{ cursor: 'pointer' }}
+                                onClick={(e) => {
+                                    navigator.clipboard.writeText(item.name);
+                                    const orig = e.target.innerText;
+                                    e.target.innerText = "✓ Copied";
+                                    setTimeout(() => e.target.innerText = orig, 1000);
+                                }}
+                            >
+                                {item.name}
+                            </p>
                         </motion.div>
                     ))}
                 </motion.div>

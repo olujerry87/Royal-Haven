@@ -28,9 +28,15 @@ export async function GET(request) {
     lon = lon || "-0.1278";
     if (!cityName) cityName = "Your Location";
 
+    // Handle Nunavut edge case for geocoder (sometimes 'Nunavut' fails unless specified in Canada)
+    if (cityName.toLowerCase() === 'nunavut') {
+        lat = "64.2823"; // Iqaluit coordinates as default for Nunavut
+        lon = "-65.5522";
+    }
+
     try {
         const res = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
             { next: { revalidate: 1800 } }
         );
         if (!res.ok) throw new Error("Open-Meteo fetch failed");
@@ -43,6 +49,9 @@ export async function GET(request) {
         const humidity = data.current.relative_humidity_2m ?? null;
         const temp_max = data.daily?.temperature_2m_max?.[0] ? Math.round(data.daily.temperature_2m_max[0]) : null;
         const temp_min = data.daily?.temperature_2m_min?.[0] ? Math.round(data.daily.temperature_2m_min[0]) : null;
+
+        // Slice first 24 hours of forecast
+        const hourlyForecast = data.hourly?.temperature_2m?.slice(0, 24).map(t => Math.round(t)) || [];
 
         // WMO code → simplified condition + label
         let condition = "clear";
@@ -69,6 +78,7 @@ export async function GET(request) {
             windspeed,
             cityName,
             weathercode: code,
+            hourly: hourlyForecast
         });
     } catch (err) {
         console.error("[weather route]", err.message);

@@ -151,7 +151,7 @@ export default function AboutClient({ page }) {
             <HeritageAnimation />
 
             {/* Styling Intelligence — Digital Closet */}
-            <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}>
+            <section id="styling" className={styles.section} style={{ backgroundColor: 'var(--obsidian)', borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}>
                 <div className={styles.journeySection}>
                     <h2 className={styles.heading} style={{ color: 'var(--gold)' }}>Styling Intelligence</h2>
                     <p className={styles.text} style={{ color: 'var(--off-white)', marginBottom: '3rem' }}>
