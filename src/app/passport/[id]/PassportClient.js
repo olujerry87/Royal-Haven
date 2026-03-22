@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Info, Sparkles, Droplets, PenTool, CheckCircle, Globe } from "lucide-react";
 import SocialShare from "@/components/passport/SocialShare";
+import { createClient } from "@supabase/supabase-js";
 import styles from "./PassportClient.module.css";
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export default function PassportClient({ garmentId }) {
     const [isRegistered, setIsRegistered] = useState(false);
@@ -13,16 +19,42 @@ export default function PassportClient({ garmentId }) {
     const [name, setName] = useState("");
     const [registrationLoading, setRegistrationLoading] = useState(false);
 
-    // Mock Data representing the NFC Garment Profile
-    const garmentData = {
-        name: "Wura Asoke Trench",
-        collection: "Heritage AW24",
-        origin: "Woven in the heart of Abeokuta, Nigeria, this authentic Aso-Oke textile was crafted using centuries-old horizontal loom techniques by third-generation artisans before being structurally tailored in our London atelier.",
-        care: "This is a living textile. Dry clean only. Do not machine wash or tumble dry. Store folded or on a padded hanger to preserve the structural integrity of the spun cotton.",
-        styling: "Pair this statement trench with monochrome base layers (black turtleneck and tailored trousers) to let the metallic threading command the room. Ideal for art galleries or evening galas.",
-        founderNote: "I designed this piece to be a bridge between my two worlds. Wearing this isn't just a fashion statement; it's wearing a piece of history. Carry it with pride.",
-        founder: "Jerry Olugboye"
-    };
+    const [garmentData, setGarmentData] = useState(null);
+    const [pageLoading, setPageLoading] = useState(true);
+
+    // Fetch garment data from Supabase using the Garment ID
+    useEffect(() => {
+        async function fetchGarment() {
+            try {
+                const { data, error } = await supabase
+                    .from("garments")
+                    .select("*")
+                    .eq("id", garmentId)
+                    .single();
+
+                if (data && !error) {
+                    setGarmentData(data);
+                } else {
+                    // Fallback block if table doesn't exist yet or garment not found
+                    setGarmentData({
+                        name: "Wura Asoke Trench (Demo Mode)",
+                        collection: "Heritage AW24",
+                        origin: "Woven in the heart of Abeokuta, Nigeria, this authentic Aso-Oke textile was crafted using centuries-old horizontal loom techniques.",
+                        care: "Dry clean only. Do not machine wash or tumble dry.",
+                        styling: "Pair this statement trench with monochrome base layers.",
+                        founder_note: "I designed this piece to be a bridge between my two worlds.",
+                        founder: "Wura & Ewa Official",
+                        isFallback: true
+                    });
+                }
+            } catch (err) {
+                 console.error(err);
+            } finally {
+                setPageLoading(false);
+            }
+        }
+        fetchGarment();
+    }, [garmentId]);
 
     // Simulate checking the Hostinger database for ownership status on initial load
     // For now, we manually force the modal to appear to demonstrate the UX flow.
@@ -44,11 +76,18 @@ export default function PassportClient({ garmentId }) {
 
     return (
         <div className={styles.container}>
-            {/* Modal Overlay for Registration (First-Time Scan) */}
-            <AnimatePresence>
-                {!isRegistered && !hideModal && (
-                    <motion.div 
-                        className={styles.modalOverlay}
+            {pageLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--gold)' }}>
+                    <Sparkles size={32} style={{ marginBottom: '1rem', animation: 'pulse 2s infinite' }} />
+                    <p style={{ fontFamily: 'var(--font-body)', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '0.85rem' }}>Decrypting NTAG 213 Provenance...</p>
+                </div>
+            ) : (
+                <>
+                    {/* Modal Overlay for Registration (First-Time Scan) */}
+                    <AnimatePresence>
+                        {!isRegistered && !hideModal && (
+                            <motion.div 
+                                className={styles.modalOverlay}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -131,7 +170,7 @@ export default function PassportClient({ garmentId }) {
                     <p className={styles.collection}>{garmentData.collection} // SEC #{garmentId}</p>
                 </motion.div>
 
-                <div className={styles.sections}>
+                    <div className={styles.sections}>
                     <motion.div 
                         className={styles.sectionCard}
                         initial={{ opacity: 0, x: -20 }}
@@ -184,7 +223,7 @@ export default function PassportClient({ garmentId }) {
                             <PenTool size={24} />
                             <h3 className={styles.sectionTitle}>Founder's Intel</h3>
                         </div>
-                        <p className={styles.textBlock}>{garmentData.founderNote}</p>
+                        <p className={styles.textBlock}>{garmentData.founder_note}</p>
                         <p className={styles.signature}>— {garmentData.founder}</p>
                     </motion.div>
                 </div>
@@ -201,6 +240,8 @@ export default function PassportClient({ garmentId }) {
                     </motion.div>
                 )}
             </div>
+            </>
+            )}
         </div>
     );
 }
