@@ -188,20 +188,22 @@ export async function POST(request) {
             })
             .filter(Boolean);
 
-        // Fallback Base (Ensuring an outfit exists if they own at least 1 top and bottom)
-        const hasTop = matchedItems.some(i => ['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top', 'white_tee', 'graphic_tee', 'dress_shirt', 'linen_shirt', 'athletic_top'].includes(i.category));
-        const hasBottom = matchedItems.some(i => ['trousers', 'chinos', 'slim_jeans', 'cargo_pants', 'shorts', 'joggers', 'baggy_jeans', 'big_pants'].includes(i.category));
-        
-        if (!hasTop) {
-             const anyTop = userItems.find(i => ['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top', 'white_tee', 'graphic_tee', 'dress_shirt', 'linen_shirt', 'athletic_top'].includes(i.category));
-             if (anyTop) matchedItems.push(anyTop);
-        }
-        if (!hasBottom) {
-             const anyBottom = userItems.find(i => ['trousers', 'chinos', 'slim_jeans', 'cargo_pants', 'shorts', 'joggers', 'baggy_jeans', 'big_pants'].includes(i.category));
-             if (anyBottom) matchedItems.push(anyBottom);
-        }
-        
         matchedItems = [...new Map(matchedItems.map(i => [i.id, i])).values()];
+
+        // FAILSAFE: If the user simply has no matching items or fallbacks for this specific Vibe,
+        // we forcefully assign them the closest items they DO have so the system never returns an empty outfit.
+        if (matchedItems.length === 0 && userItems.length > 0) {
+            const forcedTop = userItems.find(i => ['shirt', 'tee', 'blouse', 'turtleneck', 'sweater', 'crop_top', 'white_tee', 'graphic_tee', 'dress_shirt', 'linen_shirt', 'athletic_top'].includes(i.category));
+            const forcedBottom = userItems.find(i => ['trousers', 'chinos', 'slim_jeans', 'cargo_pants', 'shorts', 'joggers', 'baggy_jeans', 'big_pants'].includes(i.category));
+            const forcedShoe = userItems.find(i => ['shoes', 'sneakers', 'boots', 'loafers'].includes(i.category));
+
+            if (forcedTop) matchedItems.push(forcedTop);
+            if (forcedBottom) matchedItems.push(forcedBottom);
+            if (forcedShoe) matchedItems.push(forcedShoe);
+            
+            // Absolute nuclear fallback if their closet lacks clear categories
+            if (matchedItems.length === 0) matchedItems.push(...userItems.slice(0, 3));
+        }
 
         const matchRate = Math.round((matchedItems.length / neededCategories.length) * 100);
         const missingCategory = neededCategories.find((cat) => !userCategories.has(cat));
@@ -224,9 +226,22 @@ export async function POST(request) {
         // Determine Stylist Rules and Tips based on Vibe and Event
         const { stylingTips, colorPalette, stylingPersona } = getStylistAdvice(vibe, event, gender, matchedItems, weather, itemColors);
 
+        // Generate explicit "Todo" List based on the user's specific selected colors
+        const explicitChecklist = matchedItems.map(item => {
+            const colorsArray = itemColors[item.id] || [];
+            // Capitalize the first color selected (e.g., 'blue') or fallback to empty string
+            const colorName = colorsArray.length > 0 ? (colorsArray[0].charAt(0).toUpperCase() + colorsArray[0].slice(1)) + " " : "";
+            return `Wear your ${colorName}<b>${item.name.toLowerCase()}</b>`;
+        });
+        
+        // Unshift the core checklist to the very top of stylingTips so the user sees it immediately
+        if (explicitChecklist.length > 0) {
+            stylingTips.unshift(`**Outfit Blueprint**: For this ${weather.condition} weather, <br/> • ${explicitChecklist.join("<br/> • ")}`);
+        }
+
         return Response.json({
             formulaName: formula.name,
-            matchRate,
+            matchRate: isNaN(matchRate) ? 50 : matchRate,
             matchedItems,
             missingCategory: missingCategory || null,
             nudgeProduct,

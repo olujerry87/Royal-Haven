@@ -61,7 +61,10 @@ export default function ColorPicker({ items, closetIds, itemColors, onChange, on
                                     <button
                                         key={color.id}
                                         className={`${styles.swatch} ${isSelected ? styles.selected : ""}`}
-                                        style={{ backgroundColor: color.hex }}
+                                        style={{ 
+                                            backgroundColor: color.hex,
+                                            border: color.id === "black" ? "2px solid rgba(255, 255, 255, 0.4)" : undefined
+                                        }}
                                         onClick={() => onChange(item.id, color.id)}
                                         title={color.name}
                                     />

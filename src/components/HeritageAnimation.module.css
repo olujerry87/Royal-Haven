@@ -100,9 +100,4 @@
         width: 180px;
         height: 360px;
     }
-
-    /* Hide floating cards on mobile — they overflow off-screen due to pixel-based positioning */
-    .glassCard {
-        display: none;
-    }
 }
