@@ -239,8 +239,61 @@ export default function PassportClient({ garmentId }) {
                         <SocialShare garment={{ garment_name: garmentData.name }} context="passport" />
                     </motion.div>
                 )}
+
+                {/* FAQ Section */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    style={{ marginTop: '3rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}
+                >
+                    <h3 style={{ fontFamily: 'var(--font-heritage)', color: 'var(--gold)', fontSize: '1.2rem', marginBottom: '1.5rem', letterSpacing: '2px', textTransform: 'uppercase' }}>Garment FAQ</h3>
+                    {[
+                        { q: "Is this garment authentic?", a: "Yes. Every Royal Haven piece is embedded with an NTAG 213 NFC chip that contains a unique serial number permanently linked to our authentication ledger." },
+                        { q: "How do I care for this piece?", a: garmentData.care || "Please refer to the Preservation & Care section above for detailed care instructions." },
+                        { q: "Can I return this item?", a: "We offer a 7-day return policy on all unworn, unaltered items with the original NTAG seal intact. Contact hello@wuraandewa.com to initiate." },
+                        { q: "How do I verify digital ownership?", a: "Fill in your name and email in the Digital Genesis form above to permanently register this garment to your identity in our secure ledger." },
+                        { q: "Where was this garment made?", a: garmentData.origin?.split('.')[0] + '.' || "Nigeria, West Africa." },
+                    ].map((item, i) => (
+                        <PassportFAQItem key={i} question={item.q} answer={item.a} />
+                    ))}
+                </motion.div>
+
+                {/* Footer */}
+                <div style={{ marginTop: '3rem', paddingTop: '2rem', paddingBottom: '3rem', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+                    <p style={{ fontFamily: 'var(--font-heritage)', color: 'var(--gold)', fontSize: '1.1rem', letterSpacing: '2px' }}>WURA & EWA</p>
+                    <p style={{ fontFamily: 'var(--font-body)', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', marginTop: '0.5rem' }}>hello@wuraandewa.com</p>
+                    <p style={{ fontFamily: 'var(--font-body)', color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', marginTop: '1rem' }}>
+                        &quot;She is clothed in strength and dignity.&quot; — Proverbs 31:25
+                    </p>
+                </div>
             </div>
             </>
+            )}
+        </div>
+    );
+}
+
+function PassportFAQItem({ question, answer }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+            <button
+                onClick={() => setOpen(!open)}
+                style={{
+                    background: 'none', border: 'none', color: 'var(--off-white)',
+                    fontFamily: 'var(--font-body)', fontSize: '0.95rem', cursor: 'pointer',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    width: '100%', textAlign: 'left', padding: '0.5rem 0', gap: '1rem'
+                }}
+            >
+                <span>{question}</span>
+                <span style={{ color: 'var(--gold)', fontSize: '1.2rem', flexShrink: 0 }}>{open ? '−' : '+'}</span>
+            </button>
+            {open && (
+                <p style={{ fontFamily: 'var(--font-body)', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', lineHeight: 1.6, marginTop: '0.5rem', paddingLeft: '0.5rem' }}>
+                    {answer}
+                </p>
             )}
         </div>
     );

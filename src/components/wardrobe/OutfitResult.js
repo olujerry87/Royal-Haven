@@ -175,9 +175,6 @@ export default function OutfitResult({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >
-                    <p style={{ width: '100%', textAlign: 'center', fontSize: '0.8rem', color: 'var(--off-white)', opacity: 0.7, marginBottom: '1rem' }}>
-                        *Pro Tip: Tap any item name to quickly copy it to your clipboard.
-                    </p>
                     {items.map((item, i) => (
                         <motion.div
                             key={item.id}

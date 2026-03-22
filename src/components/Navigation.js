@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,7 @@ import { useCart } from "@/context/CartContext";
 export default function Navigation() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileEwaOpen, setMobileEwaOpen] = useState(false);
     const { cartCount } = useCart();
     const pathname = usePathname();
 
@@ -141,9 +142,30 @@ export default function Navigation() {
                 <div className={styles.mobileMenu}>
                     <div className={styles.mobileLinks}>
                         <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Wura</Link>
-                        <Link href="/services" onClick={() => setIsMobileMenuOpen(false)}>Book Ewa</Link>
+
+                        {/* Book Ewa expandable sub-section */}
+                        <button
+                            onClick={() => setMobileEwaOpen(!mobileEwaOpen)}
+                            style={{
+                                background: 'none', border: 'none', color: 'var(--off-white)',
+                                fontFamily: 'var(--font-heritage)', fontSize: '1.8rem', fontWeight: 400,
+                                cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'
+                            }}
+                        >
+                            Book Ewa <ChevronDown size={18} style={{ transform: mobileEwaOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+                        </button>
+                        {mobileEwaOpen && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingLeft: '1.2rem', borderLeft: '1px solid rgba(212,175,55,0.4)' }}>
+                                <Link href="/lookbook" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem', color: 'var(--gold)' }}>✦ Lookbook</Link>
+                                <Link href="/services/book" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Book Appointment</Link>
+                                <Link href="/services/makeup" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Makeup</Link>
+                                <Link href="/services/hair" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Hair</Link>
+                                <Link href="/services/gele" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Gele</Link>
+                            </div>
+                        )}
+
                         <Link href="/heritage" onClick={() => setIsMobileMenuOpen(false)}>Our Heritage</Link>
-                        <Link href="/heritage#styling" onClick={() => setIsMobileMenuOpen(false)} style={{ color: 'var(--gold)' }}>Stylist AI</Link>
+                        <Link href="/heritage#styling" onClick={() => setIsMobileMenuOpen(false)} style={{ color: 'var(--gold)' }}>Stylist AI ✨</Link>
                     </div>
                 </div>
             )}

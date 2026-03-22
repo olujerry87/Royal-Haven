@@ -58,7 +58,7 @@ export default function ClosetBuilder({ items, closetIds, onToggle, onDone, load
                 Your Starter Kit
             </motion.h3>
             <p className={styles.subtitle}>
-                Tap an icon to add/remove it. Click an item's <b>text name</b> to quickly copy it to your clipboard if you need to search it online.
+                Tap an item to add it to your closet. <b>Tap the item name</b> to copy it to your clipboard — handy for a quick Google image search!
             </p>
 
             <div className={styles.grid}>

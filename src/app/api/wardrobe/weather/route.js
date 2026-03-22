@@ -40,7 +40,7 @@ export async function GET(request) {
     try {
         const res = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3`,
-            { next: { revalidate: 1800 } }
+            { next: { revalidate: 300 } }
         );
         if (!res.ok) throw new Error("Open-Meteo fetch failed");
         const data = await res.json();
