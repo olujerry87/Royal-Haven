@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
-import styles from "./PortfolioClient.module.css";
+import styles from "./LookbookClient.module.css";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -13,7 +13,7 @@ const supabase = createClient(
 
 const TABS = ["All", "Hair", "Makeup", "Gele", "Fashion"];
 
-export default function PortfolioClient() {
+export default function LookbookClient() {
     const [activeTab, setActiveTab] = useState("All");
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function PortfolioClient() {
             try {
                 // If table doesn't exist, this will quietly fail and we show empty state or fallbacks.
                 const { data, error } = await supabase
-                    .from("portfolio_images")
+                    .from("lookbook_images")
                     .select("*")
                     .order('created_at', { ascending: false });
 

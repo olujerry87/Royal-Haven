@@ -8,6 +8,7 @@ import styles from "./PassportClient.module.css";
 
 export default function PassportClient({ garmentId }) {
     const [isRegistered, setIsRegistered] = useState(false);
+    const [hideModal, setHideModal] = useState(false);
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [registrationLoading, setRegistrationLoading] = useState(false);
@@ -45,7 +46,7 @@ export default function PassportClient({ garmentId }) {
         <div className={styles.container}>
             {/* Modal Overlay for Registration (First-Time Scan) */}
             <AnimatePresence>
-                {!isRegistered && (
+                {!isRegistered && !hideModal && (
                     <motion.div 
                         className={styles.modalOverlay}
                         initial={{ opacity: 0 }}
@@ -98,6 +99,16 @@ export default function PassportClient({ garmentId }) {
                                 />
                                 <button type="submit" className={styles.btnPrimary} disabled={registrationLoading}>
                                     {registrationLoading ? "Cryptographically Securing..." : "Activate Digital Ownership"}
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setHideModal(true)}
+                                    style={{
+                                        background: "transparent", border: "none", color: "var(--stone)", 
+                                        fontFamily: "var(--font-body)", fontSize: "0.85rem", cursor: "pointer", marginTop: "0.5rem"
+                                    }}
+                                >
+                                    Skip and view garment details
                                 </button>
                             </form>
                         </motion.div>

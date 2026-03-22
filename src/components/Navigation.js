@@ -82,7 +82,7 @@ export default function Navigation() {
                                 <div className={styles.column}>
                                     <h3>Studio</h3>
                                     <Link href="/services/book">Book Appointment</Link>
-                                    <Link href="/portfolio">Portfolio</Link>
+                                    <Link href="/lookbook">Lookbook</Link>
                                 </div>
                                 <div className={styles.promoImage}>
                                     <div className={styles.placeholder}>Glam</div>
