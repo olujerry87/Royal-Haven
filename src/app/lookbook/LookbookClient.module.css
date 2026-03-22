@@ -175,3 +175,88 @@
         grid-auto-rows: 350px;
     }
 }
+
+/* Lightbox Modal */
+.lightboxOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightboxImageContainer {
+    position: relative;
+    width: 90vw;
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightboxImage {
+    object-fit: contain;
+}
+
+.lightboxNavButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--off-white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.lightboxNavButton:hover {
+    background: rgba(212, 175, 55, 0.4);
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightboxNavLeft {
+    left: 2rem;
+}
+
+.lightboxNavRight {
+    right: 2rem;
+}
+
+.lightboxCloseButton {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: transparent;
+    border: none;
+    color: var(--stone);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1001;
+}
+
+.lightboxCloseButton:hover {
+    color: var(--gold);
+}
+
+@media (max-width: 768px) {
+    .lightboxNavButton {
+        width: 45px;
+        height: 45px;
+    }
+    .lightboxNavLeft { left: 1rem; }
+    .lightboxNavRight { right: 1rem; }
+    .lightboxImageContainer { width: 100vw; }
+}

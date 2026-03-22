@@ -1,8 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import styles from "./LookbookClient.module.css";
 
@@ -17,6 +16,9 @@ export default function LookbookClient() {
     const [activeTab, setActiveTab] = useState("All");
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
+    
+    // Lightbox State
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     useEffect(() => {
         async function fetchImages() {
@@ -54,6 +56,43 @@ export default function LookbookClient() {
     const filteredImages = activeTab === "All" 
         ? images 
         : images.filter(img => img.category === activeTab);
+
+    // Lightbox Keyboard Listeners
+    const handleKeyDown = useCallback(
+        (e) => {
+            if (selectedIndex === null) return;
+            if (e.key === "Escape") setSelectedIndex(null);
+            if (e.key === "ArrowRight") handleNext();
+            if (e.key === "ArrowLeft") handlePrev();
+        },
+        [selectedIndex, filteredImages.length]
+    );
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [handleKeyDown]);
+
+    // Body scroll lock when lightbox is open
+    useEffect(() => {
+        if (selectedIndex !== null) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+    }, [selectedIndex]);
+
+    const handleNext = () => {
+        setSelectedIndex((prev) => (prev + 1) % filteredImages.length);
+    };
+
+    const handlePrev = () => {
+        setSelectedIndex((prev) => (prev === 0 ? filteredImages.length - 1 : prev - 1));
+    };
+
+    const handleImageClick = (idx) => {
+        setSelectedIndex(idx);
+    };
 
     return (
         <div className={styles.container}>
@@ -93,7 +132,7 @@ export default function LookbookClient() {
             ) : (
                 <motion.div className={styles.grid} layout>
                     <AnimatePresence mode="popLayout">
-                        {filteredImages.map((img) => (
+                        {filteredImages.map((img, index) => (
                             <motion.div
                                 key={img.id}
                                 layout
@@ -102,6 +141,7 @@ export default function LookbookClient() {
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.4 }}
                                 className={styles.imageCard}
+                                onClick={() => handleImageClick(index)}
                             >
                                 <Image
                                     src={img.image_url}
@@ -125,6 +165,40 @@ export default function LookbookClient() {
                     No works catalogued strictly under "{activeTab}" yet.
                 </div>
             )}
+
+            {/* Lightbox Overlay */}
+            <AnimatePresence>
+                {selectedIndex !== null && (
+                    <motion.div
+                        className={styles.lightboxOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <button className={styles.lightboxCloseButton} onClick={() => setSelectedIndex(null)}>
+                            <X size={40} />
+                        </button>
+
+                        <button className={`${styles.lightboxNavButton} ${styles.lightboxNavLeft}`} onClick={(e) => { e.stopPropagation(); handlePrev(); }}>
+                            <ChevronLeft size={32} />
+                        </button>
+
+                        <div className={styles.lightboxImageContainer}>
+                            <Image
+                                src={filteredImages[selectedIndex].image_url}
+                                alt={filteredImages[selectedIndex].title || "Lookbook HD"}
+                                fill
+                                className={styles.lightboxImage}
+                                unoptimized={true} // bypasses Next.js image resizing so it loads max-res
+                            />
+                        </div>
+
+                        <button className={`${styles.lightboxNavButton} ${styles.lightboxNavRight}`} onClick={(e) => { e.stopPropagation(); handleNext(); }}>
+                            <ChevronRight size={32} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
