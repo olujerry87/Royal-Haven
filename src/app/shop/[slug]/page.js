@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/woocommerce";
 import ProductDetailClient from "./ProductDetailClient";
 
+// Force-dynamic: product pages always fetch fresh data from WooCommerce
+// This ensures custom fields and gallery images are never stale-cached.
+export const dynamic = 'force-dynamic';
+
 // In Next.js 15, params is a Promise that needs to be awaited
 export default async function ProductPage({ params }) {
     // Await params in Next.js 15+
@@ -30,13 +34,14 @@ export default async function ProductPage({ params }) {
             ? product.images.map(img => img.src)
             : ['/images/placeholder.jpg'],
         slug: product.slug,
+        short_description: product.short_description || '',
         description: product.description || product.short_description || '',
-        // Extract attributes (like Size)
         attributes: product.attributes || [],
-        // WooCommerce specific data
         sku: product.sku || '',
         stock_status: product.stock_status || 'instock',
         categories: product.categories || [],
+        // ✅ Pass WooCommerce custom fields (rh_origin, rh_fabric, rh_care, rh_styling, rh_ntag_id)
+        meta_data: product.meta_data || [],
     };
 
     return <ProductDetailClient product={transformedProduct} />;
