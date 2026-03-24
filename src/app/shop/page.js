@@ -5,6 +5,8 @@ import styles from "./page.module.css";
 import { getProducts } from "@/lib/woocommerce";
 import ShopClient from "./ShopClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Shop() {
     // Fetch products from WooCommerce (Server Component)
     let products = [];
