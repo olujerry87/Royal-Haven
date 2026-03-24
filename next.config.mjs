@@ -11,6 +11,18 @@ const nextConfig = BuilderDevTools()({
         pathname: "/wp-content/uploads/**",
       },
       {
+        protocol: "https",
+        hostname: "royalhavencms.bezaleelgroup.ca",
+        port: "",
+        pathname: "/wp-content/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.bezaleelgroup.ca",
+        port: "",
+        pathname: "/wp-content/uploads/**",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },
