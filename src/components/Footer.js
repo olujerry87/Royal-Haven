@@ -58,7 +58,11 @@ export default function Footer() {
                         <div className={styles.socials}>
                             <a href="#" aria-label="Instagram"><Instagram size={20} /></a>
                             <a href="#" aria-label="Facebook"><Facebook size={20} /></a>
-                            <a href="mailto:hello@wuraewa.com" aria-label="Email"><Mail size={20} /></a>
+                            <a href="mailto:royalhaven.ng@gmail.com" aria-label="Email"><Mail size={20} /></a>
+                        </div>
+                        <div style={{ marginTop: '0.5rem', marginBottom: '1.5rem', fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <p>royalhaven.ng@gmail.com</p>
+                            <p>+1 (613) 286-0661</p>
                         </div>
                         <div className={styles.newsletter}>
                             <p>Subscribe for exclusive updates.</p>

@@ -45,7 +45,7 @@ export default function AboutClient({ page }) {
         ],
         journey: {
             heading: getVal('journey_heading', 'The Journey'),
-            text: getVal('journey_text', 'Founded in 2024, Wura & Ewa started as a dual passion project. What began as a small collection of bespoke outfits and freelance makeup artistry has grown into a full-service lifestyle brand, serving clients who seek authenticity in what they wear and how they present themselves to the world.'),
+            text: getVal('journey_text', 'Founded in 2017 in Nigeria, Wura & Ewa began as a passion project exploring the duality of fashion and artistry. Evolving significantly over the years, the brand was formally refounded in Canada in 2026, bringing its rich African heritage to a global audience.'),
             quote: getVal('journey_quote', '"We don\'t just dress you; we adorn you."')
         }
     };
@@ -183,7 +183,7 @@ export default function AboutClient({ page }) {
                         <Link href="/shop" className="btn-primary">
                             Shop Wura Collection
                         </Link>
-                        <Link href="/services" className="btn-primary" style={{ backgroundColor: 'transparent', color: 'var(--obsidian)', borderColor: 'var(--obsidian)' }}>
+                        <Link href="/services" className="btn-primary">
                             Book Ewa Services
                         </Link>
                     </div>

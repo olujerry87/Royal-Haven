@@ -162,6 +162,24 @@
 }
 
 /* Responsive */
+.detailsBtn {
+    display: inline-block;
+    border: 1px solid var(--charcoal);
+    color: var(--charcoal);
+    padding: 0.8rem 2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.detailsBtn:hover {
+    background-color: var(--obsidian);
+    color: var(--off-white);
+    border-color: var(--obsidian);
+}
+
 @media (min-width: 768px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);

@@ -117,7 +117,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                     </div>
 
                     <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                        <Link href="/services/details" className="btn-secondary" style={{ display: 'inline-block', border: '1px solid var(--charcoal)', color: 'var(--charcoal)', padding: '0.8rem 2rem', textDecoration: 'none', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '2px' }}>
+                        <Link href="/services/details" className={styles.detailsBtn}>
                             View Detailed Pricing
                         </Link>
                     </div>

@@ -20,9 +20,9 @@ export default function BookClient({ page }) {
             text: getVal('intro_text', 'Whether it’s for your big day, a creative project, or a personal makeover, we are here to bring your vision to life.')
         },
         contact: {
-            email: getVal('contact_email', 'bookings@wuraandewa.com'),
-            phone: getVal('contact_phone', '+234 800 ROYALTY'),
-            address: getVal('contact_address', 'Lekki Phase 1, Lagos, Nigeria')
+            email: getVal('contact_email', 'royalhaven.ng@gmail.com'),
+            phone: getVal('contact_phone', '+1 (613) 286-0661'),
+            address: getVal('contact_address', 'Ottawa, ON, Canada')
         },
         content: page?.content?.rendered || null
     };
