@@ -105,7 +105,7 @@ export default function DetailsClient() {
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                                         {service.pricing.map((group, i) => (
                                             <div key={i}>
-                                                {group.category && <h4 style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', color: 'var(--gold)', marginBottom: '0.5rem' }}>{group.category}</h4>}
+                                                {group.category && <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--off-white)', marginBottom: '0.2rem', marginTop: i > 0 ? '1rem' : '0' }}>{group.category}</p>}
                                                 <ol style={{ paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--off-white)' }}>
                                                     {group.items.map((item, j) => (
                                                         <li key={j}>

@@ -5,33 +5,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import styles from "./page.module.css";
 
-const PRICING_LIST = [
-    {
-        category: "Hair",
-        items: [
-            { name: "Corn rows (No extension)", price: "from $40" },
-            { name: "Braids / twist (No extension)", price: "from $70" },
-            { name: "Updo / Styling (No extension)", price: "from $50" },
-            { name: "Corn rows (With extensions)", price: "from $100" },
-            { name: "Braids / twist (With extensions)", price: "from $120" },
-        ]
-    },
-    {
-        category: "Makeup",
-        items: [
-            { name: "Basic glam", price: "from $70" },
-            { name: "Bridal / Celebrant glam", price: "from $120" },
-            { name: "Editorial / half day shoot", price: "from $400" },
-        ]
-    },
-    {
-        category: "Gele",
-        items: [
-            { name: "Basic", price: "from $30" },
-            { name: "Detailed / elaborate styles", price: "from $50" },
-            { name: "Event (over 5 people)", price: "from $25 per person" },
-        ]
-    }
+const GENERAL_PRICING = [
+    { title: "Hair Artistry", price: "from $40" },
+    { title: "Makeup & Glam", price: "from $70" },
+    { title: "Gele Tying", price: "from $25" }
 ];
 
 export default function ServicesClient({ page, portfolio, testimonials }) {
@@ -130,22 +107,19 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                         <h2>Service Menu</h2>
                     </div>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', maxWidth: '800px', margin: '0 auto' }}>
-                        {PRICING_LIST.map((group, idx) => (
-                            <div key={idx}>
-                                <h3 style={{ fontFamily: 'var(--font-heritage)', fontSize: '2rem', color: 'var(--gold)', marginBottom: '1.5rem', textAlign: 'center', borderBottom: '1px solid rgba(212,175,55,0.3)', paddingBottom: '0.5rem' }}>
-                                    {group.category}
-                                </h3>
-                                <div className={styles.menuList} style={{ gap: '1rem' }}>
-                                    {group.items.map((item, index) => (
-                                        <div key={index} className={styles.menuItem} style={{ borderBottom: '1px dashed rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                                            <span className={styles.itemTitle} style={{ fontSize: '1.05rem', color: 'var(--off-white)' }}>{item.name}</span>
-                                            <span className={styles.itemPrice} style={{ fontSize: '1.05rem', fontWeight: 500 }}>{item.price}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+                        {GENERAL_PRICING.map((item, index) => (
+                            <div key={index} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '1rem', paddingTop: '1rem' }}>
+                                <span style={{ fontFamily: 'var(--font-body)', fontSize: '1.2rem', color: 'var(--obsidian)' }}>{item.title}</span>
+                                <span style={{ fontFamily: 'var(--font-body)', fontSize: '1.2rem', fontWeight: 500, color: 'var(--charcoal)' }}>{item.price}</span>
                             </div>
                         ))}
+                    </div>
+
+                    <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                        <Link href="/services/details" className="btn-secondary" style={{ display: 'inline-block', border: '1px solid var(--charcoal)', color: 'var(--charcoal)', padding: '0.8rem 2rem', textDecoration: 'none', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '2px' }}>
+                            View Detailed Pricing
+                        </Link>
                     </div>
 
                     <div style={{ marginTop: '4rem', padding: '2rem', background: 'var(--gold)', color: 'var(--obsidian)', borderRadius: '8px', textAlign: 'center' }}>
