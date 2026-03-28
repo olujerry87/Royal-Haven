@@ -7,7 +7,9 @@ import ShopClient from "./ShopClient";
 
 export const dynamic = 'force-dynamic';
 
-export default async function Shop() {
+export default async function Shop({ searchParams }) {
+    const sParams = await searchParams;
+    const categoryQuery = sParams?.category || "All";
     // Fetch products from WooCommerce (Server Component)
     let products = [];
     let error = null;
@@ -38,7 +40,7 @@ export default async function Shop() {
                     <p>Add products in your WordPress admin: WooCommerce → Products</p>
                 </div>
             ) : (
-                <ShopClient products={products} />
+                <ShopClient products={products} initialCategory={categoryQuery} />
             )}
 
             <Reviews />

@@ -4,8 +4,8 @@ import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import styles from "./page.module.css";
 
-export default function ShopClient({ products }) {
-    const [activeCategory, setActiveCategory] = useState("All");
+export default function ShopClient({ products, initialCategory = "All" }) {
+    const [activeCategory, setActiveCategory] = useState(initialCategory);
 
     // Extract unique categories from WooCommerce products
     const wcCategories = products.flatMap(p =>
