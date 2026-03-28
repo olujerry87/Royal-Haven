@@ -84,9 +84,9 @@ export default function Navigation({ wuraCategories = [] }) {
                             <div className={styles.megaContent}>
                                 <div className={styles.column}>
                                     <h3>Services</h3>
-                                    <Link href="/services#makeup">Makeup</Link>
-                                    <Link href="/services#hair">Hair</Link>
-                                    <Link href="/services#gele">Gele</Link>
+                                    <Link href="/services/details#makeup">Makeup</Link>
+                                    <Link href="/services/details#hair">Hair</Link>
+                                    <Link href="/services/details#gele">Gele</Link>
                                 </div>
                                 <div className={styles.column}>
                                     <h3>Studio</h3>
@@ -166,9 +166,9 @@ export default function Navigation({ wuraCategories = [] }) {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingLeft: '1.2rem', borderLeft: '1px solid rgba(212,175,55,0.4)' }}>
                                 <Link href="/lookbook" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem', color: 'var(--gold)' }}>✦ Lookbook</Link>
                                 <Link href="/services/book" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Book Appointment</Link>
-                                <Link href="/services#makeup" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Makeup</Link>
-                                <Link href="/services#hair" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Hair</Link>
-                                <Link href="/services#gele" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Gele</Link>
+                                <Link href="/services/details#makeup" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Makeup</Link>
+                                <Link href="/services/details#hair" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Hair</Link>
+                                <Link href="/services/details#gele" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Gele</Link>
                             </div>
                         )}
 
