@@ -58,7 +58,12 @@ export default function LookbookClient() {
 
     const filteredImages = activeTab === "All" 
         ? images 
-        : images.filter(img => img.category === activeTab);
+        : images.filter(img => {
+            if (!img.category) return false;
+            // Support comma-separated categories (e.g. "Hair, Makeup") and case-insensitivity
+            const categories = img.category.split(',').map(c => c.trim().toLowerCase());
+            return categories.includes(activeTab.toLowerCase());
+        });
 
     // Lightbox Keyboard Listeners
     const handleKeyDown = useCallback(
