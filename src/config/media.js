@@ -27,7 +27,7 @@ export const SITE_MEDIA = {
         center_model: "/images/ewa-idle.jpg",
         duality_wura: "/images/wura-idle.jpg",
         duality_ewa: "/images/ewa-idle.jpg",
-        
+
         // Floating "Living Heritage" Cards
         floating_cards: {
             precision_cut: "/images/spotlight.jpg",
@@ -62,7 +62,7 @@ export const SITE_MEDIA = {
 
     // Lookbook Page
     lookbook: {
-        hero: "/images/spotlight.jpg",
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif",
     },
 
     // UI Fallbacks / Placeholders
