@@ -23,6 +23,10 @@ const nextConfig = BuilderDevTools()({
         pathname: "/wp-content/uploads/**",
       },
       {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },
