@@ -48,8 +48,8 @@ export const SITE_MEDIA = {
 
         // Selected Works Portfolio
         portfolio: [
-            { id: 1, image: "/images/spotlight.jpg", title: "Bridal Glamour" },
-            { id: 2, image: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/card.jpg", title: "Editorial Campaign" },
+            { id: 1, image: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/c2.jpeg", title: "Bridal Glamour" },
+            { id: 2, image: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/c1.jpg", title: "Editorial Campaign" },
             { id: 3, image: "/images/ewa-idle.jpg", title: "Traditional Elegance" },
             { id: 4, image: "/images/journal.jpg", title: "Studio Portraits" }
         ]
