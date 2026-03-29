@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import styles from "./LookbookClient.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -103,9 +104,17 @@ export default function LookbookClient() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
+                style={{ 
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${SITE_MEDIA.lookbook.hero})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    padding: '8rem 2rem',
+                    borderRadius: '12px',
+                    marginBottom: '3rem'
+                }}
             >
-                <h1 className={styles.title}>The Artistry</h1>
-                <p className={styles.subtitle}>
+                <h1 className={styles.title} style={{ color: 'var(--off-white)' }}>The Artistry</h1>
+                <p className={styles.subtitle} style={{ color: 'rgba(255,255,255,0.8)' }}>
                     A curated reflection of our signature styling, crafted to elevate heritage into modern luxury.
                 </p>
             </motion.div>

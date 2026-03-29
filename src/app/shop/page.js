@@ -4,6 +4,7 @@ import Reviews from "@/components/Reviews";
 import styles from "./page.module.css";
 import { getProducts } from "@/lib/woocommerce";
 import ShopClient from "./ShopClient";
+import { SITE_MEDIA } from "@/config/media";
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,7 @@ export default async function Shop({ searchParams }) {
             <Hero
                 title="The Collection"
                 subtitle="Heritage Woven Into Modern Silhouettes"
-                imagePath="/images/shop-hero.jpg"
+                imagePath={SITE_MEDIA.shop.hero}
             />
 
             {error ? (

@@ -24,12 +24,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
             id: item.id,
             image: item.acf?.image || item.featured_media_url || SITE_MEDIA.placeholders.product,
             title: item.title?.rendered || "Portfolio Item"
-        })) : [
-            { id: 1, image: SITE_MEDIA.services.hair_banner, title: "Bridal Glamour" },
-            { id: 2, image: SITE_MEDIA.services.makeup_banner, title: "Editorial Campaign" },
-            { id: 3, image: SITE_MEDIA.heritage.duality_ewa, title: "Traditional Elegance" },
-            { id: 4, image: SITE_MEDIA.home.spotlight_2, title: "Studio Portraits" }
-        ],
+        })) : SITE_MEDIA.services.portfolio,
         testimonials: testimonials && testimonials.length > 0 ? testimonials.map(item => ({
             id: item.id,
             quote: item.content?.rendered?.replace(/<[^>]+>/g, '') || "Testimonial content",

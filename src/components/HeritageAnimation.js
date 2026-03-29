@@ -5,16 +5,17 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Scissors, Feather, Gem, Sparkles, User, Palette, Image as ImageIcon } from "lucide-react";
 import styles from "./HeritageAnimation.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 // You can swap the 'image_url' fields below with your public Supabase Storage bucket URLs!
 // e.g., "https://xyz.supabase.co/storage/v1/object/public/royal_haven_assets/hero/precision-cut.png"
 const floatingElements = [
-    { id: 1, text: "Precision Cut", icon: Scissors, x: -250, y: -150, image_url: null },
-    { id: 2, text: "Silk Textures", icon: Feather, x: 250, y: -150, image_url: null },
-    { id: 3, text: "Royal Gems", icon: Gem, x: -300, y: 0, image_url: null },
-    { id: 4, text: "Artistic Vision", icon: Palette, x: 300, y: 0, image_url: null },
-    { id: 5, text: "Custom Fit", icon: User, x: -250, y: 150, image_url: null },
-    { id: 6, text: "Beaded Detail", icon: Sparkles, x: 250, y: 150, image_url: null },
+    { id: 1, text: "Precision Cut", icon: Scissors, x: -250, y: -150, image_url: SITE_MEDIA.heritage.floating_cards.precision_cut },
+    { id: 2, text: "Silk Textures", icon: Feather, x: 250, y: -150, image_url: SITE_MEDIA.heritage.floating_cards.silk_textures },
+    { id: 3, text: "Royal Gems", icon: Gem, x: -300, y: 0, image_url: SITE_MEDIA.heritage.floating_cards.royal_gems },
+    { id: 4, text: "Artistic Vision", icon: Palette, x: 300, y: 0, image_url: SITE_MEDIA.heritage.floating_cards.artistic_vision },
+    { id: 5, text: "Custom Fit", icon: User, x: -250, y: 150, image_url: SITE_MEDIA.heritage.floating_cards.custom_fit },
+    { id: 6, text: "Beaded Detail", icon: Sparkles, x: 250, y: 150, image_url: SITE_MEDIA.heritage.floating_cards.beaded_detail },
 ];
 
 function FloatingCard({ item, index, isMobile }) {
