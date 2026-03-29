@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Facebook, Mail } from "lucide-react";
 import styles from "./Footer.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function Footer() {
     return (
@@ -14,7 +15,7 @@ export default function Footer() {
                     <div className={styles.column}>
                         <div className={styles.brandWrapper}>
                             <Image
-                                src="/logos/header-logo.png"
+                                src={SITE_MEDIA.logos.footer}
                                 alt="Wura & Ewa"
                                 width={315}
                                 height={60}

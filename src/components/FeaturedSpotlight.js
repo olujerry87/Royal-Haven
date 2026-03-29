@@ -5,9 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./FeaturedSpotlight.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function FeaturedSpotlight({
-    imagePath = "/images/spotlight.jpg",
+    imagePath = SITE_MEDIA.placeholders.spotlight,
     title = "Set For Effortless Intentions",
     description = "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
     ctaText = "Explore",

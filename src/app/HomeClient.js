@@ -12,6 +12,7 @@ import FeaturedSpotlight from "@/components/FeaturedSpotlight";
 import FAQ from "@/components/FAQ";
 import Reviews from "@/components/Reviews";
 import ScrollProgress from "@/components/ScrollProgress";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function HomeClient({ 
     acf,
@@ -31,16 +32,16 @@ export default function HomeClient({
     // Fallback data if ACF/Builder is missing/empty
     const data = {
         wura: {
-            bgImage: wuraBgImage || acf?.wura_bg_image || "/images/wura-idle.jpg",
-            bgVideo: wuraBgVideo || acf?.wura_bg_video || "/videos/wura-bg.mp4",
-            logo: acf?.wura_logo || "/logos/wura-logo.png",
+            bgImage: wuraBgImage || acf?.wura_bg_image || SITE_MEDIA.heritage.duality_wura,
+            bgVideo: wuraBgVideo || acf?.wura_bg_video || SITE_MEDIA.home.hero_video,
+            logo: acf?.wura_logo || SITE_MEDIA.logos.wura,
             subtitle: wuraSubtitle || acf?.wura_subtitle || "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
             link: acf?.wura_link || "/shop"
         },
         ewa: {
-            bgImage: ewaBgImage || acf?.ewa_bg_image || "/images/ewa-idle.jpg",
-            bgVideo: ewaBgVideo || acf?.ewa_bg_video || "/videos/ewa-bg.mp4",
-            logo: acf?.ewa_logo || "/logos/ewa-logo.png",
+            bgImage: ewaBgImage || acf?.ewa_bg_image || SITE_MEDIA.heritage.duality_ewa,
+            bgVideo: ewaBgVideo || acf?.ewa_bg_video || SITE_MEDIA.home.hero_video,
+            logo: acf?.ewa_logo || SITE_MEDIA.logos.ewa,
             subtitle: ewaSubtitle || acf?.ewa_subtitle || "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
             link: acf?.ewa_link || "/services"
         },
@@ -59,11 +60,11 @@ export default function HomeClient({
         spotlight1: {
             title: spotlight1Title || acf?.spotlight_1_title || "Set For Effortless Intentions",
             description: spotlight1Desc || acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
-            image: spotlight1Image || acf?.spotlight_1_image || "/images/spotlight.jpg",
+            image: spotlight1Image || acf?.spotlight_1_image || SITE_MEDIA.home.spotlight_1,
             link: acf?.spotlight_1_link || "/shop"
         },
         spotlight2: {
-            image: spotlight2Image || acf?.spotlight_2_image || "/images/journal.jpg",
+            image: spotlight2Image || acf?.spotlight_2_image || SITE_MEDIA.home.spotlight_2,
             link: acf?.spotlight_2_link || null
         }
     };

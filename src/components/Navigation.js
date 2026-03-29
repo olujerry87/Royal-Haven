@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, ShoppingBag, Calendar } from "lucide-react";
 import styles from "./Navigation.module.css";
 import { useCart } from "@/context/CartContext";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function Navigation({ wuraCategories = [] }) {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +32,7 @@ export default function Navigation({ wuraCategories = [] }) {
                 <div className={styles.logo}>
                     <Link href="/">
                         <Image
-                            src="/logos/header-logo.png"
+                            src={SITE_MEDIA.logos.header}
                             alt="Wura & Ewa"
                             width={210}
                             height={40}

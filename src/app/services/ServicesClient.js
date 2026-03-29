@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import styles from "./page.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 const GENERAL_PRICING = [
     { title: "Hair Artistry", price: "from $40" },
@@ -16,18 +17,18 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
     const data = {
         title: page?.acf?.hero_title || "Artistry Services",
         subtitle: page?.acf?.hero_subtitle || "Bridal, Editorial, and Bespoke Beauty",
-        heroImage: page?.acf?.hero_image || "/images/spotlight.jpg",
+        heroImage: page?.acf?.hero_image || SITE_MEDIA.services.hero,
         introTitle: page?.acf?.intro_title || "The Ewa Experience",
         introText: page?.acf?.intro_text || "We believe that beauty is an art form. Our approach is rooted in enhancing your natural essence while delivering a polished, high-editorial finish. Whether you are walking down the aisle or stepping onto a set, Ewa ensures you look—and feel—radiant.",
         portfolio: portfolio && portfolio.length > 0 ? portfolio.map(item => ({
             id: item.id,
-            image: item.acf?.image || item.featured_media_url || "/images/spotlight.jpg",
+            image: item.acf?.image || item.featured_media_url || SITE_MEDIA.placeholders.product,
             title: item.title?.rendered || "Portfolio Item"
         })) : [
-            { id: 1, image: "/images/spotlight.jpg", title: "Bridal Glamour" },
-            { id: 2, image: "/images/banner-1.jpg", title: "Editorial Campaign" },
-            { id: 3, image: "/images/ewa-idle.jpg", title: "Traditional Elegance" },
-            { id: 4, image: "/images/journal.jpg", title: "Studio Portraits" }
+            { id: 1, image: SITE_MEDIA.services.hair_banner, title: "Bridal Glamour" },
+            { id: 2, image: SITE_MEDIA.services.makeup_banner, title: "Editorial Campaign" },
+            { id: 3, image: SITE_MEDIA.heritage.duality_ewa, title: "Traditional Elegance" },
+            { id: 4, image: SITE_MEDIA.home.spotlight_2, title: "Studio Portraits" }
         ],
         testimonials: testimonials && testimonials.length > 0 ? testimonials.map(item => ({
             id: item.id,

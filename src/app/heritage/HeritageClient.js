@@ -8,6 +8,7 @@ import styles from "./page.module.css";
 import WeatherStyling from "@/components/passport/WeatherStyling";
 import WardrobeWidget from "@/components/wardrobe/WardrobeWidget";
 import SocialShare from "@/components/passport/SocialShare";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function AboutClient({ page }) {
     // Fallback data
@@ -20,14 +21,14 @@ export default function AboutClient({ page }) {
         hero: {
             title: getVal('hero_title', 'Our Heritage'),
             subtitle: getVal('hero_subtitle', 'The Convergence of Fashion & Artistry'),
-            image: getVal('hero_image', '/images/spotlight.jpg')
+            image: getVal('hero_image', SITE_MEDIA.heritage.hero)
         },
         duality: {
             heading: getVal('duality_heading', 'Two Worlds. One Vision.'),
             lead: getVal('duality_lead', 'Wura & Ewa was born from the desire to merge the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.'),
             text: getVal('duality_text', '"Wura" (Gold) represents our clothing line—precious, timeless, and forged with intent. "Ewa" (Beauty) embodies our artistry services—enhancing the natural essence of every individual. Together, they form a sanctuary of style known as Royal Haven, a subsidary of Bezaleel Group.'),
-            image1: getVal('duality_image_1', '/images/wura-idle.jpg'),
-            image2: getVal('duality_image_2', '/images/ewa-idle.jpg')
+            image1: getVal('duality_image_1', SITE_MEDIA.heritage.duality_wura),
+            image2: getVal('duality_image_2', SITE_MEDIA.heritage.duality_ewa)
         },
         values: [
             {

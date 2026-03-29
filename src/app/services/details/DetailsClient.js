@@ -5,12 +5,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import styles from "../page.module.css";
 import Image from "next/image";
+import { SITE_MEDIA } from "@/config/media";
 
 const SERVICES = [
     {
         id: "hair",
         title: "Hair Artistry",
-        image: "/images/ewa-idle.jpg",
+        image: SITE_MEDIA.services.hair_banner,
         description: "From sleek updos to intricate braids, we offer premium hair styling that celebrates your crown.",
         pricing: [
             { category: "No Extension", items: [
@@ -27,7 +28,7 @@ const SERVICES = [
     {
         id: "makeup",
         title: "Makeup & Glam",
-        image: "/images/banner-1.jpg", 
+        image: SITE_MEDIA.services.makeup_banner,
         description: "Enhance your natural essence with our high-end, editorial approach to beauty. Flawless, radiant skin for your most important moments.",
         pricing: [
             { category: "", items: [
@@ -40,7 +41,7 @@ const SERVICES = [
     {
         id: "gele",
         title: "Gele Tying",
-        image: "/images/spotlight.jpg", 
+        image: SITE_MEDIA.services.gele_banner,
         description: "The crown jewel of traditional African attire. Our Gele art is sculpted to perfection, framing your face beautifully.",
         pricing: [
             { category: "", items: [
@@ -58,7 +59,7 @@ export default function DetailsClient() {
             <Hero
                 title="Artistry Details"
                 subtitle="The Ewa Experience"
-                imagePath="/images/spotlight.jpg"
+                imagePath={SITE_MEDIA.services.hero}
             />
 
             <div className={styles.container}>
