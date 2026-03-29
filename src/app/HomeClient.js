@@ -58,7 +58,7 @@ export default function HomeClient({
         })) : undefined, // undefined triggers default in component
         spotlight1: {
             title: spotlight1Title || acf?.spotlight_1_title || "Set For Effortless Intentions",
-            description: spotlight1Desc || acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed for moments of pure clarity.",
+            description: spotlight1Desc || acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
             image: spotlight1Image || acf?.spotlight_1_image || "/images/spotlight.jpg",
             link: acf?.spotlight_1_link || "/shop"
         },

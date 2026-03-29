@@ -60,7 +60,7 @@ export default function BookClient({ page }) {
                             <div className={styles.contactItem}>
                                 <div className={styles.iconWrapper}><MapPin size={20} /></div>
                                 <div>
-                                    <h3>Visit Our Studio</h3>
+                                    <h3>Base Operations</h3>
                                     <p>{data.contact.address}</p>
                                 </div>
                             </div>

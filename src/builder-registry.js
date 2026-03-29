@@ -24,7 +24,7 @@ Builder.registerComponent(HomeClient, {
         { name: "ewaBgImage", type: "file", allowedFileTypes: ["jpeg", "jpg", "png", "webp"], defaultValue: "/images/ewa-idle.jpg" },
         { name: "ewaBgVideo", type: "file", allowedFileTypes: ["mp4", "webm"], defaultValue: "/videos/ewa-bg.mp4" },
         { name: "spotlight1Title", type: "string", defaultValue: "Set For Effortless Intentions" },
-        { name: "spotlight1Desc", type: "text", defaultValue: "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed." },
+        { name: "spotlight1Desc", type: "text", defaultValue: "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention." },
         { name: "spotlight1Image", type: "file", allowedFileTypes: ["jpeg", "jpg", "png", "webp"], defaultValue: "/images/spotlight.jpg" },
         { name: "spotlight2Image", type: "file", allowedFileTypes: ["jpeg", "jpg", "png", "webp"], defaultValue: "/images/journal.jpg" },
     ],
@@ -134,7 +134,7 @@ Builder.registerComponent(FeaturedSpotlight, {
     name: "Featured Spotlight",
     inputs: [
         { name: "title", type: "string", defaultValue: "Set For Effortless Intentions" },
-        { name: "description", type: "text", defaultValue: "Move with purpose. Breathe with ease. <br /> Our new Heritage Silk collection is designed for moments of pure clarity." },
+        { name: "description", type: "text", defaultValue: "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention." },
         { name: "ctaText", type: "string", defaultValue: "Explore The Collection" },
         { name: "ctaLink", type: "string", defaultValue: "/shop" },
         { name: "imagePath", type: "file", allowedFileTypes: ["jpeg", "jpg", "png", "webp"], defaultValue: "/images/spotlight.jpg" },
@@ -154,7 +154,8 @@ Builder.registerComponent(FAQ, {
             ],
             defaultValue: [
                 { question: "How do I book an appointment with Ewa?", answer: "You can book directly through our Services page." },
-                { question: "Can I request custom measurements?", answer: "Absolutely. Many of our Heritage pieces can be tailored." }
+                { question: "Can I request custom measurements?", answer: "Absolutely. Many of our Heritage pieces can be tailored." },
+                { question: "Do you offer international shipping for Wura lines?", answer: "Yes, we ship globally. Shipping times vary by location, but typically range from 10-21 business days for international orders." }
             ]
         }
     ],

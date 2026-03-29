@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User, UserPlus, Sparkles } from "lucide-react";
+import { Venus, Mars, Sparkles } from "lucide-react";
 import styles from "./IdentityPicker.module.css";
 
 export default function IdentityPicker({ onSelect }) {
@@ -21,7 +21,7 @@ export default function IdentityPicker({ onSelect }) {
                     onClick={() => onSelect("female")}
                 >
                     <div className={styles.iconCircle}>
-                        <User size={40} strokeWidth={1.5} />
+                        <Venus size={40} strokeWidth={1.5} />
                     </div>
                     <span>Female</span>
                 </motion.button>
@@ -33,7 +33,7 @@ export default function IdentityPicker({ onSelect }) {
                     onClick={() => onSelect("male")}
                 >
                     <div className={styles.iconCircle}>
-                        <UserPlus size={40} strokeWidth={1.5} />
+                        <Mars size={40} strokeWidth={1.5} />
                     </div>
                     <span>Male / Unisex</span>
                 </motion.button>

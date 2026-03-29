@@ -12,7 +12,7 @@ const defaultFaqs = [
     },
     {
         question: "Do you offer international shipping for Wura lines?",
-        answer: "Yes, we ship globally. Shipping times vary by location, but typically range from 5-10 business days for international orders."
+        answer: "Yes, we ship globally. Shipping times vary by location, but typically range from 10-21 business days for international orders."
     },
     {
         question: "Can I request custom measurements and full customized outfits?",
