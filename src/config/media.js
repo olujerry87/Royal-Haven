@@ -24,6 +24,7 @@ export const SITE_MEDIA = {
     // Heritage Page
     heritage: {
         hero: "/images/spotlight.jpg",
+        center_model: "/images/ewa-idle.jpg",
         duality_wura: "/images/wura-idle.jpg",
         duality_ewa: "/images/ewa-idle.jpg",
         

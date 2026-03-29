@@ -80,7 +80,17 @@ export default function HeritageAnimation() {
                     transition={{ duration: 1 }}
                     viewport={{ once: true }}
                 >
-                    <div>Living Heritage</div>
+                    {SITE_MEDIA.heritage.center_model ? (
+                        <Image 
+                            src={SITE_MEDIA.heritage.center_model} 
+                            alt="Living Heritage" 
+                            fill 
+                            style={{ objectFit: 'cover' }} 
+                            unoptimized 
+                        />
+                    ) : (
+                        <div>Living Heritage</div>
+                    )}
                 </motion.div>
 
 
