@@ -1,8 +1,9 @@
 .container {
     min-height: 100vh;
-    padding: 8rem 2rem 4rem;
+    padding: 0 0 4rem;
     background-color: var(--obsidian);
     color: var(--off-white);
+    overflow-x: hidden;
 }
 
 .header {
@@ -35,8 +36,6 @@
 }
 
 .tab {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--stone);
     padding: 0.8rem 2rem;
     border-radius: 30px;
@@ -44,7 +43,6 @@
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;

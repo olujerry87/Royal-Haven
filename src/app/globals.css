@@ -11,22 +11,14 @@
   --stone: #E5E5E5;
   --charcoal: #333333;
 
-  /* Liquid Glass System (iOS 26.6 Style) */
-  --glass-bg-light: rgba(255, 255, 255, 0.45);
-  --glass-bg-dark: rgba(11, 11, 11, 0.45);
-  --glass-ios-bg: rgba(255, 255, 255, 0.15);
-  --glass-ios-border: 1px solid rgba(255, 255, 255, 0.2);
-  --glass-ios-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  --glass-ios-blur: blur(20px) saturate(180%);
-  --glass-border: var(--glass-ios-border);
-  --glass-blur: var(--glass-ios-blur);
-  --glass-shadow: var(--glass-ios-shadow);
-  --glass-highlight: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.1) 100%);
-  --glass-reflection: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0) 40%);
+  /* Liquid Glass System (Modern iOS 26.6 Style) */
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(18px) saturate(160%);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  
+  --glass-bg-dark: rgba(0, 0, 0, 0.2);
+  --glass-border-dark: 1px solid rgba(255, 255, 255, 0.1);
 
   /* Typography */
   --font-heritage: var(--font-heritage), serif;
@@ -35,6 +27,30 @@
   /* Spacing & Layout */
   --max-width: 1400px;
   --header-height: 80px;
+}
+
+/* Glassmorphism Utility with Grain */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
 }
 
 * {

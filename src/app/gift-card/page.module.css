@@ -12,13 +12,9 @@
 }
 
 .card {
-    background: var(--obsidian);
-    border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 20px;
     padding: 2.5rem;
     text-align: center;
-    position: relative;
-    overflow: hidden;
     cursor: pointer;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -42,7 +38,6 @@
 .card:hover {
     transform: translateY(-10px) scale(1.02);
     border-color: var(--gold);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.2);
 }
 
 .card:hover::before {
@@ -77,10 +72,8 @@
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-    background: rgba(255, 255, 255, 0.03);
     padding: 3rem;
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .form h2 {
@@ -119,7 +112,8 @@
 
 .selectedCard {
     border-color: var(--gold) !important;
-    background: linear-gradient(135deg, var(--obsidian) 0%, #1a1a1a 100%);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0) 100%) !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2) !important;
 }
 
 .success {

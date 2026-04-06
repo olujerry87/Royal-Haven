@@ -26,7 +26,7 @@ export default function Navigation({ wuraCategories = [] }) {
     }, []);
 
     return (
-        <nav className={`${styles.nav} ${isScrolled ? styles.scrolled : ""}`}>
+        <nav className={`${styles.nav} glass-panel ${isScrolled ? styles.scrolled : ""}`}>
             <div className={styles.container}>
                 {/* Logo */}
                 <div className={styles.logo}>
@@ -150,7 +150,7 @@ export default function Navigation({ wuraCategories = [] }) {
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className={styles.mobileMenu}>
+                <div className={`${styles.mobileMenu} glass-panel`}>
                     <div className={styles.mobileLinks}>
                         <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Wura</Link>
 

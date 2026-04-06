@@ -5,11 +5,20 @@
     width: 100%;
     height: var(--header-height);
     z-index: 1000;
-    transition: background-color 0.3s ease, padding 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    border: none !important;
+    box-shadow: none !important;
     color: var(--off-white);
 }
 
-/* Default state (transparent) assumes dark background or hero image behind it */
+.scrolled {
+    background: var(--glass-bg);
+    height: 70px;
+    border-bottom: var(--glass-border) !important;
+    color: var(--gold);
+}
+
 /* Default state (transparent) assumes dark background or hero image behind it */
 .nav:not(.scrolled) {
     background: var(--glass-ios-bg);

@@ -9,10 +9,9 @@ import { useCart } from "@/context/CartContext";
 import { Gift, Mail, Send, CheckCircle2 } from "lucide-react";
 
 const GIFT_CARDS = [
-    { id: "gift-50", amount: 50, title: "Royal Gift: $50", desc: "A perfect token of appreciation for fine heritage.", wordpress_id: 110 }, // Replace with real IDs later
+    { id: "gift-50", amount: 50, title: "Royal Gift: $50", desc: "A perfect token of appreciation for fine heritage.", wordpress_id: 110 },
     { id: "gift-100", amount: 100, title: "Royal Gift: $100", desc: "Elevate someone's wardrobe with signature elegance.", wordpress_id: 111 },
-    { id: "gift-250", amount: 250, title: "Royal Gift: $250", desc: "The ultimate gesture of artistry and bespoke care.", wordpress_id: 112 },
-    { id: "gift-500", amount: 500, title: "Royal Gift: $500", desc: "An exclusive experience of total luxury and heritage.", wordpress_id: 113 }
+    { id: "gift-250", amount: 250, title: "Royal Gift: $250", desc: "The ultimate gesture of artistry and bespoke care.", wordpress_id: 112 }
 ];
 
 export default function GiftCardPage() {
@@ -61,7 +60,7 @@ export default function GiftCardPage() {
                     {GIFT_CARDS.map((card, idx) => (
                         <motion.div
                             key={card.id}
-                            className={`${styles.card} ${selectedCard?.id === card.id ? styles.selectedCard : ''}`}
+                            className={`${styles.card} glass-panel ${selectedCard?.id === card.id ? styles.selectedCard : ''}`}
                             onClick={() => setSelectedCard(card)}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -88,7 +87,7 @@ export default function GiftCardPage() {
                 <AnimatePresence>
                     {selectedCard && (
                         <motion.form 
-                            className={styles.form}
+                            className={`${styles.form} glass-panel`}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}

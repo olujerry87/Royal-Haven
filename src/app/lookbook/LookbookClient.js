@@ -110,12 +110,18 @@ export default function LookbookClient() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 style={{ 
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${SITE_MEDIA.lookbook.hero})`,
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${SITE_MEDIA.lookbook.hero})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    padding: '8rem 2rem',
-                    borderRadius: '12px',
-                    marginBottom: '3rem'
+                    padding: '10rem 2rem',
+                    width: '100vw',
+                    marginLeft: 'calc(-50vw + 50%)',
+                    borderRadius: '0',
+                    marginBottom: '4rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}
             >
                 <h1 className={styles.title} style={{ color: 'var(--off-white)' }}>The Artistry</h1>
@@ -126,7 +132,7 @@ export default function LookbookClient() {
 
             {/* Glass Navigation Tabs */}
             <motion.div 
-                className={styles.tabContainer}
+                className={`${styles.tabContainer} glass-panel`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
