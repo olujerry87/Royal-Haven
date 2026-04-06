@@ -41,7 +41,7 @@ export const SITE_MEDIA = {
 
     // Services (Ewa Artistry)
     services: {
-        hero: "/images/spotlight.jpg",
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20service.png",
         hair_banner: "/images/ewa-hair.jpg",
         makeup_banner: "/images/ewa-makeup.jpg",
         gele_banner: "/images/ewa-gele.jpg",
