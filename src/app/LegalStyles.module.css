@@ -1,0 +1,116 @@
+.container {
+    min-height: 100vh;
+    background-color: var(--obsidian, #0A0A0A);
+    color: var(--off-white, #FAFAFA);
+    padding: 8rem 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contentWrapper {
+    max-width: 800px;
+    width: 100%;
+}
+
+.header {
+    margin-bottom: 4rem;
+    text-align: left;
+}
+
+.title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-family: var(--font-display, "Outfit", sans-serif);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #FFFFFF, rgba(255, 255, 255, 0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    font-family: var(--font-body, "Inter", sans-serif);
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.section {
+    margin-bottom: 3rem;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 24px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.section:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.section h2 {
+    font-size: 1.8rem;
+    font-family: var(--font-display, "Outfit", sans-serif);
+    margin-bottom: 1.5rem;
+    color: #FFFFFF;
+}
+
+.section h3 {
+    font-size: 1.3rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.section p {
+    font-family: var(--font-body, "Inter", sans-serif);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+.section ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.section li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+}
+
+.section li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background-color: var(--gold, #D4AF37);
+    border-radius: 50%;
+}
+
+.lastUpdated {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 6rem 1rem 3rem;
+    }
+    
+    .section {
+        padding: 1.5rem;
+    }
+}
