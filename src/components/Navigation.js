@@ -30,10 +30,10 @@ export default function Navigation({ wuraCategories = [] }) {
             <div className={styles.container}>
                 {/* Logo */}
                 <div className={styles.logo}>
-                    <Link href="/">
+                    <Link href="/" aria-label="Royal Haven Home">
                         <Image
                             src={SITE_MEDIA.logos.header}
-                            alt="Wura & Ewa"
+                            alt="Royal Haven Logo"
                             width={210}
                             height={40}
                             className={styles.headerLogoImg}
@@ -115,8 +115,8 @@ export default function Navigation({ wuraCategories = [] }) {
                     <Link href="/services/book" className={styles.iconBtn} aria-label="Book Appointment">
                         <Calendar size={20} />
                     </Link>
-                    <Link href="/cart" className={styles.iconBtn} aria-label="Cart" style={{ position: 'relative' }}>
-                        <ShoppingBag size={20} />
+                    <Link href="/cart" className={styles.iconBtn} aria-label={`View Cart, ${cartCount} items`} style={{ position: 'relative' }}>
+                        <ShoppingBag size={20} aria-hidden="true" />
                         {cartCount > 0 && (
                             <span style={{
                                 position: 'absolute',
@@ -140,8 +140,10 @@ export default function Navigation({ wuraCategories = [] }) {
                     <button
                         className={styles.mobileToggle}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
+                        aria-expanded={isMobileMenuOpen}
                     >
-                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isMobileMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
                     </button>
                 </div>
             </div>

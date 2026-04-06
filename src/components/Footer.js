@@ -57,9 +57,9 @@ export default function Footer() {
                     <div className={styles.column}>
                         <h4>Connect</h4>
                         <div className={styles.socials}>
-                            <a href="#" aria-label="Instagram"><Instagram size={20} /></a>
-                            <a href="#" aria-label="Facebook"><Facebook size={20} /></a>
-                            <a href="mailto:royalhaven.ng@gmail.com" aria-label="Email"><Mail size={20} /></a>
+                            <a href="#" aria-label="Follow us on Instagram"><Instagram size={20} /></a>
+                            <a href="#" aria-label="Follow us on Facebook"><Facebook size={20} /></a>
+                            <a href="mailto:royalhaven.ng@gmail.com" aria-label="Send us an Email"><Mail size={20} /></a>
                         </div>
                         <div style={{ marginTop: '0.5rem', marginBottom: '1.5rem', fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
                             <p>royalhaven.ng@gmail.com</p>
@@ -68,8 +68,14 @@ export default function Footer() {
                         <div className={styles.newsletter}>
                             <p>Subscribe for exclusive updates.</p>
                             <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-                                <input type="email" placeholder="Your email" className={styles.input} />
-                                <button type="submit" className={styles.btn}>Join</button>
+                                <label htmlFor="newsletter-email" className="sr-only">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="newsletter-email"
+                                    placeholder="Your email" 
+                                    className={styles.input} 
+                                />
+                                <button type="submit" className={styles.btn} aria-label="Subscribe to newsletter">Join</button>
                             </form>
                         </div>
                     </div>
