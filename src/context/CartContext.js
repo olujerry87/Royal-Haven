@@ -24,7 +24,12 @@ export function CartProvider({ children }) {
 
     const addToCart = (product, size, quantity) => {
         setCart((prevCart) => {
-            // Check if item details (id + size) matches
+            // If the product object already contains everything (like a Gift Card)
+            if (!size && product.recipient_email) {
+                return [...prevCart, { ...product }];
+            }
+
+            // Standard product logic
             const existingItemIndex = prevCart.findIndex(
                 (item) => item.id === product.id && item.size === size
             );
@@ -32,14 +37,14 @@ export function CartProvider({ children }) {
             if (existingItemIndex > -1) {
                 // Update quantity if exists
                 const newCart = [...prevCart];
-                newCart[existingItemIndex].quantity += quantity;
+                newCart[existingItemIndex].quantity += (quantity || product.quantity || 1);
                 return newCart;
             } else {
                 // Add new item
-                return [...prevCart, { ...product, size, quantity }];
+                return [...prevCart, { ...product, size: size || product.size, quantity: quantity || product.quantity || 1 }];
             }
         });
-        setIsCartOpen(true); // Auto open cart/drawer or show feedback
+        setIsCartOpen(true); 
     };
 
     const removeFromCart = (id, size) => {

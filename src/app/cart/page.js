@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Link from "next/link";
 import { Trash2, Minus, Plus, ArrowRight } from "lucide-react";
 import styles from "./page.module.css";
+import { SITE_MEDIA } from "@/config/media";
 
 export default function CartPage() {
     const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
@@ -12,7 +13,11 @@ export default function CartPage() {
     if (cart.length === 0) {
         return (
             <main>
-                <Hero title="Your Bag" subtitle="Is currently empty." />
+                <Hero 
+                    title="Your Bag" 
+                    subtitle="Is currently empty." 
+                    imagePath={SITE_MEDIA.cart.hero}
+                />
                 <div className={styles.emptyState}>
                     <p>Looks like you haven&apos;t discovered our treasures yet.</p>
                     <Link href="/shop" className="btn-primary">
@@ -25,7 +30,11 @@ export default function CartPage() {
 
     return (
         <main>
-            <Hero title="Shopping Bag" subtitle="Review your selection" />
+            <Hero 
+                title="Shopping Bag" 
+                subtitle="Review your selection" 
+                imagePath={SITE_MEDIA.cart.hero}
+            />
 
             <div className={styles.container}>
                 <div className={styles.grid}>

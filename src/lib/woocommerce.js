@@ -125,11 +125,23 @@ export async function getOrderById(orderId) {
  * @param {object} customerData
  */
 export function formatOrderData(cartItems, customerData) {
-    const lineItems = cartItems.map(item => ({
-        product_id: item.id,
-        quantity: item.quantity,
-        meta_data: [{ key: "Size", value: item.size }],
-    }));
+    const lineItems = cartItems.map(item => {
+        const meta = [{ key: "Size", value: item.size }];
+        
+        // Add Gift Card specific metadata
+        if (item.recipient_email) {
+            meta.push({ key: "Recipient Email", value: item.recipient_email });
+        }
+        if (item.message) {
+            meta.push({ key: "Gift Message", value: item.message });
+        }
+
+        return {
+            product_id: item.id,
+            quantity: item.quantity,
+            meta_data: meta,
+        };
+    });
 
     const order = {
         payment_method: "bacs",

@@ -57,7 +57,17 @@ export const SITE_MEDIA = {
 
     // Shop Page
     shop: {
-        hero: "/images/shop-hero.jpg",
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20clothing.jpg",
+    },
+
+    // Cart Page
+    cart: {
+        hero: "/images/spotlight.jpg",
+    },
+
+    // Gift Card Page
+    gift_card: {
+        hero: "/images/spotlight.jpg",
     },
 
     // Lookbook Page
