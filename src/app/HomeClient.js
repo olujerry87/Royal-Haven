@@ -239,6 +239,15 @@ export default function HomeClient({
 
 
 
+            <FeaturedSpotlight
+                title="Your Personal AI Stylist"
+                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically."
+                ctaText="Start Styling"
+                ctaLink="/heritage#styling"
+                imagePath={SITE_MEDIA.home.spotlight_ai}
+                hasGlassCard={true}
+            />
+
             <FAQ />
 
             <FeaturedSpotlight
