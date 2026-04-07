@@ -21,8 +21,8 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 400px;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: var(--off-white) !important;
+    border: 1px solid var(--stone) !important;
 }
 
 .card::before {
@@ -76,7 +76,7 @@
     margin-right: auto;
     padding: 3rem;
     border-radius: 24px;
-    background: rgba(15, 15, 15, 0.95) !important;
+    background: rgba(40, 40, 40, 0.95) !important;
     border: 1px solid var(--gold) !important;
 }
 
@@ -101,12 +101,13 @@
 
 .input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 1rem;
-    color: white;
+    background: rgba(20, 20, 20, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    font-family: var(--font-body);
+    color: white;
+    font-family: inherit;
+    transition: all 0.3s;
 }
 
 .input:focus {
@@ -115,9 +116,10 @@
 }
 
 .selectedCard {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%) !important;
     border-color: var(--gold) !important;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0) 100%) !important;
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2) !important;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
 }
 
 .success {

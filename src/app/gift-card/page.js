@@ -68,18 +68,21 @@ export default function GiftCardPage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                         >
-                            <div className={styles.brand}>ROYAL HAVEN</div>
-                            <div className={styles.amount}>${card.amount}</div>
-                            <div className={styles.description}>{card.desc}</div>
+                            <div className={styles.brand} style={{ color: 'var(--obsidian)' }}>ROYAL HAVEN</div>
+                            <div className={styles.subtitle} style={{ fontSize: '1.2rem', color: 'var(--charcoal)', textTransform: 'uppercase', letterSpacing: '1px' }}>Gift Card</div>
+                            <div className={styles.amount} style={{ color: 'var(--gold)' }}>${card.amount}</div>
+                            <div className={styles.description} style={{ color: 'var(--charcoal)' }}>{card.desc}</div>
                             
                             <button 
                                 className="btn-secondary" 
                                 style={{
-                                    borderColor: selectedCard?.id === card.id ? 'var(--gold)' : '',
-                                    color: selectedCard?.id === card.id ? 'var(--gold)' : 'white'
+                                    borderColor: selectedCard?.id === card.id ? 'var(--gold)' : 'var(--obsidian)',
+                                    color: selectedCard?.id === card.id ? 'var(--gold)' : 'var(--obsidian)',
+                                    background: selectedCard?.id === card.id ? 'var(--obsidian)' : 'transparent',
+                                    borderWidth: '1px'
                                 }}
                             >
-                                {selectedCard?.id === card.id ? "Selected" : "Choose Card"}
+                                {selectedCard?.id === card.id ? "SELECTED" : "CHOOSE CARD"}
                             </button>
                         </motion.div>
                     ))}
@@ -94,8 +97,9 @@ export default function GiftCardPage() {
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             onSubmit={handleAddGiftCard}
+                            action="javascript:void(0);"
                         >
-                            <h2>Card Details</h2>
+                            <h2 style={{ color: 'var(--gold)' }}>Card Details</h2>
                             <div className={styles.inputGroup}>
                                 <label><Mail size={14} style={{ marginRight: '5px' }} /> Recipient Email</label>
                                 <input 
