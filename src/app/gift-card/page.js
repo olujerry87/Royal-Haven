@@ -90,13 +90,11 @@ export default function GiftCardPage() {
                 {/* Recipient Form */}
                 <AnimatePresence>
                     {selectedCard && (
-                        <motion.form 
+                        <motion.div 
                             className={`${styles.form} glass-panel`}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            onSubmit={handleAddGiftCard}
-                            action="javascript:void(0);"
                         >
                             <h2 style={{ color: 'var(--gold)' }}>Card Details</h2>
                             <div className={styles.inputGroup}>
@@ -132,18 +130,31 @@ export default function GiftCardPage() {
                                 ></textarea>
                             </div>
 
-                            <button type="submit" className="btn-primary" style={{ width: '100%' }}>
-                                {success ? (
-                                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                                        <CheckCircle2 size={18} /> Added to Bag
-                                    </span>
-                                ) : "Add Gift Card to Bag"}
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <button type="button" onClick={handleAddGiftCard} className="btn-primary" style={{ width: '100%' }}>
+                                    {success ? (
+                                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                                            <CheckCircle2 size={18} /> Added to Bag
+                                        </span>
+                                    ) : "Add Gift Card to Bag"}
+                                </button>
+                                
+                                {success && (
+                                    <button 
+                                        type="button" 
+                                        className="btn-secondary" 
+                                        style={{ width: '100%', borderColor: 'var(--gold)', color: 'var(--gold)', backgroundColor: 'var(--obsidian)' }}
+                                        onClick={() => window.location.href = '/checkout'}
+                                    >
+                                        Proceed to Checkout
+                                    </button>
+                                )}
+                            </div>
 
                             <p style={{ marginTop: '1rem', fontSize: '0.8rem', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
                                 Security Note: This is an official digital gift card transaction. Codes are securely generated and verified upon successful payment.
                             </p>
-                        </motion.form>
+                        </motion.div>
                     )}
                 </AnimatePresence>
             </div>

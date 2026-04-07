@@ -23,6 +23,12 @@ export default async function ProductPage({ params }) {
         notFound();
     }
 
+    // Redirect Gift Card products safely to their dedicated purchase flow
+    if (product.slug && product.slug.includes('-gift-card')) {
+        const { redirect } = await import('next/navigation');
+        redirect('/gift-card');
+    }
+
     // Transform WooCommerce product data to our format
     const transformedProduct = {
         id: product.id,
