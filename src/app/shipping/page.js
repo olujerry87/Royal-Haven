@@ -5,6 +5,8 @@ import styles from "../LegalStyles.module.css";
 import Link from "next/link";
 import { ArrowLeft, Truck, PackageCheck, RotateCcw, HelpCircle, Globe2, CreditCard } from "lucide-react";
 
+import ScrollProgress from "@/components/ScrollProgress";
+
 const fadeIn = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -15,6 +17,7 @@ const fadeIn = {
 export default function ShippingAndReturns() {
     return (
         <main className={styles.container}>
+            <ScrollProgress />
             <div className={styles.contentWrapper}>
                 {/* Back button */}
                 <motion.div 

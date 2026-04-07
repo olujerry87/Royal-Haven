@@ -75,12 +75,11 @@ export default function GiftCardPage() {
                             
                             <button 
                                 className="btn-secondary" 
-                                style={{
-                                    borderColor: selectedCard?.id === card.id ? 'var(--gold)' : 'var(--obsidian)',
-                                    color: selectedCard?.id === card.id ? 'var(--gold)' : 'var(--obsidian)',
-                                    background: selectedCard?.id === card.id ? 'var(--obsidian)' : 'transparent',
-                                    borderWidth: '1px'
-                                }}
+                                style={selectedCard?.id === card.id ? {
+                                    borderColor: 'var(--gold)',
+                                    color: 'var(--gold)',
+                                    backgroundColor: 'var(--obsidian)'
+                                } : {}}
                             >
                                 {selectedCard?.id === card.id ? "SELECTED" : "CHOOSE CARD"}
                             </button>

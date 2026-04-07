@@ -26,6 +26,8 @@ export default function ScrollProgress() {
                 boxShadow: "0 0 10px rgba(212, 175, 55, 0.5)",
                 scaleX
             }}
-        />
+        >
+            <div className="scroll-organic-tip" />
+        </motion.div>
     );
 }

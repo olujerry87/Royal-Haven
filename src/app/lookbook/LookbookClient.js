@@ -7,6 +7,8 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import styles from "./LookbookClient.module.css";
 import { SITE_MEDIA } from "@/config/media";
+import Hero from "@/components/Hero";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -104,35 +106,16 @@ export default function LookbookClient() {
 
     return (
         <div className={styles.container}>
-            <motion.div 
-                className={styles.header}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                style={{ 
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${SITE_MEDIA.lookbook.hero})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    padding: '10rem 2rem',
-                    width: '100vw',
-                    marginLeft: 'calc(-50vw + 50%)',
-                    borderRadius: '0',
-                    marginBottom: '4rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                <h1 className={styles.title} style={{ color: 'var(--off-white)' }}>The Artistry</h1>
-                <p className={styles.subtitle} style={{ color: 'rgba(255,255,255,0.8)' }}>
-                    A curated reflection of our signature styling, crafted to elevate heritage into modern luxury.
-                </p>
-            </motion.div>
+            <ScrollProgress />
+            <Hero 
+                title="The Artistry" 
+                subtitle="A curated reflection of our signature styling, crafted to elevate heritage into modern luxury."
+                imagePath={SITE_MEDIA.lookbook.hero}
+            />
 
             {/* Glass Navigation Tabs */}
             <motion.div 
-                className={`${styles.tabContainer} glass-panel`}
+                className={styles.tabContainer}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}

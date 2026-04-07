@@ -6,25 +6,7 @@
     overflow-x: hidden;
 }
 
-.header {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 4rem auto;
-}
 
-.title {
-    font-family: var(--font-heritage);
-    font-size: 3.5rem;
-    color: var(--gold);
-    margin-bottom: 1rem;
-}
-
-.subtitle {
-    font-family: var(--font-body);
-    font-size: 1.1rem;
-    color: var(--stone);
-    line-height: 1.6;
-}
 
 /* Glass Tabs */
 .tabContainer {
@@ -33,10 +15,13 @@
     gap: 1rem;
     margin-bottom: 4rem;
     flex-wrap: wrap;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .tab {
-    color: var(--stone);
+    color: var(--off-white);
     padding: 0.8rem 2rem;
     border-radius: 30px;
     font-family: var(--font-body);
@@ -46,11 +31,15 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .tab:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     color: var(--off-white);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .activeTab {
