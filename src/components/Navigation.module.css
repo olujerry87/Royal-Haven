@@ -6,14 +6,15 @@
     height: var(--header-height);
     z-index: 1000;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: transparent;
-    border: none !important;
-    box-shadow: none !important;
+    background: rgba(220, 220, 220, 0.15) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     color: var(--off-white);
 }
 
 .scrolled {
-    background: var(--glass-bg);
+    background: var(--glass-bg) !important;
     height: 70px;
     border-bottom: var(--glass-border) !important;
     color: var(--gold);
@@ -136,20 +137,14 @@
         left: 0;
         width: 100vw;
         overflow: hidden;
-
-        /* Improved Liquid Glass Effect (iOS Style) */
-        background-color: rgba(0, 0, 0, 0.6);
-        /* Slightly darker for better text contrast */
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-
-        /* Transitions */
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-bottom: var(--glass-border);
         opacity: 0;
         visibility: hidden;
         transform: translateY(10px);
-        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
     }
 
     .menuItem:hover .megaMenu {

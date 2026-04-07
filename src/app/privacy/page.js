@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import styles from "../LegalStyles.module.css";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Lock, Globe, Database, UserCheck, Share2 } from "lucide-react";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -15,6 +16,7 @@ const fadeIn = {
 export default function PrivacyPolicy() {
     return (
         <main className={styles.container}>
+            <ScrollProgress />
             <div className={styles.contentWrapper}>
                 {/* Back button */}
                 <motion.div 

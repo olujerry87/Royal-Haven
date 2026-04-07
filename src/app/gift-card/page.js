@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Hero from "@/components/Hero";
+import ScrollProgress from "@/components/ScrollProgress";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 import { SITE_MEDIA } from "@/config/media";
@@ -9,9 +10,9 @@ import { useCart } from "@/context/CartContext";
 import { Gift, Mail, Send, CheckCircle2 } from "lucide-react";
 
 const GIFT_CARDS = [
-    { id: "gift-50", amount: 50, title: "Royal Gift: $50", desc: "A perfect token of appreciation for fine heritage.", wordpress_id: 110 },
-    { id: "gift-100", amount: 100, title: "Royal Gift: $100", desc: "Elevate someone's wardrobe with signature elegance.", wordpress_id: 111 },
-    { id: "gift-250", amount: 250, title: "Royal Gift: $250", desc: "The ultimate gesture of artistry and bespoke care.", wordpress_id: 112 }
+    { id: "gift-50", amount: 50, title: "Royal Gift Card: $50", desc: "A perfect token of appreciation for fine heritage.", wordpress_id: 110 },
+    { id: "gift-100", amount: 100, title: "Royal Gift Card: $100", desc: "Elevate someone's wardrobe with signature elegance.", wordpress_id: 111 },
+    { id: "gift-250", amount: 250, title: "Royal Gift Card: $250", desc: "The ultimate gesture of artistry and bespoke care.", wordpress_id: 112 }
 ];
 
 export default function GiftCardPage() {
@@ -44,6 +45,7 @@ export default function GiftCardPage() {
 
     return (
         <main>
+            <ScrollProgress />
             <Hero 
                 title="The Gift of Heritage" 
                 subtitle="Share the Royal Haven experience with the ones who matter most."

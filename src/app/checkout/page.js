@@ -233,14 +233,18 @@ export default function Checkout() {
                 <div className={styles.summarySection}>
                     <div className={styles.items}>
                         {cart.map((item) => (
-                            <div key={`${item.id}-${item.size}`} className={styles.item}>
+                            <div key={`${item.id}-${item.size || item.id}`} className={styles.item}>
                                 <div className={styles.imageWrapper}>
-                                    <img src={item.images[0]} alt={item.name} className={styles.image} />
+                                    <img 
+                                        src={item.images && item.images.length > 0 ? item.images[0] : "/images/spotlight.jpg"} 
+                                        alt={item.name || "Product"} 
+                                        className={styles.image} 
+                                    />
                                     <span className={styles.badge}>{item.quantity}</span>
                                 </div>
                                 <div className={styles.info}>
                                     <span className={styles.name}>{item.name}</span>
-                                    <span className={styles.variant}>{item.size}</span>
+                                    <span className={styles.variant}>{item.size || "Fixed"}</span>
                                 </div>
                                 <span className={styles.price}>${item.price * item.quantity}</span>
                             </div>

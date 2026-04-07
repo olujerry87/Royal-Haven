@@ -1,12 +1,9 @@
 "use client";
 
 import { motion, useScroll, useSpring } from "framer-motion";
-import styles from "./ScrollProgress.module.css";
 
 export default function ScrollProgress() {
     const { scrollYProgress } = useScroll();
-
-    // Smooth out the progress bar movement
     const scaleX = useSpring(scrollYProgress, {
         stiffness: 100,
         damping: 30,
@@ -14,11 +11,19 @@ export default function ScrollProgress() {
     });
 
     return (
-        <div className={styles.container}>
-            <motion.div
-                className={styles.progressBar}
-                style={{ scaleX }}
-            />
-        </div>
+        <motion.div
+            style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                backgroundColor: "var(--gold, #D4AF37)",
+                transformOrigin: "0%",
+                zIndex: 2000,
+                boxShadow: "0 0 10px rgba(212, 175, 55, 0.5)",
+                scaleX
+            }}
+        />
     );
 }

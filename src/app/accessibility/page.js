@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import styles from "../LegalStyles.module.css";
 import Link from "next/link";
-import { ArrowLeft, Accessibility, Eye, HelpCircle, Laptop, Phone, Speaker } from "lucide-react";
+import { ArrowLeft, Accessibility, Eye, HelpCircle, Laptop } from "lucide-react";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -15,6 +16,7 @@ const fadeIn = {
 export default function AccessibilityStatement() {
     return (
         <main className={styles.container}>
+            <ScrollProgress />
             <div className={styles.contentWrapper}>
                 {/* Back button */}
                 <motion.div 
@@ -106,8 +108,8 @@ export default function AccessibilityStatement() {
                         you encounter any accessibility barriers so that we may rectify them immediately:
                     </p>
                     <ul>
-                        <li><Phone size={16} style={{ marginRight: '0.5rem' }} /> <strong>Phone:</strong> +1 (613) 286-0661</li>
-                        <li><Speaker size={16} style={{ marginRight: '0.5rem' }} /> <strong>Email:</strong> royalhaven.ng@gmail.com</li>
+                        <li><strong>Phone:</strong> +1 (613) 286-0661</li>
+                        <li><strong>Email:</strong> royalhaven.ng@gmail.com</li>
                     </ul>
                     <p>We try to respond to feedback within 2 business days.</p>
                 </motion.section>
