@@ -17,8 +17,10 @@ export const SITE_MEDIA = {
     // Homepage
     home: {
         spotlight_1: "/images/spotlight.jpg",
-        spotlight_2: "/images/journal.jpg", // The image before FAQ
-        hero_video: "/videos/hero-bg.mp4",
+        spotlight_ai: "/images/wura-idle.jpg", // The AI Stylist parallax image
+        spotlight_2: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // The image before FAQ
+        wura_video: "/videos/wura-bg.mp4",
+        ewa_video: "/videos/ewa-bg.mp4",
     },
 
     // Heritage Page

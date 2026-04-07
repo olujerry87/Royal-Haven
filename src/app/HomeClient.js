@@ -33,14 +33,14 @@ export default function HomeClient({
     const data = {
         wura: {
             bgImage: wuraBgImage || acf?.wura_bg_image || SITE_MEDIA.heritage.duality_wura,
-            bgVideo: wuraBgVideo || acf?.wura_bg_video || SITE_MEDIA.home.hero_video,
+            bgVideo: wuraBgVideo || acf?.wura_bg_video || SITE_MEDIA.home.wura_video,
             logo: acf?.wura_logo || SITE_MEDIA.logos.wura,
             subtitle: wuraSubtitle || acf?.wura_subtitle || "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
             link: acf?.wura_link || "/shop"
         },
         ewa: {
             bgImage: ewaBgImage || acf?.ewa_bg_image || SITE_MEDIA.heritage.duality_ewa,
-            bgVideo: ewaBgVideo || acf?.ewa_bg_video || SITE_MEDIA.home.hero_video,
+            bgVideo: ewaBgVideo || acf?.ewa_bg_video || SITE_MEDIA.home.ewa_video,
             logo: acf?.ewa_logo || SITE_MEDIA.logos.ewa,
             subtitle: ewaSubtitle || acf?.ewa_subtitle || "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
             link: acf?.ewa_link || "/services"
@@ -237,14 +237,7 @@ export default function HomeClient({
 
             <div style={{ height: '80px', backgroundColor: '#FFFFFF', width: '100%' }} className={styles.mobileDivider} />
 
-            <FeaturedSpotlight
-                title="Your Personal AI Stylist"
-                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically."
-                ctaText="Start Styling"
-                ctaLink="/heritage#styling"
-                imagePath="/images/wura-idle.jpg"
-                hasGlassCard={true}
-            />
+
 
             <FAQ />
 
