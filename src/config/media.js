@@ -42,6 +42,7 @@ export const SITE_MEDIA = {
     // Services (Ewa Artistry)
     services: {
         hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20service.png",
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20service.png", // Replace with cropped mobile URL
         hair_banner: "/images/ewa-hair.jpg",
         makeup_banner: "/images/ewa-makeup.jpg",
         gele_banner: "/images/ewa-gele.jpg",
@@ -58,6 +59,7 @@ export const SITE_MEDIA = {
     // Shop Page
     shop: {
         hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20clothing.jpg",
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20clothing.jpg", // Replace with cropped mobile URL
     },
 
     // Cart Page
@@ -73,6 +75,7 @@ export const SITE_MEDIA = {
     // Lookbook Page
     lookbook: {
         hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif",
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif", // Replace with cropped mobile URL
     },
 
     // UI Fallbacks / Placeholders

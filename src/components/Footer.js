@@ -89,7 +89,9 @@ export default function Footer() {
                         "Finally, brothers and sisters, whatever is true, whatever is noble, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think about such things." — Philippians 4:8
                     </p>
                     <br />
-                    <p>&copy; {new Date().getFullYear()} MidasMark. All rights reserved. | a Bezaleel Group Subsidiary</p>
+                    <p style={{ color: 'var(--gold)', opacity: 0.85, fontSize: '0.85rem' }}>
+                        &copy; {new Date().getFullYear()} MidasMark. All rights reserved. | a Bezaleel Group Subsidiary
+                    </p>
                 </div>
             </div>
         </footer>

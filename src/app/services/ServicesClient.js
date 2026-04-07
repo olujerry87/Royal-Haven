@@ -18,6 +18,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
         title: page?.acf?.hero_title || "Artistry Services",
         subtitle: page?.acf?.hero_subtitle || "Bridal, Editorial, and Bespoke Beauty",
         heroImage: page?.acf?.hero_image || SITE_MEDIA.services.hero,
+        mobileHeroImage: SITE_MEDIA.services.hero_mobile,
         introTitle: page?.acf?.intro_title || "The Ewa Experience",
         introText: page?.acf?.intro_text || "We believe that beauty is an art form. Our approach is rooted in enhancing your natural essence while delivering a polished, high-editorial finish. Whether you are walking down the aisle or stepping onto a set, Ewa ensures you look—and feel—radiant.",
         portfolio: portfolio && portfolio.length > 0 ? portfolio.map(item => ({
@@ -42,6 +43,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                 title={data.title}
                 subtitle={data.subtitle}
                 imagePath={data.heroImage}
+                mobileImagePath={data.mobileHeroImage}
             />
 
             <div className={styles.container}>

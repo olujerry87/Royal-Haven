@@ -111,6 +111,7 @@ export default function LookbookClient() {
                 title="The Artistry" 
                 subtitle="A curated reflection of our signature styling, crafted to elevate heritage into modern luxury."
                 imagePath={SITE_MEDIA.lookbook.hero}
+                mobileImagePath={SITE_MEDIA.lookbook.hero_mobile}
             />
 
             {/* Glass Navigation Tabs */}

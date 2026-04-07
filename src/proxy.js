@@ -10,6 +10,34 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
+// Lightweight Edge-compatible in-memory rate limiter.
+const rateLimitMap = new Map();
+const RATE_LIMIT_POINTS = 50; // 50 requests
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // Per 1 minute
+
+function checkRateLimit(ip) {
+    const now = Date.now();
+    const entry = rateLimitMap.get(ip) || { count: 0, firstHit: now };
+
+    if (now - entry.firstHit > RATE_LIMIT_WINDOW_MS) {
+        entry.count = 0;
+        entry.firstHit = now;
+    }
+
+    entry.count++;
+    rateLimitMap.set(ip, entry);
+
+    if (rateLimitMap.size > 1000) {
+        for (const [key, val] of rateLimitMap.entries()) {
+            if (now - val.firstHit > RATE_LIMIT_WINDOW_MS) {
+                rateLimitMap.delete(key);
+            }
+        }
+    }
+
+    return entry.count <= RATE_LIMIT_POINTS;
+}
+
 const PROTECTED_ROUTES = ["/account", "/wishlist", "/checkout"];
 
 /**
@@ -33,6 +61,22 @@ export async function proxy(request) {
     // ── 1. Builder.io editor — always pass through ────────────────────────
     if (searchParams.has("builder.preview") || searchParams.has("builder.frameEditing")) {
         return response;
+    }
+
+    // ── 1.5 Rate Limiting for API routes ──────────────────────────────────
+    if (pathname.startsWith("/api")) {
+        const ip = request.ip || 
+                   request.headers.get("x-real-ip") || 
+                   request.headers.get("x-forwarded-for") || 
+                   "127.0.0.1";
+        
+        if (!checkRateLimit(ip)) {
+            console.warn(`[RATE LIMIT] IP ${ip} exceeded API quota on ${pathname}`);
+            return NextResponse.json(
+                { error: "Too Many Requests", message: "Rate limit exceeded. Please wait a moment." },
+                { status: 429, headers: { "Retry-After": "60" } }
+            );
+        }
     }
 
     // ── 2. BULLETPROOF SUPABASE URL GUARD ─────────────────────────────────
