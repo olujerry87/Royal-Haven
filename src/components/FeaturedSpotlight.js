@@ -21,8 +21,8 @@ export default function FeaturedSpotlight({
         offset: ["start end", "end start"]
     });
 
-    // Parallax effect: Faster speed as requested (-40% to 10%)
-    const y = useTransform(scrollYProgress, [0, 1], ["-40%", "10%"]);
+    // Parallax effect: Gentler shift to reveal the top of the image and hide the bottom
+    const y = useTransform(scrollYProgress, [0, 1], ["-10%", "20%"]);
     const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.5, 1, 0.5]);
 
     return (
