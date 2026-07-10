@@ -3,7 +3,7 @@
 import styles from "./Hero.module.css";
 import { SITE_MEDIA } from "@/config/media";
 
-export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, videoPath, mobileVideoPath, overlayImage, height = "70vh", bgSize = "cover", bgPosition = "center", textAlign = "center" }) {
+export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, videoPath, mobileVideoPath, overlayImage, height = "70vh", bgSize = "cover", bgPosition = "center", textAlign = "center", titleColor }) {
     const overlayStyle = overlayImage ? {
         backgroundImage: `url(${overlayImage})`,
         backgroundRepeat: "no-repeat",
@@ -67,7 +67,7 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
 
             <div className={styles.overlay} style={overlayStyle}></div>
             <div className={styles.content} style={{ textAlign: textAlign, alignItems: textAlign === 'left' ? 'flex-start' : textAlign === 'right' ? 'flex-end' : 'center', maxWidth: textAlign !== 'center' ? '50%' : '100%', paddingLeft: textAlign === 'left' ? '5%' : '1rem', paddingRight: textAlign === 'right' ? '5%' : '1rem' }}>
-                <h1 className={styles.title}>{title}</h1>
+                <h1 className={styles.title} style={titleColor ? { color: titleColor } : {}}>{title}</h1>
                 {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
             </div>
         </section>

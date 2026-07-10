@@ -46,6 +46,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                 mobileImagePath={data.mobileHeroImage}
                 textAlign="left"
                 bgPosition="left center"
+                titleColor="var(--royal-purple)"
             />
 
             <div className={styles.container}>

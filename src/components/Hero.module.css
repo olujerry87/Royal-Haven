@@ -8,6 +8,8 @@
     align-items: center;
     text-align: center;
     margin-bottom: 2rem;
+    /* Push content below the fixed nav on mobile */
+    padding-top: var(--header-height);
 }
 
 .overlay {
