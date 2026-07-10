@@ -3,7 +3,7 @@
 import styles from "./Hero.module.css";
 import { SITE_MEDIA } from "@/config/media";
 
-export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, videoPath, mobileVideoPath, overlayImage, height = "70vh" }) {
+export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, videoPath, mobileVideoPath, overlayImage, height = "70vh", bgSize = "cover", bgPosition = "center", textAlign = "center" }) {
     const overlayStyle = overlayImage ? {
         backgroundImage: `url(${overlayImage})`,
         backgroundRepeat: "no-repeat",
@@ -19,6 +19,8 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
             className={`${styles.hero} ${heroId}`}
             style={{
                 backgroundImage: videoPath ? 'none' : `url(${imagePath})`,
+                backgroundSize: bgSize,
+                backgroundPosition: bgPosition,
                 height: height
             }}
         >
@@ -28,7 +30,8 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
                     @media (max-width: 768px) {
                         .${heroId} {
                             background-image: url('${mobileImagePath}') !important;
-                            background-position: top center !important;
+                            background-position: center center !important;
+                            background-size: cover !important;
                         }
                     }
                 `}} />
@@ -63,7 +66,7 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
             )}
 
             <div className={styles.overlay} style={overlayStyle}></div>
-            <div className={styles.content}>
+            <div className={styles.content} style={{ textAlign: textAlign, alignItems: textAlign === 'left' ? 'flex-start' : textAlign === 'right' ? 'flex-end' : 'center', maxWidth: textAlign !== 'center' ? '50%' : '100%', paddingLeft: textAlign === 'left' ? '5%' : '1rem', paddingRight: textAlign === 'right' ? '5%' : '1rem' }}>
                 <h1 className={styles.title}>{title}</h1>
                 {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
             </div>

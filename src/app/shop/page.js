@@ -28,6 +28,9 @@ export default async function Shop({ searchParams }) {
                 title="The Collection"
                 subtitle="Heritage Woven Into Modern Silhouettes"
                 imagePath={SITE_MEDIA.shop.hero}
+                mobileImagePath={SITE_MEDIA.shop.hero_mobile}
+                bgSize="120%"
+                bgPosition="center center"
             />
 
             {error ? (

@@ -44,6 +44,8 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                 subtitle={data.subtitle}
                 imagePath={data.heroImage}
                 mobileImagePath={data.mobileHeroImage}
+                textAlign="left"
+                bgPosition="left center"
             />
 
             <div className={styles.container}>
