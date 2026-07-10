@@ -90,34 +90,34 @@
 /* Isolated Card for transparent floating assets */
 .isolatedCard {
     position: absolute;
-    width: 120px;
+    width: 160px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     z-index: 20;
     transform-origin: center center;
-    margin: -60px 0 0 -60px;
+    margin: -80px 0 0 -80px;
 }
 
 .isolatedImageWrapper {
-    width: 100px;
-    height: 100px;
+    width: 140px;
+    height: 140px;
     position: relative;
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    margin-bottom: 0.6rem;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
     transition: transform 0.3s ease;
 }
 
 .isolatedCard:hover .isolatedImageWrapper {
-    transform: scale(1.1);
+    transform: scale(1.12);
 }
 
 .isolatedText {
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--gold);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
     letter-spacing: 1px;
 }
 
