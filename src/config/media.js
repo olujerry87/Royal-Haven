@@ -44,8 +44,8 @@ export const SITE_MEDIA = {
 
     // Services (Ewa Artistry)
     services: {
-        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20service.png",
-        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20service.png", // Replace with cropped mobile URL
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20servicedk.jpg",
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20servicemob.jpg",
         hair_banner: "/images/ewa-hair.jpg",
         makeup_banner: "/images/ewa-makeup.jpg",
         gele_banner: "/images/ewa-gele.jpg",
@@ -61,8 +61,8 @@ export const SITE_MEDIA = {
 
     // Shop Page
     shop: {
-        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20clothing.jpg",
-        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20clothing.jpg", // Replace with cropped mobile URL
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20collectionsdk.jpg",
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/WURA%20collectionsmob.jpg",
     },
 
     // Cart Page
@@ -77,8 +77,10 @@ export const SITE_MEDIA = {
 
     // Lookbook Page
     lookbook: {
-        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif",
-        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif", // Replace with cropped mobile URL
+        hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif", // Fallback poster image
+        hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20hero.gif",
+        video: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20herodk.mp4",
+        video_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/lookbook%20heromob.mp4"
     },
 
     // UI Fallbacks / Placeholders

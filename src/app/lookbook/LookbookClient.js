@@ -112,6 +112,8 @@ export default function LookbookClient() {
                 subtitle="A curated reflection of our signature styling, crafted to elevate heritage into modern luxury."
                 imagePath={SITE_MEDIA.lookbook.hero}
                 mobileImagePath={SITE_MEDIA.lookbook.hero_mobile}
+                videoPath={SITE_MEDIA.lookbook.video}
+                mobileVideoPath={SITE_MEDIA.lookbook.video_mobile}
             />
 
             {/* Glass Navigation Tabs */}
