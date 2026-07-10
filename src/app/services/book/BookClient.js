@@ -3,6 +3,7 @@
 import Hero from "@/components/Hero";
 import styles from "./page.module.css";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { InlineWidget } from "react-calendly";
 
 export default function BookClient({ page }) {
     // Fallback data
@@ -87,16 +88,17 @@ export default function BookClient({ page }) {
 
                                     {/* Widget Placeholder - This is where the plugin/iframe will go */}
                                     <div className={styles.calendarWidget}>
-                                        <div className={styles.loadingSpinner}>Loading Calendar...</div>
-                                        {/* 
-                                            INSTRUCTIONS: 
-                                            1. Install your booking plugin (e.g., Calendly, Amelia) in WordPress.
-                                            2. Paste the shortcode or embed code into the 'Book' page content in WP Admin.
-                                            3. It will automatically render here via 'data.content'.
-                                            
-                                            If strictly using a client-side snippet (like Calendly inline widget), 
-                                            you can paste the script here directly.
-                                        */}
+                                        <InlineWidget 
+                                            url="https://calendly.com/royalhaven-ng" 
+                                            styles={{ height: '700px', width: '100%' }} 
+                                            pageSettings={{
+                                                backgroundColor: 'ffffff',
+                                                hideEventTypeDetails: false,
+                                                hideLandingPageDetails: false,
+                                                primaryColor: 'd4af37',
+                                                textColor: '1e1e1e'
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>
