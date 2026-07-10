@@ -27,18 +27,18 @@ export const SITE_MEDIA = {
     // Heritage Page
     heritage: {
         hero: "/images/spotlight.jpg",
-        center_model: "/images/ewa-idle.jpg",
+        center_model: "/images/heritage_center_new.jpg",
         duality_wura: "/images/wura-idle.jpg",
         duality_ewa: "/images/ewa-idle.jpg",
 
         // Floating "Living Heritage" Cards
         floating_cards: {
-            precision_cut: "/images/spotlight.jpg",
-            silk_textures: "/images/spotlight.jpg",
-            royal_gems: "/images/spotlight.jpg",
-            artistic_vision: "/images/spotlight.jpg",
-            custom_fit: "/images/spotlight.jpg",
-            beaded_detail: "/images/spotlight.jpg",
+            precision_cut: "/images/heritage_floating_1.png",
+            silk_textures: "/images/heritage_floating_2.png",
+            royal_gems: "/images/heritage_floating_3.png",
+            artistic_vision: "/images/heritage_floating_4.png",
+            custom_fit: "/images/heritage_floating_5.png",
+            beaded_detail: "/images/heritage_floating_1.png", // Fallback duplicate for 6th slot
         }
     },
 

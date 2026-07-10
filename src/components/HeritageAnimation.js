@@ -22,9 +22,11 @@ function FloatingCard({ item, index, isMobile }) {
     // Dynamically scale down the positioning bounds on mobile so they hug the model closer
     const responsiveX = isMobile ? item.x * 0.45 : item.x;
     const responsiveY = isMobile ? item.y * 0.5 : item.y;
+    const isIsolated = !!item.image_url;
+
     return (
         <motion.div
-            className={styles.glassCard}
+            className={isIsolated ? styles.isolatedCard : styles.glassCard}
             style={{ 
                 left: `calc(50% + ${responsiveX}px)`, 
                 top: `calc(50% + ${responsiveY}px)`,
@@ -44,16 +46,31 @@ function FloatingCard({ item, index, isMobile }) {
                 ease: "easeInOut"
             }}
         >
-            <div className={styles.iconPlaceholder} style={{ overflow: "hidden", position: "relative" }}>
-                {item.image_url ? (
-                    <Image src={item.image_url} alt={item.text} fill style={{objectFit: 'cover'}} unoptimized />
-                ) : (
-                    <ImageIcon size={20} style={{ opacity: 0.5 }} />
-                )}
-            </div>
-            <div className={styles.cardText}>
-                {item.text}
-            </div>
+            {isIsolated ? (
+                <>
+                    <div className={styles.isolatedImageWrapper}>
+                        <Image 
+                            src={item.image_url} 
+                            alt={item.text} 
+                            fill 
+                            style={{ objectFit: 'contain' }} 
+                            unoptimized 
+                        />
+                    </div>
+                    <div className={styles.isolatedText}>
+                        {item.text}
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className={styles.iconPlaceholder} style={{ overflow: "hidden", position: "relative" }}>
+                        <item.icon size={20} style={{ opacity: 0.8 }} />
+                    </div>
+                    <div className={styles.cardText}>
+                        {item.text}
+                    </div>
+                </>
+            )}
         </motion.div>
     );
 }
