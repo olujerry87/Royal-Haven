@@ -162,6 +162,15 @@ export default function ProductDetailClient({ product }) {
                                 : 'Select a Size'}
                     </button>
 
+                    {/* Main WooCommerce Description */}
+                    {product.description && (
+                        <div
+                            className={styles.description}
+                            style={{ marginTop: '2.5rem' }}
+                            dangerouslySetInnerHTML={{ __html: product.description }}
+                        />
+                    )}
+
                     {/* NFC Passport Link — shows only if rh_ntag_id is set on the product */}
                     {ntagId && (
                         <Link
@@ -192,9 +201,7 @@ export default function ProductDetailClient({ product }) {
                             {openSection === 'story' && (
                                 <div className={styles.accordionContent}>
                                     {originRaw ? (
-                                        <p>{originRaw}</p>
-                                    ) : product.description ? (
-                                        <div dangerouslySetInnerHTML={{ __html: product.description }} />
+                                        <div dangerouslySetInnerHTML={{ __html: originRaw.replace(/\n/g, '<br/>') }} />
                                     ) : (
                                         <p>This piece is crafted with heritage in mind, weaving traditional motifs into modern silhouettes.</p>
                                     )}
@@ -217,7 +224,7 @@ export default function ProductDetailClient({ product }) {
                                             {fabricData.design && <p><strong>Design:</strong> {fabricData.design}</p>}
                                         </>
                                     ) : fabricRaw ? (
-                                        <p>{fabricRaw}</p>
+                                        <div dangerouslySetInnerHTML={{ __html: fabricRaw.replace(/\n/g, '<br/>') }} />
                                     ) : (
                                         <>
                                             <p><strong>Material:</strong> Premium Silk / Cotton Blend.</p>
@@ -262,7 +269,7 @@ export default function ProductDetailClient({ product }) {
                             {openSection === 'styling' && (
                                 <div className={styles.accordionContent}>
                                     {stylingRaw ? (
-                                        <p>{stylingRaw}</p>
+                                        <div dangerouslySetInnerHTML={{ __html: stylingRaw.replace(/\n/g, '<br/>') }} />
                                     ) : (
                                         <>
                                             <p><strong>Day Look:</strong> Pair with simple leather sandals and minimal jewelry.</p>
