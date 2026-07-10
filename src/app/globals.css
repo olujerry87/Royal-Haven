@@ -62,7 +62,7 @@
 html,
 body {
   max-width: 100vw;
-  /* overflow-x: hidden; - Removed to fix sticky positioning */
+  overflow-x: clip; /* Fixes mobile layout breakage and horizontal scrolling */
   background-color: var(--off-white);
   color: var(--obsidian);
   font-family: var(--font-body);
