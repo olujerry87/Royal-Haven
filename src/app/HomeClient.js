@@ -65,6 +65,7 @@ export default function HomeClient({
         },
         spotlight2: {
             image: spotlight2Image || acf?.spotlight_2_image || SITE_MEDIA.home.spotlight_2,
+            mobileImage: SITE_MEDIA.home.spotlight_2_mobile || SITE_MEDIA.home.spotlight_2,
             link: acf?.spotlight_2_link || null
         }
     };
@@ -256,6 +257,7 @@ export default function HomeClient({
                 ctaText={null}
                 ctaLink={data.spotlight2.link}
                 imagePath={data.spotlight2.image}
+                mobileImagePath={data.spotlight2.mobileImage}
                 hasGlassCard={false}
             />
 

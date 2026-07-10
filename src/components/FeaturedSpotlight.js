@@ -9,6 +9,7 @@ import { SITE_MEDIA } from "@/config/media";
 
 export default function FeaturedSpotlight({
     imagePath = SITE_MEDIA.placeholders.spotlight,
+    mobileImagePath,
     title = "Set For Effortless Intentions",
     description = "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
     ctaText = "Explore",
@@ -25,8 +26,23 @@ export default function FeaturedSpotlight({
     const y = useTransform(scrollYProgress, [0, 1], ["-10%", "20%"]);
     const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.5, 1, 0.5]);
 
+    // Generate a unique identifier for this specific instance's injected style
+    const spotlightId = `spotlight-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
-        <section ref={ref} className={styles.parallaxContainer}>
+        <section ref={ref} className={`${styles.parallaxContainer} ${spotlightId}`}>
+            {/* Inject mobile-specific background via inline pseudo-stylesheet if mobile path exists */}
+            {mobileImagePath && (
+                <style dangerouslySetInnerHTML={{__html: `
+                    @media (max-width: 768px) {
+                        .${spotlightId} .${styles.image} {
+                            content: url('${mobileImagePath}');
+                            object-position: top center !important;
+                        }
+                    }
+                `}} />
+            )}
+
             <motion.div style={{ y }} className={styles.backgroundImageWrapper}>
                 <Image
                     src={imagePath}
