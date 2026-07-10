@@ -3,7 +3,7 @@
 import styles from "./Hero.module.css";
 import { SITE_MEDIA } from "@/config/media";
 
-export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, overlayImage, height = "70vh" }) {
+export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placeholders.hero, mobileImagePath, videoPath, mobileVideoPath, overlayImage, height = "70vh" }) {
     const overlayStyle = overlayImage ? {
         backgroundImage: `url(${overlayImage})`,
         backgroundRepeat: "no-repeat",
@@ -18,7 +18,7 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
         <section
             className={`${styles.hero} ${heroId}`}
             style={{
-                backgroundImage: `url(${imagePath})`,
+                backgroundImage: videoPath ? 'none' : `url(${imagePath})`,
                 height: height
             }}
         >
@@ -32,6 +32,34 @@ export default function Hero({ title, subtitle, imagePath = SITE_MEDIA.placehold
                         }
                     }
                 `}} />
+            )}
+
+            {/* Video Background Support */}
+            {videoPath && (
+                <>
+                    <video
+                        className={`${styles.bgVideo} ${mobileVideoPath ? styles.desktopVideo : ''}`}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster={imagePath}
+                    >
+                        <source src={videoPath} type="video/mp4" />
+                    </video>
+                    {mobileVideoPath && (
+                        <video
+                            className={`${styles.bgVideo} ${styles.mobileVideo}`}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            poster={mobileImagePath || imagePath}
+                        >
+                            <source src={mobileVideoPath} type="video/mp4" />
+                        </video>
+                    )}
+                </>
             )}
 
             <div className={styles.overlay} style={overlayStyle}></div>

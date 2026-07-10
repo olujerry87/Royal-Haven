@@ -27,6 +27,35 @@
     padding: 0 1rem;
 }
 
+/* Video Background Support */
+.bgVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.desktopVideo {
+    display: block;
+}
+
+.mobileVideo {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktopVideo {
+        display: none !important;
+    }
+    
+    .mobileVideo {
+        display: block !important;
+    }
+}
+
 .title {
     font-family: var(--font-heritage);
     font-size: 3.5rem;
