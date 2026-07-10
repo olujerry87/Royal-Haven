@@ -75,34 +75,33 @@ export default function BookClient({ page }) {
                             If the WordPress page has content (e.g. Calendly embed code), display it here.
                             Otherwise, fallback to the manual request form.
                         */}
-                        {data.content ? (
-                            <div className={styles.wpContent} dangerouslySetInnerHTML={{ __html: data.content }} />
-                        ) : (
-                            <div className={styles.wpPlaceholder}>
-                                <div className={styles.widgetContainer}>
-                                    <h2 className={styles.formTitle}>Schedule Your Appointment</h2>
-                                    <p className={styles.widgetNote}>
-                                        Please use the calendar below to book your session directly.
-                                        If the calendar doesn&apos;t load, please refresh the page.
-                                    </p>
+                        {data.content && (
+                            <div className={styles.wpContent} dangerouslySetInnerHTML={{ __html: data.content }} style={{ marginBottom: '2rem' }} />
+                        )}
 
-                                    {/* Widget Placeholder - This is where the plugin/iframe will go */}
-                                    <div className={styles.calendarWidget}>
-                                        <InlineWidget 
-                                            url="https://calendly.com/royalhaven-ng" 
-                                            styles={{ height: '700px', width: '100%' }} 
-                                            pageSettings={{
-                                                backgroundColor: 'ffffff',
-                                                hideEventTypeDetails: false,
-                                                hideLandingPageDetails: false,
-                                                primaryColor: 'd4af37',
-                                                textColor: '1e1e1e'
-                                            }}
-                                        />
-                                    </div>
+                        <div className={styles.wpPlaceholder}>
+                            <div className={styles.widgetContainer}>
+                                <h2 className={styles.formTitle}>Schedule Your Appointment</h2>
+                                <p className={styles.widgetNote}>
+                                    Please use the calendar below to book your session directly.
+                                    If the calendar doesn&apos;t load, please refresh the page.
+                                </p>
+
+                                <div className={styles.calendarWidget}>
+                                    <InlineWidget 
+                                        url="https://calendly.com/royalhaven-ng" 
+                                        styles={{ height: '700px', width: '100%' }} 
+                                        pageSettings={{
+                                            backgroundColor: 'ffffff',
+                                            hideEventTypeDetails: false,
+                                            hideLandingPageDetails: false,
+                                            primaryColor: 'd4af37',
+                                            textColor: '1e1e1e'
+                                        }}
+                                    />
                                 </div>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </div>
