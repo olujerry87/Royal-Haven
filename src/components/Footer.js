@@ -15,39 +15,39 @@ export default function Footer() {
                 <svg
                     className={styles.waveSvgDeep}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 160"
+                    viewBox="0 0 4320 180"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
                     <path
                         fill="rgba(11,11,11,0.22)"
-                        d="M0,80 C360,-10 1080,170 1440,80 C1800,-10 2520,170 2880,80 C3240,-10 3960,170 4320,80 L4320,160 L0,160 Z"
+                        d="M0,90 C360,15 1080,165 1440,90 C1800,15 2520,165 2880,90 C3240,15 3960,165 4320,90 L4320,180 L0,180 Z"
                     />
                 </svg>
-                {/* Mid layer — semi-transparent, medium height, reverse direction */}
+                {/* Mid layer — semi-transparent, medium height, offset phase */}
                 <svg
                     className={styles.waveSvgBack}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 160"
+                    viewBox="0 0 4320 180"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
                     <path
                         fill="rgba(11,11,11,0.52)"
-                        d="M0,100 C300,20 900,155 1440,100 C1980,45 2580,155 2880,100 C3180,45 3780,155 4320,100 L4320,160 L0,160 Z"
+                        d="M0,150 C360,165 1080,15 1440,150 C1800,165 2520,15 2880,150 C3240,165 3960,15 4320,150 L4320,180 L0,180 Z"
                     />
                 </svg>
                 {/* Front layer — solid footer color, lowest crests, fastest */}
                 <svg
                     className={styles.waveSvgFront}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 160"
+                    viewBox="0 0 4320 180"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
                     <path
                         fill="#0b0b0b"
-                        d="M0,118 C240,55 840,150 1440,118 C2040,86 2640,150 2880,118 C3120,86 3720,150 4320,118 L4320,160 L0,160 Z"
+                        d="M0,110 C180,25 900,155 1440,110 C1620,25 2340,155 2880,110 C3060,25 3780,155 4320,110 L4320,180 L0,180 Z"
                     />
                 </svg>
             </div>
@@ -68,24 +68,24 @@ export default function Footer() {
                             Where heritage meets modern luxury. <br />
                             Fashion &amp; Artistry redefined.
                         </p>
-                        {/* Proportional Monochrome Canada flag */}
+                        {/* Miniature Proportional Canada flag matching user attachment */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 200 100"
-                            width="90"
-                            height="45"
+                            width="64"
+                            height="32"
                             role="img"
                             aria-label="Canadian flag"
-                            style={{ marginTop: '1.2rem', display: 'block', opacity: 0.55 }}
+                            style={{ marginTop: '0.8rem', display: 'block', opacity: 0.8, border: '1px solid rgba(255, 255, 255, 0.2)' }}
                         >
-                            {/* Left stripe */}
-                            <rect x="0" y="0" width="50" height="100" fill="var(--off-white)" opacity="0.6" />
-                            {/* Right stripe */}
-                            <rect x="150" y="0" width="50" height="100" fill="var(--off-white)" opacity="0.6" />
-                            {/* Center white panel */}
-                            <rect x="50" y="0" width="100" height="100" fill="var(--off-white)" opacity="0.15" />
-                            {/* Official 11-point maple leaf */}
-                            <g transform="translate(100, 48)" fill="var(--off-white)" opacity="0.85">
+                            {/* White flag background */}
+                            <rect width="200" height="100" fill="var(--off-white)" />
+                            {/* Left black stripe */}
+                            <rect x="0" y="0" width="50" height="100" fill="#0b0b0b" />
+                            {/* Right black stripe */}
+                            <rect x="150" y="0" width="50" height="100" fill="#0b0b0b" />
+                            {/* Official 11-point maple leaf in black */}
+                            <g transform="translate(100, 48)" fill="#0b0b0b">
                                 <path d="
                                     M 0,-40
                                     L 1.5,-27 L 5,-28 L 4,-23 L 8,-24 L 18,-30

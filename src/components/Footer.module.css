@@ -26,8 +26,8 @@
     overflow: hidden;
     line-height: 0;
     transform: translateY(-99%);
-    /* 160px keeps wave from overlapping above-section content */
-    height: 160px;
+    /* Taller height for deeper, more dramatic curves */
+    height: 180px;
     pointer-events: none;
 }
 
@@ -39,30 +39,31 @@
     left: 0;
     width: 300vw;
     height: 100%;
+    /* GPU accelerated translation layers */
     will-change: transform;
-    transform: translateZ(0);
+    transform: translate3d(0, 0, 0);
 }
 
+/* 
+  All layers move in the SAME direction (right to left) at offset speeds.
+  This allows peaks to slowly overtake each other in a smooth fluid rhythm,
+  preventing hectic/ugly fast crossings.
+*/
 .waveSvgDeep {
-    animation: waveSlideDeep 25s linear infinite;
+    animation: waveSlideSmooth 36s linear infinite;
 }
 
 .waveSvgBack {
-    animation: waveSlideBack 18s linear infinite;
+    animation: waveSlideSmooth 24s linear infinite;
 }
 
 .waveSvgFront {
-    animation: waveSlideDeep 11s linear infinite;
+    animation: waveSlideSmooth 14s linear infinite;
 }
 
-@keyframes waveSlideDeep {
-    from { transform: translateZ(0) translateX(0); }
-    to   { transform: translateZ(0) translateX(-100vw); }
-}
-
-@keyframes waveSlideBack {
-    from { transform: translateZ(0) translateX(-100vw); }
-    to   { transform: translateZ(0) translateX(0); }
+@keyframes waveSlideSmooth {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-100vw, 0, 0); }
 }
 
 
