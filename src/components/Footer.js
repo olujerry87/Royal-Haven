@@ -9,38 +9,58 @@ import { SITE_MEDIA } from "@/config/media";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            {/* Three-layer animated wave transition into footer */}
+            {/* Three-layer perfectly seamless wave — 3-period SVG tile */}
             <div className={styles.waveWrapper}>
-                {/* Deep back layer — most transparent, slowest */}
-                <svg
-                    className={styles.waveSvgDeep}
+
+                {/* Layer 1: deep ghost, slowest, forward */}
+                <svg className={styles.waveSvgDeep}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 130"
+                    viewBox="0 0 4320 240"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,30 1440,60 L1440,130 L0,130 Z" />
+                    {/* 3 identical sine-like periods: each goes 0→1440, 1440→2880, 2880→4320 */}
+                    <path d="
+                        M0,120
+                        C360,0 1080,240 1440,120
+                        C1800,0 2520,240 2880,120
+                        C3240,0 3960,240 4320,120
+                        L4320,240 L0,240 Z
+                    " />
                 </svg>
-                {/* Mid layer */}
-                <svg
-                    className={styles.waveSvgBack}
+
+                {/* Layer 2: mid, reverse waveSlideB (starts offset so reverse is seamless) */}
+                <svg className={styles.waveSvgBack}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 130"
+                    viewBox="0 0 4320 240"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="M0,70 C240,110 480,20 720,60 C960,100 1200,10 1440,70 L1440,130 L0,130 Z" />
+                    <path d="
+                        M0,140
+                        C270,20 900,220 1440,130
+                        C1980,40 2610,220 2880,130
+                        C3150,40 3870,220 4320,140
+                        L4320,240 L0,240 Z
+                    " />
                 </svg>
-                {/* Front layer — topmost, solid footer color */}
-                <svg
-                    className={styles.waveSvgFront}
+
+                {/* Layer 3: front, solid #0b0b0b = exact footer color, fastest */}
+                <svg className={styles.waveSvgFront}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 130"
+                    viewBox="0 0 4320 240"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="M0,85 C180,40 360,110 540,75 C720,40 900,100 1080,65 C1260,30 1380,85 1440,80 L1440,130 L0,130 Z" />
+                    <path d="
+                        M0,160
+                        C240,60 720,220 1440,165
+                        C2160,110 2700,220 2880,165
+                        C3060,110 3840,220 4320,160
+                        L4320,240 L0,240 Z
+                    " />
                 </svg>
+
             </div>
             <div className={styles.container}>
                 <div className={styles.grid}>
@@ -59,6 +79,38 @@ export default function Footer() {
                             Where heritage meets modern luxury. <br />
                             Fashion & Artistry redefined.
                         </p>
+                        {/* Monochrome Canada flag */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 200 100"
+                            width="90"
+                            height="45"
+                            aria-label="Made in Canada"
+                            style={{ marginTop: '1rem', opacity: 0.45 }}
+                        >
+                            {/* Left bar */}
+                            <rect x="0" y="0" width="50" height="100" fill="var(--off-white)" />
+                            {/* Right bar */}
+                            <rect x="150" y="0" width="50" height="100" fill="var(--off-white)" />
+                            {/* Centre white panel */}
+                            <rect x="50" y="0" width="100" height="100" fill="var(--off-white)" opacity="0.15" />
+                            {/* Maple leaf */}
+                            <g transform="translate(100,50)" fill="var(--off-white)">
+                                <path d="
+                                    M0,-28 L4,-12
+                                    L16,-18 L11,-7
+                                    L24,-2 L14,4
+                                    L18,22 L8,16
+                                    L4,32 L0,22
+                                    L-4,32 L-8,16
+                                    L-18,22 L-14,4
+                                    L-24,-2 L-11,-7
+                                    L-16,-18 L-4,-12 Z
+                                " />
+                                {/* Stem */}
+                                <rect x="-3" y="22" width="6" height="14" />
+                            </g>
+                        </svg>
                     </div>
 
                     {/* Explore Column */}

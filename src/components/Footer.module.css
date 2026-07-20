@@ -1,15 +1,19 @@
 .footer {
-    background: rgba(11, 11, 11, 0.92);
-    backdrop-filter: blur(25px) saturate(180%);
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    /* Solid color — must match waveSvgFront fill exactly for seamless wave */
+    background: #0b0b0b;
     color: var(--off-white);
-    padding: 7rem 0 2rem 0;
+    padding: 9rem 0 2rem 0;
     margin-top: auto;
     position: relative;
     z-index: 10;
 }
 
-/* ── Three-layer animated wave ── */
+/* ──────────────────────────────────────────────
+   THREE-LAYER SEAMLESS WAVE
+   Technique: 3-period SVG tile, width:300%,
+   animated translateX(-33.333%) = exactly 1 period.
+   No visible seam ever. Layers at different speeds.
+────────────────────────────────────────────── */
 .waveWrapper {
     position: absolute;
     top: 0;
@@ -17,47 +21,61 @@
     width: 100%;
     overflow: hidden;
     line-height: 0;
+    /* Sit just above the footer */
     transform: translateY(-99%);
-    height: 130px;
+    height: 240px;
+    pointer-events: none;
 }
 
-/* Layer 1 — deepest, most transparent, slowest */
+/* Layer 1 — deepest ghost, slowest */
 .waveSvgDeep {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 200%;
+    width: 300%;
     height: 100%;
-    fill: rgba(11, 11, 11, 0.25);
-    animation: waveSlide 25s linear infinite;
+    fill: rgba(11, 11, 11, 0.2);
+    animation: waveSlideA 28s linear infinite;
 }
 
-/* Layer 2 — mid, semi-transparent, medium speed */
+/* Layer 2 — mid tone, medium speed, opposite direction */
 .waveSvgBack {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 200%;
-    height: 90%;
+    width: 300%;
+    height: 85%;
     fill: rgba(11, 11, 11, 0.55);
-    animation: waveSlide 16s linear infinite reverse;
+    animation: waveSlideB 18s linear infinite;
 }
 
-/* Layer 3 — front/topmost, solid footer color, fastest */
+/* Layer 3 — topmost, solid footer color, fastest */
 .waveSvgFront {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 200%;
-    height: 75%;
-    fill: rgba(11, 11, 11, 0.92);
-    animation: waveSlide 10s linear infinite;
+    width: 300%;
+    height: 70%;
+    /* MUST be identical to .footer background */
+    fill: #0b0b0b;
+    animation: waveSlideA 11s linear infinite;
 }
 
-@keyframes waveSlide {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+/*
+  -33.333% of 300% width = exactly 1 viewport width.
+  The SVG path has 3 identical periods, so the
+  end of period 3 = start of period 1 → zero glitch.
+*/
+@keyframes waveSlideA {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-33.3333%); }
 }
+/* Reverse direction for depth parallax */
+@keyframes waveSlideB {
+    from { transform: translateX(-33.3333%); }
+    to   { transform: translateX(0); }
+}
+
 
 .container {
     max-width: var(--max-width);
