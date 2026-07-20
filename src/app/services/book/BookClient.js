@@ -90,7 +90,7 @@ export default function BookClient({ page }) {
                                 <div className={styles.calendarWidget}>
                                     <InlineWidget 
                                         url="https://calendly.com/royalhaven-ng" 
-                                        styles={{ height: '700px', width: '100%' }} 
+                                        styles={{ height: '1100px', width: '100%' }} 
                                         pageSettings={{
                                             backgroundColor: 'ffffff',
                                             hideEventTypeDetails: false,

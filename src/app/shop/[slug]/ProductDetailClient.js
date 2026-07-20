@@ -111,10 +111,12 @@ export default function ProductDetailClient({ product }) {
 
                     {/* Short Description */}
                     {product.short_description && (
-                        <div
-                            className={styles.shortDescription}
-                            dangerouslySetInnerHTML={{ __html: product.short_description }}
-                        />
+                        <div style={{ width: '100%', overflowX: 'hidden' }}>
+                            <div
+                                className={styles.shortDescription}
+                                dangerouslySetInnerHTML={{ __html: product.short_description }}
+                            />
+                        </div>
                     )}
 
                     <div className={styles.divider}></div>
@@ -164,11 +166,13 @@ export default function ProductDetailClient({ product }) {
 
                     {/* Main WooCommerce Description */}
                     {product.description && (
-                        <div
-                            className={styles.description}
-                            style={{ marginTop: '2.5rem' }}
-                            dangerouslySetInnerHTML={{ __html: product.description }}
-                        />
+                        <div style={{ width: '100%', overflowX: 'hidden' }}>
+                            <div
+                                className={styles.description}
+                                style={{ marginTop: '2.5rem' }}
+                                dangerouslySetInnerHTML={{ __html: product.description }}
+                            />
+                        </div>
                     )}
 
                     {/* NFC Passport Link — shows only if rh_ntag_id is set on the product */}
