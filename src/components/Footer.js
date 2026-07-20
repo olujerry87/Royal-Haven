@@ -9,25 +9,37 @@ import { SITE_MEDIA } from "@/config/media";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            {/* Two-layer animated wave transition into footer */}
+            {/* Three-layer animated wave transition into footer */}
             <div className={styles.waveWrapper}>
+                {/* Deep back layer — most transparent, slowest */}
+                <svg
+                    className={styles.waveSvgDeep}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1440 130"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
+                    <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,30 1440,60 L1440,130 L0,130 Z" />
+                </svg>
+                {/* Mid layer */}
                 <svg
                     className={styles.waveSvgBack}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 80"
+                    viewBox="0 0 1440 130"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" />
+                    <path d="M0,70 C240,110 480,20 720,60 C960,100 1200,10 1440,70 L1440,130 L0,130 Z" />
                 </svg>
+                {/* Front layer — topmost, solid footer color */}
                 <svg
                     className={styles.waveSvgFront}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 80"
+                    viewBox="0 0 1440 130"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="M0,50 C180,10 360,70 540,40 C720,10 900,70 1080,40 C1260,10 1380,60 1440,50 L1440,80 L0,80 Z" />
+                    <path d="M0,85 C180,40 360,110 540,75 C720,40 900,100 1080,65 C1260,30 1380,85 1440,80 L1440,130 L0,130 Z" />
                 </svg>
             </div>
             <div className={styles.container}>

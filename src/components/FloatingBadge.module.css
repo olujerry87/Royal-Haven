@@ -1,31 +1,30 @@
 /* Vertical tab anchored to left edge */
 .badgeWrapper {
     position: fixed;
-    /* Center vertically */
-    top: 50%;
-    /* Offset so the rotated element hugs the left side */
-    left: -60px;
+    top: 70%;
+    left: -52px;
     transform: translateY(-50%) rotate(-90deg);
     transform-origin: center center;
     z-index: 1001;
     background-color: var(--obsidian);
     color: var(--off-white);
-    padding: 0.55rem 1.4rem;
+    padding: 0.45rem 1.2rem;
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     cursor: pointer;
     box-shadow: 4px 0 20px rgba(0,0,0,0.4);
-    /* Rounded on the top corners (which face outward when rotated) */
     border-radius: 0 0 8px 8px;
     border-top: 2px solid var(--gold);
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     white-space: nowrap;
+    /* Material Design: minimum touch target 48px height (when rotated, this becomes the width) */
+    min-height: 48px;
 }
 
 .badgeWrapper:hover {
@@ -55,8 +54,9 @@
 
 @media (max-width: 768px) {
     .badgeWrapper {
-        font-size: 0.65rem;
-        padding: 0.45rem 1.1rem;
-        left: -55px;
+        font-size: 0.62rem;
+        padding: 0.4rem 1rem;
+        left: -48px;
+        top: 75%;
     }
 }

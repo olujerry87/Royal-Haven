@@ -13,7 +13,7 @@
 .stickyWrapper {
     position: relative;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     height: 80vh;
     display: flex;
     justify-content: center;
@@ -39,13 +39,14 @@
     backdrop-filter: blur(5px);
     overflow: hidden;
     position: relative;
+    flex-shrink: 0;
 }
 
 /* Floating Glass Card */
 .glassCard {
     position: absolute;
-    width: 180px;
-    padding: 1.5rem;
+    width: 160px;
+    padding: 1.2rem;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -59,7 +60,7 @@
     z-index: 20;
     transition: border-color 0.3s ease;
     transform-origin: center center;
-    margin: -45px 0 0 -90px;
+    margin: -45px 0 0 -80px;
 }
 
 .glassCard:hover {
@@ -84,27 +85,29 @@
     font-size: 0.8rem;
     color: var(--off-white);
     line-height: 1.4;
+    white-space: normal;
+    word-break: normal;
     outline: none;
 }
 
 /* Isolated Card for transparent floating assets */
 .isolatedCard {
     position: absolute;
-    width: 200px;
+    width: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     z-index: 20;
     transform-origin: center center;
-    margin: -100px 0 0 -100px;
+    margin: -90px 0 0 -90px;
 }
 
 .isolatedImageWrapper {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
     position: relative;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
     transition: transform 0.3s ease;
 }
@@ -119,21 +122,88 @@
     color: var(--gold);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 
-/* Mobile Responsiveness */
+/* ── Mobile: switch from absolute to stacked layout ── */
 @media (max-width: 768px) {
     .container {
-        min-height: 60vh;
-        padding: 3rem 1rem;
+        min-height: auto;
+        padding: 2rem 0.5rem;
     }
 
+    /* On mobile the stickyWrapper stacks vertically */
     .stickyWrapper {
-        height: 50vh;
+        flex-direction: column;
+        height: auto;
+        gap: 2rem;
+        align-items: center;
     }
 
     .modelPlaceholder {
-        width: 180px;
-        height: 360px;
+        width: 160px;
+        height: 320px;
+        position: relative;
+        order: 0;
     }
+
+    /* Override inline absolute positioning on mobile */
+    .isolatedCard,
+    .glassCard {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        width: 120px;
+    }
+
+    .isolatedImageWrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .isolatedText {
+        font-size: 0.7rem;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+/* Mobile 3-column grid layout */
+.mobileLayout {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem 0.5rem;
+}
+
+.mobileCol {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    flex: 1;
+}
+
+.mobileCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+}
+
+.mobileCard .isolatedImageWrapper {
+    width: 85px;
+    height: 85px;
+}
+
+.mobileCard .isolatedText {
+    font-size: 0.6rem;
+    white-space: normal;
+    letter-spacing: 0.5px;
 }

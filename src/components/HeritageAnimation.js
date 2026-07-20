@@ -85,6 +85,65 @@ export default function HeritageAnimation() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    if (isMobile) {
+        // Mobile: render a clean grid — left column, model, right column
+        const leftItems = floatingElements.filter((_, i) => i % 2 === 0);
+        const rightItems = floatingElements.filter((_, i) => i % 2 !== 0);
+
+        return (
+            <section className={styles.container}>
+                <div className={styles.mobileLayout}>
+                    {/* Left column */}
+                    <div className={styles.mobileCol}>
+                        {leftItems.map((item, index) => (
+                            <motion.div
+                                key={item.id}
+                                className={styles.mobileCard}
+                                animate={{ y: [0, -8, 0] }}
+                                transition={{ duration: 5, repeat: Infinity, repeatType: "mirror", delay: index * 0.7, ease: "easeInOut" }}
+                            >
+                                <div className={styles.isolatedImageWrapper}>
+                                    <Image src={item.image_url} alt={item.text} fill style={{ objectFit: 'contain' }} unoptimized />
+                                </div>
+                                <div className={styles.isolatedText}>{item.text}</div>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Model center */}
+                    <motion.div
+                        className={styles.modelPlaceholder}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1 }}
+                        viewport={{ once: true }}
+                    >
+                        {SITE_MEDIA.heritage.center_model && (
+                            <Image src={SITE_MEDIA.heritage.center_model} alt="Living Heritage" fill style={{ objectFit: 'cover' }} unoptimized />
+                        )}
+                    </motion.div>
+
+                    {/* Right column */}
+                    <div className={styles.mobileCol}>
+                        {rightItems.map((item, index) => (
+                            <motion.div
+                                key={item.id}
+                                className={styles.mobileCard}
+                                animate={{ y: [0, -8, 0] }}
+                                transition={{ duration: 5, repeat: Infinity, repeatType: "mirror", delay: index * 0.7 + 0.3, ease: "easeInOut" }}
+                            >
+                                <div className={styles.isolatedImageWrapper}>
+                                    <Image src={item.image_url} alt={item.text} fill style={{ objectFit: 'contain' }} unoptimized />
+                                </div>
+                                <div className={styles.isolatedText}>{item.text}</div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className={styles.container}>
             <div className={styles.stickyWrapper}>

@@ -9,7 +9,7 @@
     z-index: 10;
 }
 
-/* ── Two-layer animated wave ── */
+/* ── Three-layer animated wave ── */
 .waveWrapper {
     position: absolute;
     top: 0;
@@ -18,29 +18,40 @@
     overflow: hidden;
     line-height: 0;
     transform: translateY(-99%);
-    height: 90px;
+    height: 130px;
 }
 
-/* Back wave — slightly transparent, slower */
+/* Layer 1 — deepest, most transparent, slowest */
+.waveSvgDeep {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    fill: rgba(11, 11, 11, 0.25);
+    animation: waveSlide 25s linear infinite;
+}
+
+/* Layer 2 — mid, semi-transparent, medium speed */
 .waveSvgBack {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 200%;
-    height: 100%;
-    fill: rgba(11, 11, 11, 0.45);
-    animation: waveSlide 20s linear infinite;
+    height: 90%;
+    fill: rgba(11, 11, 11, 0.55);
+    animation: waveSlide 16s linear infinite reverse;
 }
 
-/* Front wave — solid footer color, faster, offset */
+/* Layer 3 — front/topmost, solid footer color, fastest */
 .waveSvgFront {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 200%;
-    height: 100%;
+    height: 75%;
     fill: rgba(11, 11, 11, 0.92);
-    animation: waveSlide 12s linear infinite reverse;
+    animation: waveSlide 10s linear infinite;
 }
 
 @keyframes waveSlide {
