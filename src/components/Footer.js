@@ -9,58 +9,47 @@ import { SITE_MEDIA } from "@/config/media";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            {/* Three-layer perfectly seamless wave — 3-period SVG tile */}
+            {/* Three-layer dynamic sliding waves — 3-period SVG tiles with independent speeds */}
             <div className={styles.waveWrapper}>
-
-                {/* Layer 1: deep ghost, slowest, forward */}
-                <svg className={styles.waveSvgDeep}
+                {/* Ghost layer — most transparent, tallest crests, slow */}
+                <svg
+                    className={styles.waveSvgDeep}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 240"
+                    viewBox="0 0 4320 160"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    {/* 3 identical sine-like periods: each goes 0→1440, 1440→2880, 2880→4320 */}
-                    <path d="
-                        M0,120
-                        C360,0 1080,240 1440,120
-                        C1800,0 2520,240 2880,120
-                        C3240,0 3960,240 4320,120
-                        L4320,240 L0,240 Z
-                    " />
+                    <path
+                        fill="rgba(11,11,11,0.22)"
+                        d="M0,80 C360,-10 1080,170 1440,80 C1800,-10 2520,170 2880,80 C3240,-10 3960,170 4320,80 L4320,160 L0,160 Z"
+                    />
                 </svg>
-
-                {/* Layer 2: mid, reverse waveSlideB (starts offset so reverse is seamless) */}
-                <svg className={styles.waveSvgBack}
+                {/* Mid layer — semi-transparent, medium height, reverse direction */}
+                <svg
+                    className={styles.waveSvgBack}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 240"
+                    viewBox="0 0 4320 160"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="
-                        M0,140
-                        C270,20 900,220 1440,130
-                        C1980,40 2610,220 2880,130
-                        C3150,40 3870,220 4320,140
-                        L4320,240 L0,240 Z
-                    " />
+                    <path
+                        fill="rgba(11,11,11,0.52)"
+                        d="M0,100 C300,20 900,155 1440,100 C1980,45 2580,155 2880,100 C3180,45 3780,155 4320,100 L4320,160 L0,160 Z"
+                    />
                 </svg>
-
-                {/* Layer 3: front, solid #0b0b0b = exact footer color, fastest */}
-                <svg className={styles.waveSvgFront}
+                {/* Front layer — solid footer color, lowest crests, fastest */}
+                <svg
+                    className={styles.waveSvgFront}
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 4320 240"
+                    viewBox="0 0 4320 160"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <path d="
-                        M0,160
-                        C240,60 720,220 1440,165
-                        C2160,110 2700,220 2880,165
-                        C3060,110 3840,220 4320,160
-                        L4320,240 L0,240 Z
-                    " />
+                    <path
+                        fill="#0b0b0b"
+                        d="M0,118 C240,55 840,150 1440,118 C2040,86 2640,150 2880,118 C3120,86 3720,150 4320,118 L4320,160 L0,160 Z"
+                    />
                 </svg>
-
             </div>
             <div className={styles.container}>
                 <div className={styles.grid}>
@@ -77,38 +66,37 @@ export default function Footer() {
                         </div>
                         <p className={styles.tagline}>
                             Where heritage meets modern luxury. <br />
-                            Fashion & Artistry redefined.
+                            Fashion &amp; Artistry redefined.
                         </p>
-                        {/* Monochrome Canada flag */}
+                        {/* Proportional Monochrome Canada flag */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 200 100"
                             width="90"
                             height="45"
-                            aria-label="Made in Canada"
-                            style={{ marginTop: '1rem', opacity: 0.45 }}
+                            role="img"
+                            aria-label="Canadian flag"
+                            style={{ marginTop: '1.2rem', display: 'block', opacity: 0.55 }}
                         >
-                            {/* Left bar */}
-                            <rect x="0" y="0" width="50" height="100" fill="var(--off-white)" />
-                            {/* Right bar */}
-                            <rect x="150" y="0" width="50" height="100" fill="var(--off-white)" />
-                            {/* Centre white panel */}
+                            {/* Left stripe */}
+                            <rect x="0" y="0" width="50" height="100" fill="var(--off-white)" opacity="0.6" />
+                            {/* Right stripe */}
+                            <rect x="150" y="0" width="50" height="100" fill="var(--off-white)" opacity="0.6" />
+                            {/* Center white panel */}
                             <rect x="50" y="0" width="100" height="100" fill="var(--off-white)" opacity="0.15" />
-                            {/* Maple leaf */}
-                            <g transform="translate(100,50)" fill="var(--off-white)">
+                            {/* Official 11-point maple leaf */}
+                            <g transform="translate(100, 48)" fill="var(--off-white)" opacity="0.85">
                                 <path d="
-                                    M0,-28 L4,-12
-                                    L16,-18 L11,-7
-                                    L24,-2 L14,4
-                                    L18,22 L8,16
-                                    L4,32 L0,22
-                                    L-4,32 L-8,16
-                                    L-18,22 L-14,4
-                                    L-24,-2 L-11,-7
-                                    L-16,-18 L-4,-12 Z
+                                    M 0,-40
+                                    L 1.5,-27 L 5,-28 L 4,-23 L 8,-24 L 18,-30
+                                    L 16,-18 L 32,-15 L 22,-5 L 28,6 L 14,2
+                                    L 13,18 L 8,14 L 0,16
+                                    L -8,14 L -13,18 L -14,2 L -28,6 L -22,-5
+                                    L -32,-15 L -16,-18 L -18,-30 L -8,-24 L -4,-23
+                                    L -5,-28 L -1.5,-27
+                                    Z
                                 " />
-                                {/* Stem */}
-                                <rect x="-3" y="22" width="6" height="14" />
+                                <path d="M -1.5,16 L -1.5,38 L 1.5,38 L 1.5,16 Z" />
                             </g>
                         </svg>
                     </div>

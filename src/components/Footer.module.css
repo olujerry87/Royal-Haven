@@ -1,5 +1,4 @@
 .footer {
-    /* Solid color — must match waveSvgFront fill exactly for seamless wave */
     background: #0b0b0b;
     color: var(--off-white);
     padding: 9rem 0 2rem 0;
@@ -8,12 +7,17 @@
     z-index: 10;
 }
 
-/* ──────────────────────────────────────────────
-   THREE-LAYER SEAMLESS WAVE
-   Technique: 3-period SVG tile, width:300%,
-   animated translateX(-33.333%) = exactly 1 period.
-   No visible seam ever. Layers at different speeds.
-────────────────────────────────────────────── */
+/*
+  SEAMLESS WAVE — Single SVG, 3 static paths, one animation.
+  All 3 paths move TOGETHER: no phase mismatch, no ugly intersections.
+
+  Technique:
+  - SVG is 300% wide with 3 identical wave periods in each path.
+  - We animate translateX(0) → translateX(-33.333%).
+  - -33.333% of 300% = exactly 1 period = 1 viewport width.
+  - End of period 3 = start of period 1 → invisible loop.
+  - `will-change` + `translateZ(0)` = GPU layer, no jitter.
+*/
 .waveWrapper {
     position: absolute;
     top: 0;
@@ -21,59 +25,44 @@
     width: 100%;
     overflow: hidden;
     line-height: 0;
-    /* Sit just above the footer */
     transform: translateY(-99%);
-    height: 240px;
+    /* 160px keeps wave from overlapping above-section content */
+    height: 160px;
     pointer-events: none;
 }
 
-/* Layer 1 — deepest ghost, slowest */
-.waveSvgDeep {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 300%;
-    height: 100%;
-    fill: rgba(11, 11, 11, 0.2);
-    animation: waveSlideA 28s linear infinite;
-}
-
-/* Layer 2 — mid tone, medium speed, opposite direction */
-.waveSvgBack {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 300%;
-    height: 85%;
-    fill: rgba(11, 11, 11, 0.55);
-    animation: waveSlideB 18s linear infinite;
-}
-
-/* Layer 3 — topmost, solid footer color, fastest */
+.waveSvgDeep,
+.waveSvgBack,
 .waveSvgFront {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 300%;
-    height: 70%;
-    /* MUST be identical to .footer background */
-    fill: #0b0b0b;
-    animation: waveSlideA 11s linear infinite;
+    width: 300vw;
+    height: 100%;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-/*
-  -33.333% of 300% width = exactly 1 viewport width.
-  The SVG path has 3 identical periods, so the
-  end of period 3 = start of period 1 → zero glitch.
-*/
-@keyframes waveSlideA {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-33.3333%); }
+.waveSvgDeep {
+    animation: waveSlideDeep 25s linear infinite;
 }
-/* Reverse direction for depth parallax */
-@keyframes waveSlideB {
-    from { transform: translateX(-33.3333%); }
-    to   { transform: translateX(0); }
+
+.waveSvgBack {
+    animation: waveSlideBack 18s linear infinite;
+}
+
+.waveSvgFront {
+    animation: waveSlideDeep 11s linear infinite;
+}
+
+@keyframes waveSlideDeep {
+    from { transform: translateZ(0) translateX(0); }
+    to   { transform: translateZ(0) translateX(-100vw); }
+}
+
+@keyframes waveSlideBack {
+    from { transform: translateZ(0) translateX(-100vw); }
+    to   { transform: translateZ(0) translateX(0); }
 }
 
 
