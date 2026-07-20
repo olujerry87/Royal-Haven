@@ -1,7 +1,9 @@
 .section {
-    background-color: #6C7A60; /* Muted olive green matching screenshot */
+    background-color: var(--obsidian);
     padding: 4rem 2rem;
     width: 100%;
+    position: relative;
+    z-index: 10;
 }
 
 .container {

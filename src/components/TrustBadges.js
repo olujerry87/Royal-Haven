@@ -11,7 +11,7 @@ const badges = [
     },
     {
         icon: MapPin,
-        title: "Handcrafted in Canada",
+        title: "Handcrafted in Canada 🇨🇦",
         description: "Each piece is conceptualized and crafted in Ontario, Canada, ensuring consistent quality and attention to detail."
     },
     {

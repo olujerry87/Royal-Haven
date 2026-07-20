@@ -9,9 +9,25 @@ import { SITE_MEDIA } from "@/config/media";
 export default function Footer() {
     return (
         <footer className={styles.footer}>
-            <div className={styles.waveDivider}>
-                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,119.38,193.36,99.5,239.56,84.74,284.8,70.2,321.39,56.44Z" className={styles.shapeFill}></path>
+            {/* Two-layer animated wave transition into footer */}
+            <div className={styles.waveWrapper}>
+                <svg
+                    className={styles.waveSvgBack}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1440 80"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
+                    <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" />
+                </svg>
+                <svg
+                    className={styles.waveSvgFront}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1440 80"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
+                    <path d="M0,50 C180,10 360,70 540,40 C720,10 900,70 1080,40 C1260,10 1380,60 1440,50 L1440,80 L0,80 Z" />
                 </svg>
             </div>
             <div className={styles.container}>

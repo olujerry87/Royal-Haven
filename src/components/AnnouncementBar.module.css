@@ -1,18 +1,22 @@
 .bar {
     width: 100%;
-    background-color: #6C7A60; /* Muted olive green matching screenshot */
-    color: white;
+    background-color: var(--obsidian); /* changed from green to dark */
+    color: var(--off-white);
     text-align: center;
-    padding: 0.6rem 1rem;
+    padding: 0;
+    height: 36px; /* fixed height for predictable header offset */
     font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 400;
     letter-spacing: 0.5px;
-    z-index: 100;
-    position: relative;
+    z-index: 1100;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .bar a {
