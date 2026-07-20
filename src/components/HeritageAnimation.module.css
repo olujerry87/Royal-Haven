@@ -90,19 +90,19 @@
 /* Isolated Card for transparent floating assets */
 .isolatedCard {
     position: absolute;
-    width: 160px;
+    width: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     z-index: 20;
     transform-origin: center center;
-    margin: -80px 0 0 -80px;
+    margin: -100px 0 0 -100px;
 }
 
 .isolatedImageWrapper {
-    width: 140px;
-    height: 140px;
+    width: 180px;
+    height: 180px;
     position: relative;
     margin-bottom: 0.6rem;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
