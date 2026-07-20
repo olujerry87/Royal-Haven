@@ -21,10 +21,10 @@ export default function Footer() {
                 >
                     <path
                         fill="rgba(11,11,11,0.22)"
-                        d="M0,90 C360,50 1080,130 1440,90 C1800,50 2520,130 2880,90 C3240,50 3960,130 4320,90 L4320,180 L0,180 Z"
+                        d="M0,40 C360,40 360,120 720,120 C1080,120 1080,40 1440,40 C1800,40 1800,120 2160,120 C2520,120 2520,40 2880,40 C3240,40 3240,120 3600,120 C3960,120 3960,40 4320,40 L4320,180 L0,180 Z"
                     />
                 </svg>
-                {/* Mid layer — semi-transparent, medium height, offset phase */}
+                {/* Mid layer — semi-transparent, medium height, offset phase (trough first) */}
                 <svg
                     className={styles.waveSvgBack}
                     xmlns="http://www.w3.org/2000/svg"
@@ -34,10 +34,10 @@ export default function Footer() {
                 >
                     <path
                         fill="rgba(11,11,11,0.52)"
-                        d="M0,100 C360,140 1080,60 1440,100 C1800,140 2520,60 2880,100 C3240,140 3960,60 4320,100 L4320,180 L0,180 Z"
+                        d="M0,145 C360,145 360,55 720,55 C1080,55 1080,145 1440,145 C1800,145 1800,55 2160,55 C2520,55 2520,145 2880,145 C3240,145 3240,55 3600,55 C3960,55 3960,145 4320,145 L4320,180 L0,180 Z"
                     />
                 </svg>
-                {/* Front layer — solid footer color, lowest crests, fastest */}
+                {/* Front layer — solid footer color, lowest crests, fastest, offset phase (middle first) */}
                 <svg
                     className={styles.waveSvgFront}
                     xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@ export default function Footer() {
                 >
                     <path
                         fill="#0b0b0b"
-                        d="M0,110 C180,70 900,150 1440,110 C1620,70 2340,150 2880,110 C3060,70 3780,150 4320,110 L4320,180 L0,180 Z"
+                        d="M0,115 C180,115 180,160 360,160 C540,160 540,70 720,70 C900,70 900,160 1080,160 C1260,160 1260,70 1440,70 C1620,70 1620,160 1800,160 C1980,160 1980,70 2160,70 C2340,70 2340,160 2520,160 C2700,160 2700,70 2880,70 C3060,70 3060,160 3240,160 C3420,160 3420,70 3600,70 C3780,70 3780,160 3960,160 C4140,160 4140,115 4320,115 L4320,180 L0,180 Z"
                     />
                 </svg>
             </div>

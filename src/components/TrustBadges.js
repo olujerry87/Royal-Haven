@@ -11,8 +11,8 @@ const badges = [
     },
     {
         icon: MapPin,
-        title: "Handcrafted in Canada 🇨🇦",
-        description: "Each piece is conceptualized and crafted in Ontario, Canada, ensuring consistent quality and attention to detail."
+        title: "Curated in Canada 🇨🇦",
+        description: "Sourced indigenously worldwide—collaborating with heritage fabric weavers across Africa, India, and Asia—and crafted with global partners to be finalized and curated in Ontario, Canada."
     },
     {
         icon: Sparkles,
