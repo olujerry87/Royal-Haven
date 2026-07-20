@@ -21,7 +21,7 @@ export default function Footer() {
                 >
                     <path
                         fill="rgba(11,11,11,0.22)"
-                        d="M0,90 C360,15 1080,165 1440,90 C1800,15 2520,165 2880,90 C3240,15 3960,165 4320,90 L4320,180 L0,180 Z"
+                        d="M0,90 C360,50 1080,130 1440,90 C1800,50 2520,130 2880,90 C3240,50 3960,130 4320,90 L4320,180 L0,180 Z"
                     />
                 </svg>
                 {/* Mid layer — semi-transparent, medium height, offset phase */}
@@ -34,7 +34,7 @@ export default function Footer() {
                 >
                     <path
                         fill="rgba(11,11,11,0.52)"
-                        d="M0,150 C360,165 1080,15 1440,150 C1800,165 2520,15 2880,150 C3240,165 3960,15 4320,150 L4320,180 L0,180 Z"
+                        d="M0,100 C360,140 1080,60 1440,100 C1800,140 2520,60 2880,100 C3240,140 3960,60 4320,100 L4320,180 L0,180 Z"
                     />
                 </svg>
                 {/* Front layer — solid footer color, lowest crests, fastest */}
@@ -47,7 +47,7 @@ export default function Footer() {
                 >
                     <path
                         fill="#0b0b0b"
-                        d="M0,110 C180,25 900,155 1440,110 C1620,25 2340,155 2880,110 C3060,25 3780,155 4320,110 L4320,180 L0,180 Z"
+                        d="M0,110 C180,70 900,150 1440,110 C1620,70 2340,150 2880,110 C3060,70 3780,150 4320,110 L4320,180 L0,180 Z"
                     />
                 </svg>
             </div>
@@ -71,33 +71,24 @@ export default function Footer() {
                         {/* Miniature Proportional Canada flag matching user attachment */}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 200 100"
-                            width="64"
-                            height="32"
+                            viewBox="0 0 640 480"
+                            width="54"
+                            height="40"
                             role="img"
                             aria-label="Canadian flag"
-                            style={{ marginTop: '0.8rem', display: 'block', opacity: 0.8, border: '1px solid rgba(255, 255, 255, 0.2)' }}
+                            style={{ marginTop: '0.8rem', display: 'block', opacity: 0.85, border: '1px solid rgba(255, 255, 255, 0.25)' }}
                         >
                             {/* White flag background */}
-                            <rect width="200" height="100" fill="var(--off-white)" />
+                            <rect width="640" height="480" fill="var(--off-white)" />
                             {/* Left black stripe */}
-                            <rect x="0" y="0" width="50" height="100" fill="#0b0b0b" />
+                            <rect x="0" y="0" width="160" height="480" fill="#0b0b0b" />
                             {/* Right black stripe */}
-                            <rect x="150" y="0" width="50" height="100" fill="#0b0b0b" />
+                            <rect x="480" y="0" width="160" height="480" fill="#0b0b0b" />
                             {/* Official 11-point maple leaf in black */}
-                            <g transform="translate(100, 48)" fill="#0b0b0b">
-                                <path d="
-                                    M 0,-40
-                                    L 1.5,-27 L 5,-28 L 4,-23 L 8,-24 L 18,-30
-                                    L 16,-18 L 32,-15 L 22,-5 L 28,6 L 14,2
-                                    L 13,18 L 8,14 L 0,16
-                                    L -8,14 L -13,18 L -14,2 L -28,6 L -22,-5
-                                    L -32,-15 L -16,-18 L -18,-30 L -8,-24 L -4,-23
-                                    L -5,-28 L -1.5,-27
-                                    Z
-                                " />
-                                <path d="M -1.5,16 L -1.5,38 L 1.5,38 L 1.5,16 Z" />
-                            </g>
+                            <path
+                                fill="#0b0b0b"
+                                d="M201 232l-13.3 4.4 61.4 54c4.7 13.7-1.6 17.8-5.6 25l66.6-8.4-1.6 67 13.9-.3-3.1-66.6 66.7 8c-4.1-8.7-7.8-13.3-4-27.2l61.3-51-10.7-4c-8.8-6.8 3.8-32.6 5.6-48.9 0 0-35.7 12.3-38 5.8l-9.2-17.5-32.6 35.8c-3.5.9-5-.5-5.9-3.5l15-74.8-23.8 13.4q-3.2 1.3-5.2-2.2l-23-46-23.6 47.8q-2.8 2.5-5 .7L264 130.8l13.7 74.1c-1.1 3-3.7 3.8-6.7 2.2l-31.2-35.3c-4 6.5-6.8 17.1-12.2 19.5s-23.5-4.5-35.6-7c4.2 14.8 17 39.6 9 47.7"
+                            />
                         </svg>
                     </div>
 
