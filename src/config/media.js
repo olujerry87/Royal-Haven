@@ -33,12 +33,12 @@ export const SITE_MEDIA = {
 
         // Floating "Living Heritage" Cards
         floating_cards: {
-            precision_cut: "/images/heritage_floating_1.png",
-            silk_textures: "/images/heritage_floating_2.png",
-            royal_gems: "/images/heritage_floating_3.png",
-            artistic_vision: "/images/heritage_floating_4.png",
-            custom_fit: "/images/heritage_floating_5.png",
-            beaded_detail: "/images/heritage_floating_1.png", // Fallback duplicate for 6th slot
+            precision_cut: "/images/heritage_floating_1.png?v=4",
+            silk_textures: "/images/heritage_floating_2.png?v=4",
+            royal_gems: "/images/heritage_floating_3.png?v=4",
+            artistic_vision: "/images/heritage_floating_4.png?v=4",
+            custom_fit: "/images/heritage_floating_5.png?v=4",
+            beaded_detail: "/images/heritage_floating_1.png?v=4", // Fallback duplicate for 6th slot
         }
     },
 

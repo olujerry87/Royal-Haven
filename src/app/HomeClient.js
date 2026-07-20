@@ -12,6 +12,7 @@ import FeaturedSpotlight from "@/components/FeaturedSpotlight";
 import FAQ from "@/components/FAQ";
 import Reviews from "@/components/Reviews";
 import ScrollProgress from "@/components/ScrollProgress";
+import TrustBadges from "@/components/TrustBadges";
 import { SITE_MEDIA } from "@/config/media";
 
 export default function HomeClient({ 
@@ -249,6 +250,7 @@ export default function HomeClient({
                 hasGlassCard={true}
             />
 
+            <TrustBadges />
             <FAQ />
 
             <FeaturedSpotlight

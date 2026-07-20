@@ -25,6 +25,9 @@ export const metadata = {
   description: "A dual experience of heritage fashion and luxury artistry.",
 };
 
+import AnnouncementBar from "@/components/AnnouncementBar";
+import FloatingBadge from "@/components/FloatingBadge";
+
 export default async function RootLayout({ children }) {
   let categories = [];
   try {
@@ -43,6 +46,8 @@ export default async function RootLayout({ children }) {
         <CartProvider>
           <BuilderRegistry />
           <LiquidBackground />
+          <AnnouncementBar />
+          <FloatingBadge />
           <Navigation wuraCategories={categories} />
           {children}
           <Footer />

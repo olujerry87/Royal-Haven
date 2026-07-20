@@ -1,0 +1,52 @@
+.badgeWrapper {
+    position: fixed;
+    top: 60%;
+    left: 0;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: left bottom;
+    z-index: 1000;
+    background-color: var(--obsidian);
+    color: var(--off-white);
+    padding: 0.5rem 1.2rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.badgeWrapper:hover {
+    background-color: var(--royal-purple);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: var(--off-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.closeBtn:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .badgeWrapper {
+        font-size: 0.7rem;
+        padding: 0.4rem 1rem;
+        top: 65%;
+    }
+}

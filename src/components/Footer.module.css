@@ -6,11 +6,32 @@
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
     color: var(--off-white);
-    padding: 4rem 0 2rem 0;
+    padding: 6rem 0 2rem 0; /* Increased top padding to accommodate wave */
     margin-top: auto;
     /* Push to bottom if content is short */
     position: relative;
     z-index: 10;
+}
+
+.waveDivider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: translateY(-100%);
+}
+
+.waveDivider svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 60px;
+}
+
+.shapeFill {
+    fill: rgba(20, 20, 20, 0.65); /* Should match the footer background */
 }
 
 .container {

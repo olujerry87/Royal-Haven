@@ -129,7 +129,7 @@
     overflow-wrap: break-word;
     word-break: break-word;
     max-width: 100%;
-    overflow: hidden;
+    width: 100%;
 }
 
 .shortDescription * {
@@ -137,6 +137,26 @@
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
     word-break: break-word !important;
+    white-space: normal !important;
+}
+
+.shortDescription div,
+.shortDescription p,
+.shortDescription h1,
+.shortDescription h2,
+.shortDescription h3,
+.shortDescription h4,
+.shortDescription h5,
+.shortDescription h6 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 .shortDescription img {
@@ -153,7 +173,7 @@
     overflow-wrap: break-word;
     word-break: break-word;
     max-width: 100%;
-    overflow: hidden;
+    width: 100%;
 }
 
 /* Force ALL WooCommerce injected content to stay within bounds */
@@ -176,14 +196,40 @@
 .description table,
 .description img {
     max-width: 100% !important;
+    min-width: 0 !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
     word-break: break-word !important;
     white-space: normal !important;
 }
 
+.description div,
+.description p,
+.description h1,
+.description h2,
+.description h3,
+.description h4,
+.description h5,
+.description h6,
+.description ul,
+.description ol,
+.description li,
+.description table,
+.description blockquote {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 .description img {
     height: auto !important;
+    max-width: 100% !important;
 }
 
 .divider {
