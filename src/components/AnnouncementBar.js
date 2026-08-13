@@ -2,7 +2,7 @@ import styles from './AnnouncementBar.module.css';
 import { getPageBySlug } from '@/lib/wordpress';
 
 export default async function AnnouncementBar() {
-    let content = "FREE SHIPPING ... | 100% Natural & Made in Canada";
+    let content = "FREE SHIPPING ... | Natural & Made in Canada";
     
     try {
         const page = await getPageBySlug('announcement-bar');
@@ -23,7 +23,7 @@ export default async function AnnouncementBar() {
 
     return (
         <div className={styles.bar}>
-            <p>FREE SHIPPING over $150 | 100% Proudly Made in Canada</p>
+            <p>FREE SHIPPING over $150 | Proudly Made in Canada</p>
         </div>
     );
 }
