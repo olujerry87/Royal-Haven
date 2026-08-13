@@ -122,7 +122,7 @@ export default function Footer() {
                         <h4>Connect</h4>
                         <div className={styles.socials}>
                             <a 
-                                href={process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com"} 
+                                href={process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/royal_haven?igsh=MXZhM3MwdnpyOXZoYQ=="} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 aria-label="Follow us on Instagram"
@@ -130,7 +130,7 @@ export default function Footer() {
                                 <Instagram size={20} />
                             </a>
                             <a 
-                                href={process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://facebook.com"} 
+                                href={process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://www.facebook.com/share/1DQbZ7qejd/?mibextid=wwXIfr"} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 aria-label="Follow us on Facebook"
