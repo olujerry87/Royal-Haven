@@ -109,7 +109,7 @@ export default function AccessibilityStatement() {
                     </p>
                     <ul>
                         <li><strong>Phone:</strong> +1 (613) 286-0661</li>
-                        <li><strong>Email:</strong> royalhaven.ng@gmail.com</li>
+                        <li><strong>Email:</strong> royalhaven@bezaleelgroup.ca</li>
                     </ul>
                     <p>We try to respond to feedback within 2 business days.</p>
                 </motion.section>

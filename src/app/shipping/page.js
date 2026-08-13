@@ -130,7 +130,7 @@ export default function ShippingAndReturns() {
                         <h2>Support Desk</h2>
                     </div>
                     <p>Have questions about your order or our delivery policies?</p>
-                    <p><strong>Email:</strong> royalhaven.ng@gmail.com</p>
+                    <p><strong>Email:</strong> royalhaven@bezaleelgroup.ca</p>
                     <p><strong>Primary Line:</strong> +1 (613) 286-0661</p>
                 </motion.section>
 

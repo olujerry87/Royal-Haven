@@ -121,12 +121,26 @@ export default function Footer() {
                     <div className={styles.column}>
                         <h4>Connect</h4>
                         <div className={styles.socials}>
-                            <a href="#" aria-label="Follow us on Instagram"><Instagram size={20} /></a>
-                            <a href="#" aria-label="Follow us on Facebook"><Facebook size={20} /></a>
-                            <a href="mailto:royalhaven.ng@gmail.com" aria-label="Send us an Email"><Mail size={20} /></a>
+                            <a 
+                                href={process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com"} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                aria-label="Follow us on Instagram"
+                            >
+                                <Instagram size={20} />
+                            </a>
+                            <a 
+                                href={process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://facebook.com"} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                aria-label="Follow us on Facebook"
+                            >
+                                <Facebook size={20} />
+                            </a>
+                            <a href="mailto:royalhaven@bezaleelgroup.ca" aria-label="Send us an Email"><Mail size={20} /></a>
                         </div>
                         <div style={{ marginTop: '0.5rem', marginBottom: '1.5rem', fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
-                            <p>royalhaven.ng@gmail.com</p>
+                            <p>royalhaven@bezaleelgroup.ca</p>
                             <p>+1 (613) 286-0661</p>
                         </div>
                         <div className={styles.newsletter}>
