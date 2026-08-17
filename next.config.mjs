@@ -61,6 +61,24 @@ const nextConfig = BuilderDevTools()({
           },
         ],
       },
+      {
+        source: "/.well-known/apple-developer-merchantid-domain-association",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain",
+          },
+        ],
+      },
+      {
+        source: "/apple-developer-merchantid-domain-association",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain",
+          },
+        ],
+      },
     ];
   },
 });

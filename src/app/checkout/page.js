@@ -7,9 +7,10 @@ import { ArrowLeft } from "lucide-react";
 import styles from "./page.module.css";
 import { useState } from "react";
 import { placeOrder } from "./actions";
+import GiftCardInput from "@/components/GiftCardInput";
 
 export default function Checkout() {
-    const { cart, cartTotal, clearCart } = useCart();
+    const { cart, cartTotal, giftCardDiscount, finalTotal, appliedGiftCard, clearCart } = useCart();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
@@ -61,12 +62,12 @@ export default function Checkout() {
                     city: formData.city,
                     state: formData.state,
                     postcode: formData.postcode,
-                    country: "US",
-                    country: "US",
+                    country: "CA",
                     email: formData.email,
                     phone: formData.phone
                 },
                 couponCode: formData.couponCode,
+                appliedGiftCard: appliedGiftCard,
                 shipping: {
                     first_name: formData.firstName,
                     last_name: formData.lastName,
@@ -75,7 +76,7 @@ export default function Checkout() {
                     city: formData.city,
                     state: formData.state,
                     postcode: formData.postcode,
-                    country: "US"
+                    country: "CA"
                 }
             };
 
@@ -110,11 +111,11 @@ export default function Checkout() {
                     </div>
 
                     <form onSubmit={handlePayment} className={styles.form}>
-                        <h2 className={styles.sectionTitle}>Contact</h2>
+                        <h2 className={styles.sectionTitle}>Contact Information</h2>
                         <input
                             type="email"
                             name="email"
-                            placeholder="Email"
+                            placeholder="Email address"
                             required
                             className={styles.input}
                             value={formData.email}
@@ -122,7 +123,7 @@ export default function Checkout() {
                         />
 
                         <h2 className={styles.sectionTitle}>Shipping Address</h2>
-                        <div className={styles.row2}>
+                        <div className={styles.row}>
                             <input
                                 type="text"
                                 name="firstName"
@@ -159,7 +160,7 @@ export default function Checkout() {
                             value={formData.address2}
                             onChange={handleInputChange}
                         />
-                        <div className={styles.row3}>
+                        <div className={styles.row}>
                             <input
                                 type="text"
                                 name="city"
@@ -198,19 +199,11 @@ export default function Checkout() {
                             onChange={handleInputChange}
                         />
 
-                        <h2 className={styles.sectionTitle}>Promo Code</h2>
-                        <input
-                            type="text"
-                            name="couponCode"
-                            placeholder="Gift Card or Promo Code (Optional)"
-                            className={styles.input}
-                            value={formData.couponCode}
-                            onChange={handleInputChange}
-                        />
+                        <GiftCardInput />
 
                         <h2 className={styles.sectionTitle}>Payment</h2>
                         <div className={styles.paymentBox}>
-                            <p>Order will be created in WordPress. Payment processing can be configured in WooCommerce settings.</p>
+                            <p>Square & Credit Card Payment processing enabled for checkout.</p>
                         </div>
 
                         {error && (
@@ -224,7 +217,7 @@ export default function Checkout() {
                             className={styles.payBtn}
                             disabled={isProcessing}
                         >
-                            {isProcessing ? "Creating Order..." : `Place Order - $${cartTotal}`}
+                            {isProcessing ? "Creating Order..." : `Place Order - $${finalTotal.toFixed(2)} USD`}
                         </button>
                     </form>
                 </div>
@@ -254,15 +247,21 @@ export default function Checkout() {
                     <div className={styles.costs}>
                         <div className={styles.row}>
                             <span>Subtotal</span>
-                            <span>${cartTotal}</span>
+                            <span>${cartTotal.toFixed(2)}</span>
                         </div>
+                        {giftCardDiscount > 0 && (
+                            <div className={styles.row} style={{ color: 'var(--gold, #D4AF37)' }}>
+                                <span>Gift Card Balance</span>
+                                <span>-${giftCardDiscount.toFixed(2)}</span>
+                            </div>
+                        )}
                         <div className={styles.row}>
                             <span>Shipping</span>
                             <span>Free</span>
                         </div>
                         <div className={`${styles.row} ${styles.total}`}>
-                            <span>Total</span>
-                            <span>${cartTotal}</span>
+                            <span>Total Due</span>
+                            <span>${finalTotal.toFixed(2)}</span>
                         </div>
                     </div>
                 </div>

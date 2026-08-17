@@ -27,6 +27,7 @@ export const metadata = {
 
 import AnnouncementBar from "@/components/AnnouncementBar";
 import FloatingBadge from "@/components/FloatingBadge";
+import AddToCartNotification from "@/components/AddToCartNotification";
 
 export default async function RootLayout({ children }) {
   let categories = [];
@@ -48,11 +49,12 @@ export default async function RootLayout({ children }) {
           <LiquidBackground />
           <AnnouncementBar />
           <FloatingBadge />
+          <AddToCartNotification />
           <Navigation wuraCategories={categories} />
           {children}
           <Footer />
         </CartProvider>
       </body>
-    </html >
+    </html>
   );
 }

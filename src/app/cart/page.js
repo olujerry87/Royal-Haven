@@ -7,8 +7,10 @@ import { Trash2, Minus, Plus, ArrowRight } from "lucide-react";
 import styles from "./page.module.css";
 import { SITE_MEDIA } from "@/config/media";
 
+import GiftCardInput from "@/components/GiftCardInput";
+
 export default function CartPage() {
-    const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
+    const { cart, removeFromCart, updateQuantity, cartTotal, giftCardDiscount, finalTotal } = useCart();
 
     if (cart.length === 0) {
         return (
@@ -89,19 +91,28 @@ export default function CartPage() {
                         <h2 className={styles.summaryTitle}>Order Summary</h2>
                         <div className={styles.row}>
                             <span>Subtotal</span>
-                            <span>${cartTotal}</span>
+                            <span>${cartTotal.toFixed(2)}</span>
                         </div>
+                        {giftCardDiscount > 0 && (
+                            <div className={styles.row} style={{ color: 'var(--gold, #D4AF37)' }}>
+                                <span>Gift Card Balance</span>
+                                <span>-${giftCardDiscount.toFixed(2)}</span>
+                            </div>
+                        )}
                         <div className={styles.row}>
                             <span>Shipping</span>
                             <span>Calculated at checkout</span>
                         </div>
                         <div className={`${styles.row} ${styles.totalRow}`}>
-                            <span>Total</span>
-                            <span>${cartTotal}</span>
+                            <span>Total Due</span>
+                            <span>${finalTotal.toFixed(2)}</span>
                         </div>
 
+                        {/* Custom Gift Card Input Component */}
+                        <GiftCardInput />
+
                         <Link href="/checkout">
-                            <button className="btn-primary" style={{ width: '100%', marginTop: '2rem' }}>
+                            <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
                                 Proceed to Checkout <ArrowRight size={16} style={{ display: 'inline', marginLeft: '5px' }} />
                             </button>
                         </Link>

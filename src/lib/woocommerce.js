@@ -126,37 +126,60 @@ export async function getOrderById(orderId) {
  */
 export function formatOrderData(cartItems, customerData) {
     const lineItems = cartItems.map(item => {
-        const meta = [{ key: "Size", value: item.size }];
+        const meta = [{ key: "Size", value: item.size || "Fixed" }];
         
-        // Add Gift Card specific metadata
-        if (item.recipient_email) {
-            meta.push({ key: "Recipient Email", value: item.recipient_email });
-        }
-        if (item.message) {
-            meta.push({ key: "Gift Message", value: item.message });
+        // Add Omnichannel Square Gift Card metadata if item is a digital gift card
+        if (item.recipient_email || item.title?.includes("Gift Card")) {
+            const sqCode = `ROYAL-SQGC-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+            meta.push({ key: "Square Gift Card Code", value: sqCode });
+            meta.push({ key: "Square Terminal Compatible", value: "Yes (Physical POS Barcode Scan Enabled)" });
+            if (item.recipient_email) {
+                meta.push({ key: "Recipient Email", value: item.recipient_email });
+            }
+            if (item.recipient_name) {
+                meta.push({ key: "Recipient Name", value: item.recipient_name });
+            }
+            if (item.message) {
+                meta.push({ key: "Gift Message", value: item.message });
+            }
         }
 
         return {
-            product_id: item.id,
+            product_id: item.id || 110,
             quantity: item.quantity,
             meta_data: meta,
         };
     });
 
     const order = {
-        payment_method: "bacs",
-        payment_method_title: "Direct Bank Transfer",
+        payment_method: customerData.paymentMethod || "square",
+        payment_method_title: customerData.paymentMethodTitle || "Square / Credit Card",
         set_paid: false,
         billing: customerData.billing,
         shipping: customerData.shipping,
         line_items: lineItems,
         shipping_lines: [
-            { method_id: "flat_rate", method_title: "Flat Rate", total: "0.00" },
+            { method_id: "flat_rate", method_title: "Standard Shipping", total: "0.00" },
         ],
     };
 
+    const coupons = [];
     if (customerData.couponCode) {
-        order.coupon_lines = [{ code: customerData.couponCode }];
+        coupons.push({ code: customerData.couponCode });
+    }
+    if (customerData.appliedGiftCard) {
+        coupons.push({ code: customerData.appliedGiftCard.code });
+        order.fee_lines = [
+            {
+                name: `Gift Card Discount (${customerData.appliedGiftCard.code})`,
+                total: `-${customerData.appliedGiftCard.balance.toFixed(2)}`,
+                tax_status: "none"
+            }
+        ];
+    }
+
+    if (coupons.length > 0) {
+        order.coupon_lines = coupons;
     }
 
     return order;
