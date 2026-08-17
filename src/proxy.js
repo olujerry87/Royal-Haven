@@ -38,7 +38,7 @@ function checkRateLimit(ip) {
     return entry.count <= RATE_LIMIT_POINTS;
 }
 
-const PROTECTED_ROUTES = ["/account", "/wishlist", "/checkout"];
+const PROTECTED_ROUTES = ["/account", "/wishlist"];
 
 /**
  * Validate that a string is a real HTTPS URL.
