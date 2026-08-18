@@ -1,6 +1,6 @@
 .container {
     min-height: 100vh;
-    padding: 0 0 4rem;
+    padding: var(--page-top-offset, 116px) 0 4rem;
     background-color: var(--obsidian);
     color: var(--off-white);
     overflow-x: hidden;

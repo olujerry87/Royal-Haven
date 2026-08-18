@@ -1,6 +1,7 @@
 .main {
     width: 100vw;
     min-height: 100vh;
+    padding-top: var(--page-top-offset, 116px);
     background-color: var(--off-white);
     color: var(--obsidian);
 }

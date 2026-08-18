@@ -1,7 +1,8 @@
 .container {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 4rem 1rem;
+    /* top clears fixed announcement bar (36px) + nav (80px) */
+    padding: var(--page-top-offset, 116px) 1rem 4rem;
     width: 100%;
     box-sizing: border-box;
 }

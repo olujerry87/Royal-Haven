@@ -27,6 +27,9 @@
   /* Spacing & Layout */
   --max-width: 1400px;
   --header-height: 80px;
+  --announcement-height: 36px;
+  /* Total offset = announcement bar + fixed nav */
+  --page-top-offset: 116px;
 }
 
 /* Glassmorphism Utility with Grain */
@@ -89,6 +92,11 @@ a {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+/* Use this on any inner page whose content starts right below the fixed nav */
+.page-body {
+  padding-top: var(--page-top-offset);
 }
 
 .btn-primary {

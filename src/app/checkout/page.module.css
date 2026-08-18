@@ -1,12 +1,14 @@
 .container {
     min-height: 100vh;
     background-color: var(--off-white);
+    /* Push content below the fixed translucent nav */
+    padding-top: var(--page-top-offset, 116px);
 }
 
 .grid {
     display: grid;
     grid-template-columns: 1fr;
-    min-height: 100vh;
+    min-height: calc(100vh - var(--page-top-offset, 116px));
 }
 
 /* Left Column: Form */

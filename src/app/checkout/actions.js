@@ -8,7 +8,20 @@ import { createOrder, formatOrderData } from "@/lib/woocommerce";
  */
 export async function placeOrder(cart, customerData) {
     try {
-        // Validate inputs
+        // ── Guard: validate env vars first ────────────────────────────────
+        const WP_URL    = process.env.NEXT_PUBLIC_WORDPRESS_URL;
+        const WC_KEY    = process.env.WC_CONSUMER_KEY;
+        const WC_SECRET = process.env.WC_CONSUMER_SECRET;
+
+        if (!WP_URL || !WC_KEY || !WC_SECRET) {
+            console.error("[placeOrder] Missing WooCommerce environment variables");
+            return {
+                success: false,
+                error: "Order system is not configured yet. Please contact us at royalhaven@bezaleelgroup.ca to complete your purchase.",
+            };
+        }
+
+        // ── Validate inputs ───────────────────────────────────────────────
         if (!cart || cart.length === 0) {
             return { success: false, error: "Cart is empty" };
         }
@@ -17,10 +30,10 @@ export async function placeOrder(cart, customerData) {
             return { success: false, error: "Invalid customer data" };
         }
 
-        // 1. Format data for WooCommerce
+        // ── Format data for WooCommerce ───────────────────────────────────
         const orderData = formatOrderData(cart, customerData);
 
-        // 2. Create order via WooCommerce API
+        // ── Create order via WooCommerce REST API ─────────────────────────
         const order = await createOrder(orderData);
 
         if (!order || !order.id) {
@@ -31,9 +44,19 @@ export async function placeOrder(cart, customerData) {
 
     } catch (error) {
         console.error("Server Action placeOrder failed:", error);
-        return {
-            success: false,
-            error: error.message || "Failed to create order. Please try again."
-        };
+
+        // Surface a friendly message for common errors
+        const raw = error?.response?.data?.message || error.message || "";
+        let friendly = "Failed to process your order. Please try again or contact royalhaven@bezaleelgroup.ca";
+
+        if (raw.includes("401") || raw.toLowerCase().includes("cannot create")) {
+            friendly = "Authentication error with order system (401). Please ensure WooCommerce API keys are configured in Vercel → Settings → Environment Variables. Contact royalhaven@bezaleelgroup.ca if this persists.";
+        } else if (raw.toLowerCase().includes("network") || raw.toLowerCase().includes("enotfound")) {
+            friendly = "Cannot reach the store server right now. Please try again in a moment.";
+        } else if (raw) {
+            friendly = raw;
+        }
+
+        return { success: false, error: friendly };
     }
 }
