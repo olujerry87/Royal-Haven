@@ -54,7 +54,7 @@ export default function GiftCardInput() {
                 <form onSubmit={handleApply} className={styles.formRow}>
                     <input
                         type="text"
-                        placeholder="Square Gift Card Code"
+                        placeholder="ROYAL HAVEN GIFT CARD CODE"
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
                         className={styles.input}

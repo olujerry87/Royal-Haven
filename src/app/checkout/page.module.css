@@ -350,6 +350,40 @@
     }
 }
 
+@media (max-width: 768px) {
+    .formSection {
+        padding: 1.25rem 1rem;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .summarySection {
+        padding: 1.5rem 1rem;
+        border-left: none;
+        border-top: 1px solid var(--stone);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .row3, .row2 {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding-top: calc(var(--page-top-offset, 116px) - 10px);
+        overflow-x: hidden;
+    }
+
+    .shippingOption {
+        padding: 0.85rem 0.75rem;
+    }
+
+    .shippingLabel {
+        font-size: 0.85rem;
+    }
+}
+
 @media (max-width: 600px) {
     .row3 {
         grid-template-columns: 1fr;

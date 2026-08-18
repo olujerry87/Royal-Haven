@@ -3,13 +3,22 @@
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, AlertTriangle, CreditCard, Truck, Tag } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CreditCard, Truck, Tag, Globe } from "lucide-react";
 import styles from "./page.module.css";
 import { useState, useMemo, useRef } from "react";
 import { placeOrder, verifyFirstOrderEligibility } from "./actions";
 import GiftCardInput from "@/components/GiftCardInput";
 import SquarePaymentForm from "@/components/SquarePaymentForm";
 import { isDisposableEmail } from "@/lib/disposableEmailDomains";
+
+// ── Country list ─────────────────────────────────────────────────────────────
+const COUNTRIES = [
+    { code: "CA", label: "Canada 🇨🇦 (Domestic)" },
+    { code: "US", label: "United States 🇺🇸" },
+    { code: "GB", label: "United Kingdom 🇬🇧" },
+    { code: "AU", label: "Australia 🇦🇺" },
+    { code: "INTL", label: "International (Other)" }
+];
 
 // ── Canadian provinces for the dropdown ──────────────────────────────────────
 const CA_PROVINCES = [
@@ -27,12 +36,6 @@ const CA_PROVINCES = [
     { code: "QC", label: "Quebec" },
     { code: "SK", label: "Saskatchewan" },
     { code: "YT", label: "Yukon" },
-];
-
-// ── Shipping tiers ──────────────────────────────────────────────────────────
-const SHIPPING_OPTIONS = [
-    { id: "free", label: "Standard Shipping (5-7 business days)", price: 0, note: "Free on orders over $150" },
-    { id: "flat_10", label: "Express Shipping (2-3 business days)", price: 15, note: "" },
 ];
 
 export default function Checkout() {
@@ -68,8 +71,9 @@ export default function Checkout() {
         address1: "",
         address2: "",
         city: "",
-        state: "",
+        state: "ON",
         postcode: "",
+        country: "CA",
         phone: "",
         couponCode: ""
     });
@@ -77,14 +81,40 @@ export default function Checkout() {
     // Shipping selection state
     const [selectedShipping, setSelectedShipping] = useState(null);
 
-    // Compute shipping cost
+    // Dynamic Shipping options based on Country
+    const isDomesticCanada = formData.country === "CA";
+
+    const SHIPPING_OPTIONS = useMemo(() => {
+        if (isDomesticCanada) {
+            return [
+                { id: "free", label: "Standard Shipping (5-7 business days)", price: 0, note: "Free on Canadian orders over $150" },
+                { id: "flat_15", label: "Express Shipping (2-3 business days)", price: 15, note: "" },
+            ];
+        } else {
+            return [
+                { id: "intl_std", label: "Standard International Carrier Freight (7-10 business days)", price: 25, note: "Weight-scaled international flat rate" },
+                { id: "intl_exp", label: "Express International Freight (3-5 business days)", price: 45, note: "" },
+            ];
+        }
+    }, [isDomesticCanada]);
+
+    // Compute shipping cost strictly enforcing Canada-only free shipping
     const shippingCost = useMemo(() => {
         if (!selectedShipping) return 0;
         const opt = SHIPPING_OPTIONS.find(o => o.id === selectedShipping);
-        if (opt && opt.id === "free" && cartTotal >= 150) return 0;
-        if (opt && opt.id === "free" && cartTotal < 150) return 10;
+        
+        // Free shipping is strictly RESTRICTED TO CANADA ONLY for orders $150+
+        if (opt && opt.id === "free" && isDomesticCanada && cartTotal >= 150) {
+            return 0;
+        }
+        if (opt && opt.id === "free" && isDomesticCanada && cartTotal < 150) {
+            return 10;
+        }
+        if (opt && !isDomesticCanada) {
+            return opt.price; // US, UK, AU, International always incurs freight cost even if subtotal > $150
+        }
         return opt ? opt.price : 0;
-    }, [selectedShipping, cartTotal]);
+    }, [selectedShipping, cartTotal, isDomesticCanada, SHIPPING_OPTIONS]);
 
     // Total including shipping
     const orderTotal = useMemo(() => {
@@ -92,7 +122,7 @@ export default function Checkout() {
     }, [finalTotal, shippingCost]);
 
     // Validation completeness
-    const requiredFields = ["email", "firstName", "lastName", "address1", "city", "state", "postcode", "phone"];
+    const requiredFields = ["email", "firstName", "lastName", "address1", "city", "postcode", "phone"];
     const allFieldsFilled = requiredFields.every(f => formData[f]?.trim().length > 0);
     const isFormValid = allFieldsFilled && selectedShipping !== null && !isDisposableError;
 
@@ -111,6 +141,9 @@ export default function Checkout() {
         if (name === "email") {
             setIsDisposableError(false);
         }
+        if (name === "country") {
+            setSelectedShipping(null); // Reset shipping option selection when country changes
+        }
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -121,7 +154,7 @@ export default function Checkout() {
         const email = formData.email.trim();
         if (!email || !email.includes("@")) return;
 
-        // ── Requirement 4: Disposable/Temporary Email Domain Interception ────
+        // ── Requirement 5: Disposable/Temporary Email Domain Interception ────
         if (isDisposableEmail(email)) {
             setIsDisposableError(true);
             removeCoupon(); // Strip 10% coupon modifier from global cart calculations
@@ -182,10 +215,13 @@ export default function Checkout() {
             return;
         }
 
-        const postalRegex = /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/;
-        if (!postalRegex.test(formData.postcode.trim())) {
-            setError("Please enter a valid Canadian postal code (e.g. K1Z 8H7).");
-            return;
+        // Postal code check for Canada
+        if (formData.country === "CA") {
+            const postalRegex = /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/;
+            if (!postalRegex.test(formData.postcode.trim())) {
+                setError("Please enter a valid Canadian postal code (e.g. K1Z 8H7).");
+                return;
+            }
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -226,9 +262,9 @@ export default function Checkout() {
                     address_1: formData.address1.trim(),
                     address_2: formData.address2.trim(),
                     city: formData.city.trim(),
-                    state: formData.state.trim(),
+                    state: formData.state.trim() || "N/A",
                     postcode: formData.postcode.trim().toUpperCase(),
-                    country: "CA",
+                    country: formData.country,
                     email: formData.email.trim(),
                     phone: formData.phone.trim()
                 },
@@ -240,9 +276,9 @@ export default function Checkout() {
                     address_1: formData.address1.trim(),
                     address_2: formData.address2.trim(),
                     city: formData.city.trim(),
-                    state: formData.state.trim(),
+                    state: formData.state.trim() || "N/A",
                     postcode: formData.postcode.trim().toUpperCase(),
-                    country: "CA"
+                    country: formData.country
                 },
                 shippingLine: {
                     method_id: selectedShipping,
@@ -318,6 +354,24 @@ export default function Checkout() {
                         )}
 
                         <h2 className={styles.sectionTitle}>Shipping Address</h2>
+                        
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--charcoal)', display: 'block', marginBottom: '0.35rem' }}>
+                                <Globe size={14} style={{ verticalAlign: 'middle', marginRight: '0.35rem' }} /> Destination Country
+                            </label>
+                            <select
+                                name="country"
+                                required
+                                className={styles.input}
+                                value={formData.country}
+                                onChange={handleInputChange}
+                            >
+                                {COUNTRIES.map(c => (
+                                    <option key={c.code} value={c.code}>{c.label}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className={styles.row2}>
                             <input
                                 type="text"
@@ -365,21 +419,33 @@ export default function Checkout() {
                                 value={formData.city}
                                 onChange={handleInputChange}
                             />
-                            <select
-                                name="state"
-                                required
-                                className={styles.input}
-                                value={formData.state}
-                                onChange={handleInputChange}
-                            >
-                                {CA_PROVINCES.map(p => (
-                                    <option key={p.code} value={p.code}>{p.label}</option>
-                                ))}
-                            </select>
+                            {formData.country === "CA" ? (
+                                <select
+                                    name="state"
+                                    required
+                                    className={styles.input}
+                                    value={formData.state}
+                                    onChange={handleInputChange}
+                                >
+                                    {CA_PROVINCES.map(p => (
+                                        <option key={p.code} value={p.code}>{p.label}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type="text"
+                                    name="state"
+                                    placeholder="State / Region"
+                                    required
+                                    className={styles.input}
+                                    value={formData.state}
+                                    onChange={handleInputChange}
+                                />
+                            )}
                             <input
                                 type="text"
                                 name="postcode"
-                                placeholder="Postal Code"
+                                placeholder="Postal Code / Zip"
                                 required
                                 className={styles.input}
                                 value={formData.postcode}
@@ -399,16 +465,16 @@ export default function Checkout() {
                         {/* ── Shipping Method Selection ─────────────────────────── */}
                         <h2 className={styles.sectionTitle}>
                             <Truck size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
-                            Shipping Method
+                            Shipping Method ({isDomesticCanada ? "Domestic Canada" : "International Freight"})
                         </h2>
                         <div className={styles.shippingOptions}>
                             {SHIPPING_OPTIONS.map(opt => {
                                 let displayPrice = opt.price;
                                 let isFree = false;
-                                if (opt.id === "free" && cartTotal >= 150) {
+                                if (opt.id === "free" && isDomesticCanada && cartTotal >= 150) {
                                     displayPrice = 0;
                                     isFree = true;
-                                } else if (opt.id === "free" && cartTotal < 150) {
+                                } else if (opt.id === "free" && isDomesticCanada && cartTotal < 150) {
                                     displayPrice = 10;
                                     isFree = false;
                                 }
@@ -428,7 +494,7 @@ export default function Checkout() {
                                         />
                                         <div className={styles.shippingInfo}>
                                             <span className={styles.shippingLabel}>{opt.label}</span>
-                                            {opt.note && isFree && (
+                                            {opt.note && (
                                                 <span className={styles.shippingNote}>{opt.note}</span>
                                             )}
                                         </div>
