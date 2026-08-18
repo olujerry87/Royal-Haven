@@ -28,7 +28,6 @@
     height: 40px;
     margin-top: 1rem;
     filter: invert(1);
-    /* Ensure visibility if logo is white */
 }
 
 .backLink {
@@ -46,6 +45,8 @@
     font-size: 1.1rem;
     margin: 2rem 0 1rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
 }
 
 .input {
@@ -55,6 +56,15 @@
     border: 1px solid var(--stone);
     border-radius: 4px;
     font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: #fff;
+    color: var(--obsidian);
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
 }
 
 .row2 {
@@ -69,14 +79,112 @@
     gap: 1rem;
 }
 
-.paymentBox {
-    background: #f4f4f4;
+/* ── Shipping Method Selection ─────────────────────────────────────────── */
+.shippingOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.shippingOption {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     padding: 1rem;
-    border-radius: 4px;
+    border: 1px solid var(--stone);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.shippingOption:hover {
+    border-color: var(--gold);
+}
+
+.shippingSelected {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.04);
+    box-shadow: 0 0 0 1px var(--gold);
+}
+
+.radioInput {
+    accent-color: var(--gold);
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.shippingInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.shippingLabel {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--obsidian);
+}
+
+.shippingNote {
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin-top: 2px;
+}
+
+.shippingPrice {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--obsidian);
+    white-space: nowrap;
+}
+
+/* ── Payment Acknowledgement ───────────────────────────────────────────── */
+.paymentBox {
+    background: #f8f8f8;
+    padding: 1.25rem;
+    border-radius: 6px;
     text-align: center;
-    color: #666;
-    margin-bottom: 2rem;
+    color: #555;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
+    border: 1px solid var(--stone);
+}
+
+.paymentAck {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--charcoal);
+    line-height: 1.4;
+}
+
+.checkbox {
+    accent-color: var(--gold);
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* ── Warning & Error Boxes ─────────────────────────────────────────────── */
+.warningBox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #b28704;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
 }
 
 .errorBox {
@@ -90,6 +198,7 @@
     border: 1px solid #fcc;
 }
 
+/* ── Place Order Button ────────────────────────────────────────────────── */
 .payBtn {
     width: 100%;
     padding: 1rem;
@@ -99,19 +208,41 @@
     font-size: 1.1rem;
     cursor: pointer;
     border-radius: 5px;
-    transition: background 0.3s;
+    transition: background 0.3s, opacity 0.3s;
+    font-weight: 600;
 }
 
-.payBtn:hover {
+.payBtn:hover:not(:disabled) {
     background-color: #333;
 }
 
 .payBtn:disabled {
-    opacity: 0.7;
+    opacity: 0.45;
     cursor: not-allowed;
+    background-color: #999;
+    color: #ccc;
 }
 
-/* Right Column: Summary */
+.secureNote {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 0.75rem;
+}
+
+/* ── Empty State ───────────────────────────────────────────────────────── */
+.emptyContainer {
+    text-align: center;
+    padding: var(--page-top-offset, 116px) 2rem 4rem;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* ── Right Column: Summary ─────────────────────────────────────────────── */
 .summarySection {
     background-color: #fafafa;
     padding: 2rem;
@@ -181,7 +312,7 @@
     padding-top: 1.5rem;
 }
 
-.row {
+.costRow {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.8rem;
@@ -210,5 +341,14 @@
 
     .summarySection {
         padding: 4rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .row3 {
+        grid-template-columns: 1fr;
+    }
+    .row2 {
+        grid-template-columns: 1fr;
     }
 }

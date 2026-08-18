@@ -28,7 +28,7 @@ export default function ProductDetailClient({ product }) {
     const handleAddToCart = () => {
         if (!selectedSize) return;
         addToCart(product, selectedSize, quantity);
-        alert(`Added ${quantity} x ${product.name} (${selectedSize}) to bag.`);
+        // Toast notification is handled by <AddToCartNotification /> in layout.js
     };
 
     // Extract available sizes from product attributes

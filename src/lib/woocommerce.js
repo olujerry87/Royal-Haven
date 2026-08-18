@@ -151,15 +151,27 @@ export function formatOrderData(cartItems, customerData) {
         };
     });
 
+    // Use the shipping method selected on the checkout form
+    const shippingLine = customerData.shippingLine || {
+        method_id: "flat_rate",
+        method_title: "Standard Shipping",
+        total: "0.00",
+    };
+
     const order = {
         payment_method: customerData.paymentMethod || "square",
         payment_method_title: customerData.paymentMethodTitle || "Square / Credit Card",
         set_paid: false,
+        currency: "CAD",
         billing: customerData.billing,
         shipping: customerData.shipping,
         line_items: lineItems,
         shipping_lines: [
-            { method_id: "flat_rate", method_title: "Standard Shipping", total: "0.00" },
+            {
+                method_id: shippingLine.method_id,
+                method_title: shippingLine.method_title,
+                total: shippingLine.total,
+            },
         ],
     };
 
