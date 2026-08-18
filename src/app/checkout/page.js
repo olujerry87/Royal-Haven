@@ -9,6 +9,7 @@ import { useState, useMemo, useRef } from "react";
 import { placeOrder, verifyFirstOrderEligibility } from "./actions";
 import GiftCardInput from "@/components/GiftCardInput";
 import SquarePaymentForm from "@/components/SquarePaymentForm";
+import { isDisposableEmail } from "@/lib/disposableEmailDomains";
 
 // ── Canadian provinces for the dropdown ──────────────────────────────────────
 const CA_PROVINCES = [
@@ -57,6 +58,7 @@ export default function Checkout() {
     // ── Email Verification State ─────────────────────────────────────────────
     const [isCheckingEmail, setIsCheckingEmail] = useState(false);
     const [emailNotice, setEmailNotice] = useState(null);
+    const [isDisposableError, setIsDisposableError] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -92,7 +94,7 @@ export default function Checkout() {
     // Validation completeness
     const requiredFields = ["email", "firstName", "lastName", "address1", "city", "state", "postcode", "phone"];
     const allFieldsFilled = requiredFields.every(f => formData[f]?.trim().length > 0);
-    const isFormValid = allFieldsFilled && selectedShipping !== null;
+    const isFormValid = allFieldsFilled && selectedShipping !== null && !isDisposableError;
 
     // Redirect if cart is empty
     if (cart.length === 0) {
@@ -106,16 +108,31 @@ export default function Checkout() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        if (name === "email") {
+            setIsDisposableError(false);
+        }
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     /**
-     * Handle Email Verification: verify first-order 10% coupon eligibility with WooCommerce REST API
+     * Handle Email Verification & Disposable Email Domain Interception
      */
     const handleEmailBlur = async () => {
         const email = formData.email.trim();
         if (!email || !email.includes("@")) return;
 
+        // ── Requirement 4: Disposable/Temporary Email Domain Interception ────
+        if (isDisposableEmail(email)) {
+            setIsDisposableError(true);
+            removeCoupon(); // Strip 10% coupon modifier from global cart calculations
+            setEmailNotice({
+                type: "error",
+                message: "Please enter a valid, permanent email address to finalize your checkout sequence."
+            });
+            return;
+        }
+
+        setIsDisposableError(false);
         setIsCheckingEmail(true);
         setEmailNotice(null);
 
@@ -149,7 +166,13 @@ export default function Checkout() {
         e.preventDefault();
         setError(null);
 
-        // ── 1. Client-Side Field Guards ─────────────────────────────────────
+        // ── 1. Client-Side Field & Email Guards ─────────────────────────────
+        if (isDisposableEmail(formData.email.trim())) {
+            setIsDisposableError(true);
+            setError("Please enter a valid, permanent email address to finalize your checkout sequence.");
+            return;
+        }
+
         if (!allFieldsFilled) {
             setError("Please fill in all required shipping and contact fields.");
             return;
@@ -270,14 +293,14 @@ export default function Checkout() {
                             name="email"
                             placeholder="Email address"
                             required
-                            className={styles.input}
+                            className={`${styles.input} ${isDisposableError ? styles.inputError : ''}`}
                             value={formData.email}
                             onChange={handleInputChange}
                             onBlur={handleEmailBlur}
                         />
                         {isCheckingEmail && (
                             <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '-0.5rem', marginBottom: '0.75rem' }}>
-                                Verifying first-order discount eligibility...
+                                Verifying email address...
                             </p>
                         )}
                         {emailNotice && (
@@ -286,9 +309,9 @@ export default function Checkout() {
                                 borderRadius: '6px',
                                 fontSize: '0.84rem',
                                 marginBottom: '1rem',
-                                background: emailNotice.type === 'success' ? '#f0fdf4' : '#f8fafc',
-                                border: emailNotice.type === 'success' ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
-                                color: emailNotice.type === 'success' ? '#166534' : '#475569'
+                                background: emailNotice.type === 'success' ? '#f0fdf4' : emailNotice.type === 'error' ? '#fef2f2' : '#f8fafc',
+                                border: emailNotice.type === 'success' ? '1px solid #bbf7d0' : emailNotice.type === 'error' ? '1px solid #feccae' : '1px solid #e2e8f0',
+                                color: emailNotice.type === 'success' ? '#166534' : emailNotice.type === 'error' ? '#991b1b' : '#475569'
                             }}>
                                 {emailNotice.message}
                             </div>

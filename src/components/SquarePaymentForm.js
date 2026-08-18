@@ -15,17 +15,23 @@ const SquarePaymentForm = forwardRef(function SquarePaymentForm({ onError }, ref
     const [isLoaded, setIsLoaded] = useState(false);
     const [sdkError, setSdkError] = useState(null);
 
-    // Read environment variables with sandbox fallback if not yet set
-    const appId = (process.env.NEXT_PUBLIC_SQUARE_APP_ID || process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID || "").trim() || "sandbox-sq0idb-SampleAppIdForSquareWebPayments";
-    const locationId = (process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || "").trim() || "L1234567890";
-    const envMode = process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || "sandbox";
+    // Read production/sandbox environment variables from Vercel
+    const appId = (process.env.NEXT_PUBLIC_SQUARE_APP_ID || process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID || "").trim();
+    const locationId = (process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || "").trim();
+    const envMode = (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || "production").trim().toLowerCase();
 
-    const scriptUrl = envMode === "production"
+    // Use production script if environment is production or if production APP_ID is present
+    const isProduction = envMode === "production" || (appId && !appId.startsWith("sandbox-"));
+    const scriptUrl = isProduction
         ? "https://web.squarecdn.com/v1/square.js"
         : "https://sandbox.web.squarecdn.com/v1/square.js";
 
     useEffect(() => {
         let isMounted = true;
+
+        if (!appId || !locationId) {
+            console.warn("[SquarePaymentForm] Missing Square Vercel Environment Variables: NEXT_PUBLIC_SQUARE_APP_ID / NEXT_PUBLIC_SQUARE_LOCATION_ID");
+        }
 
         async function initializeSquare() {
             try {
@@ -51,20 +57,24 @@ const SquarePaymentForm = forwardRef(function SquarePaymentForm({ onError }, ref
                     throw new Error("Square Web Payments SDK unavailable.");
                 }
 
-                // 2. Initialize Payments & Card element
-                const payments = window.Square.payments(appId, locationId);
+                const targetAppId = appId || "sandbox-sq0idb-SampleAppIdForSquareWebPayments";
+                const targetLocationId = locationId || "L1234567890";
+
+                // 2. Initialize Payments & Card element with strict valid CSS properties
+                // REMOVED 'backgroundColor' and formatted 'fontFamily' as single generic family 'sans-serif'
+                // to fix Square Web Payments SDK style validation errors.
+                const payments = window.Square.payments(targetAppId, targetLocationId);
                 const card = await payments.card({
                     style: {
                         ".input-container": {
                             borderColor: "#E5E5E5",
                             borderRadius: "6px",
-                            backgroundColor: "#FFFFFF",
                         },
                         ".input-container.is-focus": {
                             borderColor: "#D4AF37",
                         },
                         "input": {
-                            fontFamily: "Montserrat, sans-serif",
+                            fontFamily: "sans-serif",
                             fontSize: "14px",
                             color: "#0B0B0B",
                         },
@@ -83,7 +93,7 @@ const SquarePaymentForm = forwardRef(function SquarePaymentForm({ onError }, ref
             } catch (err) {
                 console.error("[SquarePaymentForm] Initialization error:", err);
                 if (isMounted) {
-                    setSdkError(err.message || "Failed to load payment fields.");
+                    setSdkError(err.message || "Failed to load Square payment fields.");
                     if (onError) onError(err.message);
                 }
             }
@@ -103,7 +113,7 @@ const SquarePaymentForm = forwardRef(function SquarePaymentForm({ onError }, ref
     useImperativeHandle(ref, () => ({
         async tokenize() {
             if (!cardInstance) {
-                throw new Error("Square credit card form is not loaded. Please wait for card fields to render.");
+                throw new Error("Square credit card form is not loaded. Please verify payment fields.");
             }
 
             const result = await cardInstance.tokenize();
@@ -127,7 +137,7 @@ const SquarePaymentForm = forwardRef(function SquarePaymentForm({ onError }, ref
         <div className={styles.squareWrapper}>
             <div className={styles.squareHeader}>
                 <CreditCard size={18} color="var(--gold, #D4AF37)" />
-                <span className={styles.squareTitle}>Credit Card Payment (Square)</span>
+                <span className={styles.squareTitle}>Credit Card Payment ({isProduction ? "Live Production" : "Square"})</span>
                 <span className={styles.sslBadge}>🔒 256-bit SSL</span>
             </div>
 
