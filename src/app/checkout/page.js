@@ -217,7 +217,7 @@ export default function Checkout() {
                             className={styles.payBtn}
                             disabled={isProcessing}
                         >
-                            {isProcessing ? "Creating Order..." : `Place Order - $${finalTotal.toFixed(2)} USD`}
+                            {isProcessing ? "Creating Order..." : `Place Order - $${finalTotal.toFixed(2)} CAD`}
                         </button>
                     </form>
                 </div>

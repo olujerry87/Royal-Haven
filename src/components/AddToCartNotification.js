@@ -44,7 +44,7 @@ export default function AddToCartNotification() {
                     <div className={styles.info}>
                         <h4 className={styles.title}>{lastAddedItem.name}</h4>
                         {lastAddedItem.size && <p className={styles.meta}>Size: {lastAddedItem.size}</p>}
-                        <p className={styles.price}>${lastAddedItem.price} USD</p>
+                        <p className={styles.price}>${lastAddedItem.price} CAD</p>
                     </div>
                 </div>
 

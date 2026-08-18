@@ -42,7 +42,7 @@ export default function GiftCardInput() {
                         <div>
                             <div className={styles.codeText}>{appliedGiftCard.formattedCode}</div>
                             <div className={styles.discountBadge}>
-                                -${appliedGiftCard.balance.toFixed(2)} USD
+                                -${appliedGiftCard.balance.toFixed(2)} CAD
                             </div>
                         </div>
                     </div>
