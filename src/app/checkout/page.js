@@ -3,11 +3,12 @@
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, AlertTriangle, CreditCard, Truck, ShieldCheck } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CreditCard, Truck, Tag, CheckCircle2 } from "lucide-react";
 import styles from "./page.module.css";
-import { useState, useMemo } from "react";
-import { placeOrder } from "./actions";
+import { useState, useMemo, useRef } from "react";
+import { placeOrder, verifyFirstOrderEligibility } from "./actions";
 import GiftCardInput from "@/components/GiftCardInput";
+import SquarePaymentForm from "@/components/SquarePaymentForm";
 
 // ── Canadian provinces for the dropdown ──────────────────────────────────────
 const CA_PROVINCES = [
@@ -34,10 +35,28 @@ const SHIPPING_OPTIONS = [
 ];
 
 export default function Checkout() {
-    const { cart, cartTotal, giftCardDiscount, finalTotal, appliedGiftCard, clearCart } = useCart();
+    const { 
+        cart, 
+        cartTotal, 
+        appliedCoupon, 
+        applyFirstOrderCoupon, 
+        removeCoupon, 
+        firstOrderDiscount, 
+        giftCardDiscount, 
+        finalTotal, 
+        appliedGiftCard, 
+        clearCart 
+    } = useCart();
+    
     const router = useRouter();
+    const squareRef = useRef(null);
+
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
+
+    // ── Email Verification State ─────────────────────────────────────────────
+    const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+    const [emailNotice, setEmailNotice] = useState(null);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -57,17 +76,14 @@ export default function Checkout() {
     const [selectedShipping, setSelectedShipping] = useState(null);
 
     // ── Payment acknowledgement ──────────────────────────────────────────────
-    // Since Square payment is processed after WooCommerce order creation,
-    // we need the customer to acknowledge they'll pay via Square / credit card.
     const [paymentAcknowledged, setPaymentAcknowledged] = useState(false);
 
     // Compute shipping cost
     const shippingCost = useMemo(() => {
         if (!selectedShipping) return 0;
         const opt = SHIPPING_OPTIONS.find(o => o.id === selectedShipping);
-        // Free standard shipping on orders $150+
         if (opt && opt.id === "free" && cartTotal >= 150) return 0;
-        if (opt && opt.id === "free" && cartTotal < 150) return 10; // flat $10 under $150
+        if (opt && opt.id === "free" && cartTotal < 150) return 10;
         return opt ? opt.price : 0;
     }, [selectedShipping, cartTotal]);
 
@@ -92,12 +108,46 @@ export default function Checkout() {
     }
 
     const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    /**
+     * Handle Email Blur: verify first-order 10% coupon eligibility with WooCommerce REST API
+     */
+    const handleEmailBlur = async () => {
+        const email = formData.email.trim();
+        if (!email || !email.includes("@")) return;
+
+        setIsCheckingEmail(true);
+        setEmailNotice(null);
+
+        try {
+            const res = await verifyFirstOrderEligibility(email);
+
+            if (res.eligible) {
+                applyFirstOrderCoupon(res.couponCode || "FIRST10");
+                setEmailNotice({
+                    type: "success",
+                    message: "🎉 Verified First-Time Order! 10% discount applied to your subtotal."
+                });
+            } else {
+                removeCoupon();
+                setEmailNotice({
+                    type: "info",
+                    message: res.message || "10% First Order discount is reserved for new customers."
+                });
+            }
+        } catch (err) {
+            console.error("Email verification error:", err);
+        } finally {
+            setIsCheckingEmail(false);
+        }
+    };
+
+    /**
+     * Submit Form: Tokenize card via Square Web Payments SDK & place order
+     */
     const handlePayment = async (e) => {
         e.preventDefault();
         setError(null);
@@ -112,7 +162,7 @@ export default function Checkout() {
             return;
         }
         if (!paymentAcknowledged) {
-            setError("Please acknowledge the payment method to proceed.");
+            setError("Please acknowledge the payment method before proceeding.");
             return;
         }
 
@@ -123,7 +173,6 @@ export default function Checkout() {
             return;
         }
 
-        // Basic email format check
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email.trim())) {
             setError("Please enter a valid email address.");
@@ -133,6 +182,21 @@ export default function Checkout() {
         setIsProcessing(true);
 
         try {
+            // ── 1. Tokenize Card via Square SDK if mounted ────────────────
+            let paymentToken = null;
+            if (squareRef.current && typeof squareRef.current.tokenize === "function") {
+                try {
+                    paymentToken = await squareRef.current.tokenize();
+                    console.log("[Checkout] Square payment tokenized:", paymentToken);
+                } catch (tokenErr) {
+                    console.warn("[Checkout] Square tokenization note:", tokenErr.message);
+                    // If card is mounted and tokenization throws a user error (e.g. invalid card number), block submit
+                    if (!tokenErr.message.includes("not fully loaded") && !tokenErr.message.includes("unavailable")) {
+                        throw tokenErr;
+                    }
+                }
+            }
+
             const shippingOpt = SHIPPING_OPTIONS.find(o => o.id === selectedShipping);
 
             // Format customer data
@@ -149,7 +213,7 @@ export default function Checkout() {
                     email: formData.email.trim(),
                     phone: formData.phone.trim()
                 },
-                couponCode: formData.couponCode,
+                couponCode: appliedCoupon ? appliedCoupon.code : formData.couponCode,
                 appliedGiftCard: appliedGiftCard,
                 shipping: {
                     first_name: formData.firstName.trim(),
@@ -169,7 +233,7 @@ export default function Checkout() {
             };
 
             // Call Server Action
-            const result = await placeOrder(cart, customerData);
+            const result = await placeOrder(cart, customerData, paymentToken);
 
             if (result.success) {
                 console.log("Order created successfully:", result.orderId);
@@ -215,7 +279,26 @@ export default function Checkout() {
                             className={styles.input}
                             value={formData.email}
                             onChange={handleInputChange}
+                            onBlur={handleEmailBlur}
                         />
+                        {isCheckingEmail && (
+                            <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '-0.5rem', marginBottom: '0.75rem' }}>
+                                Verifying first-order eligibility...
+                            </p>
+                        )}
+                        {emailNotice && (
+                            <div style={{
+                                padding: '0.6rem 0.8rem',
+                                borderRadius: '4px',
+                                fontSize: '0.82rem',
+                                marginBottom: '1rem',
+                                background: emailNotice.type === 'success' ? '#f0fdf4' : '#f8fafc',
+                                border: emailNotice.type === 'success' ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                                color: emailNotice.type === 'success' ? '#166534' : '#475569'
+                            }}>
+                                {emailNotice.message}
+                            </div>
+                        )}
 
                         <h2 className={styles.sectionTitle}>Shipping Address</h2>
                         <div className={styles.row2}>
@@ -347,18 +430,15 @@ export default function Checkout() {
 
                         <GiftCardInput />
 
-                        {/* ── Payment Method Acknowledgement ──────────────────── */}
+                        {/* ── Payment Method & Square Web Payments SDK ─────────── */}
                         <h2 className={styles.sectionTitle}>
                             <CreditCard size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
-                            Payment
+                            Payment Method
                         </h2>
-                        <div className={styles.paymentBox}>
-                            <ShieldCheck size={20} style={{ marginBottom: '0.5rem', color: 'var(--gold)' }} />
-                            <p>Square & Credit Card payment processing enabled.</p>
-                            <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.25rem' }}>
-                                Your payment details are securely processed by Square.
-                            </p>
-                        </div>
+
+                        {/* Official Square Web Payments SDK Component */}
+                        <SquarePaymentForm ref={squareRef} />
+
                         <label className={styles.paymentAck}>
                             <input
                                 type="checkbox"
@@ -420,6 +500,14 @@ export default function Checkout() {
                             <span>Subtotal</span>
                             <span>${cartTotal.toFixed(2)}</span>
                         </div>
+                        {appliedCoupon && firstOrderDiscount > 0 && (
+                            <div className={styles.costRow} style={{ color: 'var(--gold, #D4AF37)' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                    <Tag size={13} /> {appliedCoupon.label || "First Order (10% Off)"}
+                                </span>
+                                <span>-${firstOrderDiscount.toFixed(2)}</span>
+                            </div>
+                        )}
                         {giftCardDiscount > 0 && (
                             <div className={styles.costRow} style={{ color: 'var(--gold, #D4AF37)' }}>
                                 <span>Gift Card Balance</span>

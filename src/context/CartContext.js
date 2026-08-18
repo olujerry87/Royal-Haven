@@ -92,9 +92,47 @@ export function CartProvider({ children }) {
         );
     };
 
+    // Coupon / First Order 10% Discount State
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+
+    // Save/load coupon to/from localStorage
+    useEffect(() => {
+        const savedCoupon = localStorage.getItem("royalHavenCoupon");
+        if (savedCoupon) {
+            try {
+                setAppliedCoupon(JSON.parse(savedCoupon));
+            } catch (e) {
+                console.error("Error parsing coupon from localStorage", e);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (appliedCoupon) {
+            localStorage.setItem("royalHavenCoupon", JSON.stringify(appliedCoupon));
+        } else {
+            localStorage.removeItem("royalHavenCoupon");
+        }
+    }, [appliedCoupon]);
+
+    const applyFirstOrderCoupon = (code = "FIRST10") => {
+        const couponObj = {
+            code: code.toUpperCase(),
+            discountPercent: 10,
+            label: "First Order (10% Off)"
+        };
+        setAppliedCoupon(couponObj);
+        return { success: true, coupon: couponObj };
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+    };
+
     const clearCart = () => {
         setCart([]);
         setAppliedGiftCard(null);
+        setAppliedCoupon(null);
     };
 
     const closeAddToCartToast = () => {
@@ -112,7 +150,6 @@ export function CartProvider({ children }) {
         const code = rawCode.trim().toUpperCase();
 
         // Check if code matches Square Gift Card format or standard patterns
-        // Standard formats: ROYAL-SQGC-50, SQGC-50, ROYAL50, SQGC-100, GIFT250, etc.
         let cardAmount = 0;
 
         if (code.includes("50")) {
@@ -122,9 +159,8 @@ export function CartProvider({ children }) {
         } else if (code.includes("250")) {
             cardAmount = 250.00;
         } else if (code.startsWith("ROYAL") || code.startsWith("SQGC") || code.startsWith("GIFT")) {
-            cardAmount = 50.00; // Default recognized Square Gift Card test value
+            cardAmount = 50.00;
         } else {
-            // General valid 8+ character Square Gift Card Code
             cardAmount = 50.00;
         }
 
@@ -153,9 +189,15 @@ export function CartProvider({ children }) {
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
     const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     
+    // Calculate 10% First Order Coupon discount
+    const firstOrderDiscount = appliedCoupon ? (cartTotal * (appliedCoupon.discountPercent / 100)) : 0;
+
+    // Subtotal after coupon
+    const subtotalAfterCoupon = Math.max(0, cartTotal - firstOrderDiscount);
+
     // Calculate Gift Card discount and final total after balance subtraction
-    const giftCardDiscount = Math.min(cartTotal, appliedGiftCard ? appliedGiftCard.balance : 0);
-    const finalTotal = Math.max(0, cartTotal - giftCardDiscount);
+    const giftCardDiscount = Math.min(subtotalAfterCoupon, appliedGiftCard ? appliedGiftCard.balance : 0);
+    const finalTotal = Math.max(0, subtotalAfterCoupon - giftCardDiscount);
 
     return (
         <CartContext.Provider value={{
@@ -166,14 +208,15 @@ export function CartProvider({ children }) {
             clearCart,
             cartCount,
             cartTotal,
+            appliedCoupon,
+            applyFirstOrderCoupon,
+            removeCoupon,
+            firstOrderDiscount,
             giftCardDiscount,
             finalTotal,
             appliedGiftCard,
             applyGiftCard,
             removeGiftCard,
-            isCartOpen,
-            setIsCartOpen,
-            lastAddedItem,
             isAddToCartToastOpen,
             closeAddToCartToast
         }}>

@@ -120,6 +120,26 @@ export async function getOrderById(orderId) {
 }
 
 /**
+ * Query orders by customer email address to verify first-time buyer status.
+ * @param {string} email
+ */
+export async function getOrdersByEmail(email) {
+    if (!email || typeof email !== "string") return [];
+    try {
+        const normalizedEmail = email.trim().toLowerCase();
+        const { data } = await api.get("orders", { search: normalizedEmail, per_page: 5 });
+        const matched = (data || []).filter(o =>
+            o.billing?.email?.toLowerCase() === normalizedEmail ||
+            o.shipping?.email?.toLowerCase() === normalizedEmail
+        );
+        return matched;
+    } catch (error) {
+        console.error(`[WooCommerce] getOrdersByEmail(${email}) failed:`, error.response?.data || error.message);
+        return [];
+    }
+}
+
+/**
  * Convert cart items to WooCommerce order format.
  * @param {array} cartItems
  * @param {object} customerData
