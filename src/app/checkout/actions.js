@@ -23,7 +23,7 @@ export async function verifyFirstOrderEligibility(email) {
         if (priorOrders && priorOrders.length > 0) {
             return {
                 eligible: false,
-                message: "This 10% discount token is reserved exclusively for first-time orders."
+                message: "10% First Order discount is reserved for first-time buyers."
             };
         }
 
@@ -31,11 +31,10 @@ export async function verifyFirstOrderEligibility(email) {
             eligible: true,
             couponCode: "FIRST10",
             discountPercent: 10,
-            message: "10% First Order discount verified & applied!"
+            message: "🎉 Verified First-Time Order! 10% discount applied."
         };
     } catch (err) {
         console.error("[verifyFirstOrderEligibility] Failed:", err);
-        // Fallback: allow first-order eligibility if WC check fails silently
         return {
             eligible: true,
             couponCode: "FIRST10",
@@ -47,7 +46,7 @@ export async function verifyFirstOrderEligibility(email) {
 
 /**
  * Server Action to place an order securely.
- * Accepts cart, customerData, and Square paymentToken (sourceId).
+ * STRICT: Requires a valid Square credit card paymentToken (sourceId).
  */
 export async function placeOrder(cart, customerData, paymentToken = null) {
     try {
@@ -64,6 +63,14 @@ export async function placeOrder(cart, customerData, paymentToken = null) {
             };
         }
 
+        // ── Strict Payment Token Guard ────────────────────────────────────
+        if (!paymentToken || typeof paymentToken !== "string" || paymentToken.trim().length === 0) {
+            return {
+                success: false,
+                error: "Credit Card authorization token missing. Please complete credit card details."
+            };
+        }
+
         // ── Validate inputs ───────────────────────────────────────────────
         if (!cart || cart.length === 0) {
             return { success: false, error: "Cart is empty" };
@@ -76,26 +83,33 @@ export async function placeOrder(cart, customerData, paymentToken = null) {
         // ── Format data for WooCommerce ───────────────────────────────────
         const orderData = formatOrderData(cart, customerData);
 
-        // Attach Square payment token metadata if available
-        if (paymentToken) {
-            orderData.transaction_id = paymentToken;
-            if (!orderData.meta_data) orderData.meta_data = [];
-            orderData.meta_data.push({
-                key: "Square Payment Token",
-                value: paymentToken
-            });
-            orderData.meta_data.push({
-                key: "Square Web Payments SDK Status",
-                value: "Tokenized Successfully (Authorized)"
-            });
-            orderData.set_paid = true; // Mark as paid when token is authorized
-        }
+        // Attach Square Payment Token & Force Status to 'processing'
+        // Setting status: "processing" + set_paid: true triggers automated WooCommerce customer receipt emails!
+        orderData.payment_method = "square";
+        orderData.payment_method_title = "Credit Card (Square Web Payments SDK)";
+        orderData.transaction_id = paymentToken;
+        orderData.set_paid = true;
+        orderData.status = "processing";
+
+        if (!orderData.meta_data) orderData.meta_data = [];
+        orderData.meta_data.push({
+            key: "_square_payment_token",
+            value: paymentToken
+        });
+        orderData.meta_data.push({
+            key: "Square Payment Token",
+            value: paymentToken
+        });
+        orderData.meta_data.push({
+            key: "Square Authorization Status",
+            value: "Authorized & Tokenized via Square Web Payments SDK"
+        });
 
         // ── Create order via WooCommerce REST API ─────────────────────────
         const order = await createOrder(orderData);
 
         if (!order || !order.id) {
-            throw new Error("Invalid response from WooCommerce");
+            throw new Error("Invalid response from WooCommerce order creation.");
         }
 
         return { success: true, orderId: order.id };
@@ -103,7 +117,6 @@ export async function placeOrder(cart, customerData, paymentToken = null) {
     } catch (error) {
         console.error("Server Action placeOrder failed:", error);
 
-        // Surface a friendly message for common errors
         const raw = error?.response?.data?.message || error.message || "";
         let friendly = "Failed to process your order. Please try again or contact royalhaven@bezaleelgroup.ca";
 

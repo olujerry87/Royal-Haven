@@ -3,7 +3,7 @@
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, AlertTriangle, CreditCard, Truck, Tag, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CreditCard, Truck, Tag } from "lucide-react";
 import styles from "./page.module.css";
 import { useState, useMemo, useRef } from "react";
 import { placeOrder, verifyFirstOrderEligibility } from "./actions";
@@ -72,11 +72,8 @@ export default function Checkout() {
         couponCode: ""
     });
 
-    // ── Shipping selection state ─────────────────────────────────────────────
+    // Shipping selection state
     const [selectedShipping, setSelectedShipping] = useState(null);
-
-    // ── Payment acknowledgement ──────────────────────────────────────────────
-    const [paymentAcknowledged, setPaymentAcknowledged] = useState(false);
 
     // Compute shipping cost
     const shippingCost = useMemo(() => {
@@ -92,10 +89,10 @@ export default function Checkout() {
         return Math.max(0, finalTotal + shippingCost);
     }, [finalTotal, shippingCost]);
 
-    // ── Validation ───────────────────────────────────────────────────────────
+    // Validation completeness
     const requiredFields = ["email", "firstName", "lastName", "address1", "city", "state", "postcode", "phone"];
     const allFieldsFilled = requiredFields.every(f => formData[f]?.trim().length > 0);
-    const isFormValid = allFieldsFilled && selectedShipping !== null && paymentAcknowledged;
+    const isFormValid = allFieldsFilled && selectedShipping !== null;
 
     // Redirect if cart is empty
     if (cart.length === 0) {
@@ -113,7 +110,7 @@ export default function Checkout() {
     };
 
     /**
-     * Handle Email Blur: verify first-order 10% coupon eligibility with WooCommerce REST API
+     * Handle Email Verification: verify first-order 10% coupon eligibility with WooCommerce REST API
      */
     const handleEmailBlur = async () => {
         const email = formData.email.trim();
@@ -129,13 +126,13 @@ export default function Checkout() {
                 applyFirstOrderCoupon(res.couponCode || "FIRST10");
                 setEmailNotice({
                     type: "success",
-                    message: "🎉 Verified First-Time Order! 10% discount applied to your subtotal."
+                    message: "🎉 Verified First-Time Buyer! 10% discount applied to your order."
                 });
             } else {
                 removeCoupon();
                 setEmailNotice({
                     type: "info",
-                    message: res.message || "10% First Order discount is reserved for new customers."
+                    message: res.message || "10% First Order discount is reserved for first-time buyers."
                 });
             }
         } catch (err) {
@@ -146,27 +143,22 @@ export default function Checkout() {
     };
 
     /**
-     * Submit Form: Tokenize card via Square Web Payments SDK & place order
+     * Submit Form: Intercept submission & strictly tokenize card via Square Web Payments SDK
      */
     const handlePayment = async (e) => {
         e.preventDefault();
         setError(null);
 
-        // ── Client-side validation guards ────────────────────────────────
+        // ── 1. Client-Side Field Guards ─────────────────────────────────────
         if (!allFieldsFilled) {
-            setError("Please fill in all required fields before placing your order.");
+            setError("Please fill in all required shipping and contact fields.");
             return;
         }
         if (!selectedShipping) {
-            setError("Please select a shipping method.");
-            return;
-        }
-        if (!paymentAcknowledged) {
-            setError("Please acknowledge the payment method before proceeding.");
+            setError("Please select a shipping method before placing your order.");
             return;
         }
 
-        // Basic postal code format check for Canada
         const postalRegex = /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/;
         if (!postalRegex.test(formData.postcode.trim())) {
             setError("Please enter a valid Canadian postal code (e.g. K1Z 8H7).");
@@ -182,24 +174,28 @@ export default function Checkout() {
         setIsProcessing(true);
 
         try {
-            // ── 1. Tokenize Card via Square SDK if mounted ────────────────
-            let paymentToken = null;
-            if (squareRef.current && typeof squareRef.current.tokenize === "function") {
-                try {
-                    paymentToken = await squareRef.current.tokenize();
-                    console.log("[Checkout] Square payment tokenized:", paymentToken);
-                } catch (tokenErr) {
-                    console.warn("[Checkout] Square tokenization note:", tokenErr.message);
-                    // If card is mounted and tokenization throws a user error (e.g. invalid card number), block submit
-                    if (!tokenErr.message.includes("not fully loaded") && !tokenErr.message.includes("unavailable")) {
-                        throw tokenErr;
-                    }
-                }
+            // ── 2. STRICT SQUARE PAYMENT TOKENIZATION INTERCEPTOR ─────────────
+            if (!squareRef.current || typeof squareRef.current.tokenize !== "function") {
+                throw new Error("Square payment fields are loading. Please wait a moment and try again.");
             }
 
+            let paymentToken = null;
+            try {
+                paymentToken = await squareRef.current.tokenize();
+            } catch (tokenErr) {
+                console.error("[Checkout] Tokenization failed:", tokenErr);
+                throw new Error(`Credit Card Validation Failed: ${tokenErr.message}`);
+            }
+
+            if (!paymentToken) {
+                throw new Error("Could not generate payment authorization token. Please verify credit card number, expiry, and CVV.");
+            }
+
+            console.log("[Checkout] Square Token Authorized:", paymentToken);
+
+            // ── 3. Submit Order to Backend ────────────────────────────────────
             const shippingOpt = SHIPPING_OPTIONS.find(o => o.id === selectedShipping);
 
-            // Format customer data
             const customerData = {
                 billing: {
                     first_name: formData.firstName.trim(),
@@ -232,11 +228,10 @@ export default function Checkout() {
                 },
             };
 
-            // Call Server Action
             const result = await placeOrder(cart, customerData, paymentToken);
 
             if (result.success) {
-                console.log("Order created successfully:", result.orderId);
+                console.log("Order created & authorized successfully:", result.orderId);
                 clearCart();
                 router.push(`/checkout/success?orderId=${result.orderId}`);
             } else {
@@ -245,12 +240,11 @@ export default function Checkout() {
 
         } catch (err) {
             console.error("Error creating order:", err);
-            setError(err.message || "Failed to process order. Please try again.");
+            setError(err.message || "Failed to process order. Please check credit card details.");
             setIsProcessing(false);
         }
     };
 
-    // Helper to render shipping price label
     const renderShippingLabel = () => {
         if (!selectedShipping) return "Select method";
         if (shippingCost === 0) return "Free";
@@ -283,14 +277,14 @@ export default function Checkout() {
                         />
                         {isCheckingEmail && (
                             <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '-0.5rem', marginBottom: '0.75rem' }}>
-                                Verifying first-order eligibility...
+                                Verifying first-order discount eligibility...
                             </p>
                         )}
                         {emailNotice && (
                             <div style={{
-                                padding: '0.6rem 0.8rem',
-                                borderRadius: '4px',
-                                fontSize: '0.82rem',
+                                padding: '0.66rem 0.85rem',
+                                borderRadius: '6px',
+                                fontSize: '0.84rem',
                                 marginBottom: '1rem',
                                 background: emailNotice.type === 'success' ? '#f0fdf4' : '#f8fafc',
                                 border: emailNotice.type === 'success' ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
@@ -430,29 +424,14 @@ export default function Checkout() {
 
                         <GiftCardInput />
 
-                        {/* ── Payment Method & Square Web Payments SDK ─────────── */}
+                        {/* ── Official Square Web Payments SDK ──────────────────── */}
                         <h2 className={styles.sectionTitle}>
                             <CreditCard size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
                             Payment Method
                         </h2>
 
-                        {/* Official Square Web Payments SDK Component */}
+                        {/* Square Web Payments SDK iframe container */}
                         <SquarePaymentForm ref={squareRef} />
-
-                        <label className={styles.paymentAck}>
-                            <input
-                                type="checkbox"
-                                checked={paymentAcknowledged}
-                                onChange={(e) => setPaymentAcknowledged(e.target.checked)}
-                                className={styles.checkbox}
-                            />
-                            <span>I confirm I will complete payment via Square / Credit Card for this order.</span>
-                        </label>
-                        {!paymentAcknowledged && (
-                            <div className={styles.warningBox}>
-                                <AlertTriangle size={14} /> You must acknowledge the payment method before placing your order.
-                            </div>
-                        )}
 
                         {error && (
                             <div className={styles.errorBox}>
@@ -465,7 +444,7 @@ export default function Checkout() {
                             className={styles.payBtn}
                             disabled={isProcessing || !isFormValid}
                         >
-                            {isProcessing ? "Creating Order..." : `Place Order - $${orderTotal.toFixed(2)} CAD`}
+                            {isProcessing ? "Authorizing Payment..." : `Place Order - $${orderTotal.toFixed(2)} CAD`}
                         </button>
                         <p className={styles.secureNote}>
                             🔒 Tax included · Shipping calculated above
