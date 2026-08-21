@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import SpatialMorphHero from "@/components/heritage/SpatialMorphHero";
@@ -10,10 +11,19 @@ import SocialShare from "@/components/passport/SocialShare";
 import { SITE_MEDIA } from "@/config/media";
 
 export default function AboutClient({ page }) {
-    // Fallback data
     const acf = page?.acf || {};
-
     const getVal = (key, fallback) => acf[key] || fallback;
+
+    const [isDesktop, setIsDesktop] = useState(true);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsDesktop(window.innerWidth >= 768);
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const data = {
         hero: {
@@ -54,37 +64,50 @@ export default function AboutClient({ page }) {
             {/* High-Performance Scroll-Linked Spatial Morph Grid Reveal */}
             <SpatialMorphHero />
 
-            {/* The Duality Narrative */}
-            <section className={styles.section}>
+            {/* The Duality Narrative Section */}
+            <section id="duality" className={styles.section}>
                 <div className={styles.dualityContainer}>
+                    {/* Animated Text Block */}
                     <motion.div
                         className={styles.dualityContent}
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        viewport={{ once: true, margin: "-50px" }}
                     >
                         <h2 className={styles.heading} dangerouslySetInnerHTML={{ __html: data.duality.heading }} />
                         <p className={`${styles.text} ${styles.lead}`} dangerouslySetInnerHTML={{ __html: data.duality.lead }} />
                         <p className={styles.text} dangerouslySetInnerHTML={{ __html: data.duality.text }} />
                     </motion.div>
 
+                    {/* Duality Images Grid (Left & Right Slide-In on Desktop, Sequential Slide-In on Mobile) */}
                     <div className={styles.imageGrid}>
+                        {/* Wura Image (Left) */}
                         <motion.div
                             className={styles.imageWrapper}
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8 }}
-                            viewport={{ once: true }}
+                            initial={{ 
+                                opacity: 0, 
+                                x: isDesktop ? -90 : 0, 
+                                y: isDesktop ? 0 : 50 
+                            }}
+                            whileInView={{ opacity: 1, x: 0, y: 0 }}
+                            transition={{ duration: 0.9, ease: "easeOut" }}
+                            viewport={{ once: true, margin: "-60px" }}
                         >
                             <img src={data.duality.image1} alt="Wura Fashion" className={styles.image} />
                         </motion.div>
+
+                        {/* Ewa Image (Right on Desktop, Sequential 2nd on Mobile) */}
                         <motion.div
                             className={styles.imageWrapper}
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            viewport={{ once: true }}
+                            initial={{ 
+                                opacity: 0, 
+                                x: isDesktop ? 90 : 0, 
+                                y: isDesktop ? 0 : 50 
+                            }}
+                            whileInView={{ opacity: 1, x: 0, y: 0 }}
+                            transition={{ duration: 0.9, delay: 0.25, ease: "easeOut" }}
+                            viewport={{ once: true, margin: "-60px" }}
                         >
                             <img src={data.duality.image2} alt="Ewa Artistry" className={styles.image} />
                         </motion.div>
@@ -145,8 +168,8 @@ export default function AboutClient({ page }) {
             {/* Living Heritage Animation */}
             <HeritageAnimation />
 
-            {/* Styling Intelligence — Digital Closet */}
-            <section id="styling" className={styles.section} style={{ backgroundColor: 'var(--obsidian)', borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}>
+            {/* Styling Intelligence — FULL-BLEED SOLID BLACK SECTION (ZERO WHITE SIDE BORDERS) */}
+            <section id="styling" className={styles.fullBleedDarkSection}>
                 <div className={styles.journeySection}>
                     <h2 className={styles.heading} style={{ color: 'var(--gold)' }}>Styling Intelligence</h2>
                     <p className={styles.text} style={{ color: 'var(--off-white)', marginBottom: '3rem' }}>
@@ -156,8 +179,8 @@ export default function AboutClient({ page }) {
                 </div>
             </section>
 
-            {/* Social Sharing */}
-            <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', paddingBottom: '4rem' }}>
+            {/* Social Sharing — FULL-BLEED SOLID BLACK SECTION */}
+            <section className={styles.fullBleedDarkSection} style={{ borderTop: 'none', paddingBottom: '4rem' }}>
                 <div className={styles.journeySection}>
                     <SocialShare 
                         garment={{ 
