@@ -60,17 +60,17 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: Middle Headline Divider Fade In (P: 0.15 -> 0.55) ─────────────
+        // ── Phase 2: Middle Headline Divider Fade In (P: 0.12 -> 0.55) ─────────────
         if (middleDividerRef.current) {
-            const textOpacity = Math.max(0, Math.min(1, (P - 0.15) / 0.35));
+            const textOpacity = Math.max(0, Math.min(1, (P - 0.12) / 0.38));
             middleDividerRef.current.style.opacity = textOpacity.toString();
-            middleDividerRef.current.style.transform = `translateY(${(1 - textOpacity) * 25}px)`;
+            middleDividerRef.current.style.transform = `translateY(${(1 - textOpacity) * 20}px)`;
         }
 
-        // ── Phase 3: Synchronized Top (9) & Bottom (10) Canvas Expansion (P: 0.10 -> 0.70)
-        const canvasProgress = Math.max(0, Math.min(1, (P - 0.10) / 0.60));
+        // ── Phase 3: Synchronized 10-Top & 10-Bottom Canvas Expansion (P: 0.08 -> 0.68)
+        const canvasProgress = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
         const canvasScale = 0.35 + (canvasProgress * 0.65); // 0.35 -> 1.0
-        const canvasTranslateY = (1 - canvasProgress) * 50; // 50px -> 0px
+        const canvasTranslateY = (1 - canvasProgress) * 45; // 45px -> 0px
 
         if (topCanvasRef.current) {
             topCanvasRef.current.style.opacity = canvasProgress.toString();
@@ -88,9 +88,9 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
         }
 
-        // ── HERO VIDEO MORPH (100vw x 100vh -> Center Slot in Middle Divider) ─────
+        // ── HERO VIDEO MORPH (100vw x 100vh -> Bounding Slot Target at Row 4 Col 3) ─
         if (slotTargetRef.current && heroVideoCardRef.current) {
-            const morphT = Math.max(0, Math.min(1, (P - 0.10) / 0.60));
+            const morphT = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
 
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
@@ -104,8 +104,8 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const currentHeight = windowHeight + (targetHeight - windowHeight) * morphT;
             const currentLeft = targetLeft * morphT;
             const currentTop = targetTop * morphT;
-            const currentRadius = morphT * 24; // 0px -> 24px
-            const shadowAlpha = morphT * 0.5;
+            const currentRadius = morphT * 20; // 0px -> 20px
+            const shadowAlpha = morphT * 0.2;
 
             heroVideoCardRef.current.style.width = `${currentWidth}px`;
             heroVideoCardRef.current.style.height = `${currentHeight}px`;
@@ -113,7 +113,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             heroVideoCardRef.current.style.top = `${currentTop}px`;
             heroVideoCardRef.current.style.borderRadius = `${currentRadius}px`;
             heroVideoCardRef.current.style.boxShadow = morphT > 0.1
-                ? `0 ${morphT * 16}px ${morphT * 32}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(212, 175, 55, ${morphT * 0.35})`
+                ? `0 ${morphT * 12}px ${morphT * 28}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(0, 0, 0, ${morphT * 0.1})`
                 : "none";
         }
     }, []);
@@ -151,42 +151,58 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         cta_link: "#duality"
     };
 
-    // Separate into 9 Top Cards + 10 Bottom Cards
-    const topCards = cards.slice(0, 9);
-    const bottomCards = cards.slice(9, 19);
+    // Exactly 10 Top Cards & 9 Bottom Cards (+ 1 Hero Target = 10 Bottom Cards)
+    const top10 = cards.slice(0, 10);
+    const bot9  = cards.slice(10, 19);
 
     return (
         <div ref={trackRef} className={styles.trackContainer}>
             <div ref={stickyBoxRef} className={styles.stickyBox}>
 
-                {/* ── TOP CANVAS (9 Visual Non-Clickable Photo Cards) ──────────────── */}
+                {/* ── TOP CANVAS (10 Visual Non-Clickable Photo Cards in Staggered Grid) ── */}
                 <div ref={topCanvasRef} className={styles.topCanvas} style={{ opacity: 0 }}>
-                    {topCards.map((card, i) => (
-                        <div key={card.id || `top-${i}`} className={styles.photoTile}>
-                            <img src={card.image_url} alt="" className={styles.tileImg} />
-                        </div>
-                    ))}
+                    {/* Row 1 (4 Cards: Cols 1, 3, 4, 6) */}
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={top10[0]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '3' }}><img src={top10[1]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={top10[2]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={top10[3]?.image_url} alt="" className={styles.tileImg} /></div>
+
+                    {/* Row 2 (6 Cards: Cols 1, 2, 3, 4, 5, 6) */}
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={top10[4]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={top10[5]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '3' }}><img src={top10[6]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={top10[7]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={top10[8]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={top10[9]?.image_url} alt="" className={styles.tileImg} /></div>
                 </div>
 
-                {/* ── MIDDLE SECTION DIVIDER (Headline & Hero Target Right in Center) ── */}
+                {/* ── MIDDLE DIVIDER SECTION (Headline & Subtitle) ───────────────── */}
                 <div ref={middleDividerRef} className={styles.middleDivider} style={{ opacity: 0 }}>
-                    <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}</span>
+                    <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
                     <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
                     <p className={styles.subheading}>
                         Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
                     </p>
-                    
-                    {/* Landing slot where Morphing Video Card settles right in center! */}
-                    <div ref={slotTargetRef} className={styles.heroSlotTarget} />
                 </div>
 
-                {/* ── BOTTOM CANVAS (10 Visual Non-Clickable Photo Cards) ────────────── */}
+                {/* ── BOTTOM CANVAS (10 Cards Total: 9 Photo Tiles + 1 Hero Target) ── */}
                 <div ref={bottomCanvasRef} className={styles.bottomCanvas} style={{ opacity: 0 }}>
-                    {bottomCards.map((card, i) => (
-                        <div key={card.id || `bot-${i}`} className={styles.photoTile}>
-                            <img src={card.image_url} alt="" className={styles.tileImg} />
-                        </div>
-                    ))}
+                    {/* Row 3 (5 Cards: Cols 1, 2, 4, 5, 6) */}
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={bot9[0]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={bot9[1]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={bot9[2]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={bot9[3]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={bot9[4]?.image_url} alt="" className={styles.tileImg} /></div>
+
+                    {/* Row 4 (5 Cards: Cols 1, 2, HERO TARGET AT COL 3, Cols 4, 5) */}
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={bot9[5]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={bot9[6]?.image_url} alt="" className={styles.tileImg} /></div>
+                    
+                    {/* Morphing Video Target Slot at Center Column 3! */}
+                    <div ref={slotTargetRef} className={styles.heroSlotTarget} style={{ gridColumn: '3' }} />
+
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={bot9[7]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={bot9[8]?.image_url} alt="" className={styles.tileImg} /></div>
                 </div>
 
                 {/* ── MORPHING HERO VIDEO CARD (GPU Isolated Compositor Layer) ─────────────── */}
@@ -202,9 +218,10 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
                         poster={currentConfig.poster_image}
                     />
                     
-                    {/* Fullscreen Hero Title & Interactive Action Button at Start (P=0) */}
                     <div ref={videoHeroOverlayRef} className={styles.videoHeroOverlay}>
-                        <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}</span>
+                        <span className={styles.badge} style={{ color: "#FAF9F6", borderColor: "rgba(255,255,255,0.4)" }}>
+                            {currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}
+                        </span>
                         <h1 className={styles.heroTitle}>{currentConfig.hero_title || "Our Heritage"}</h1>
                         <p className={styles.heroSubtitle}>
                             {currentConfig.hero_subtitle || "The Convergence of Fashion & Artistry"}

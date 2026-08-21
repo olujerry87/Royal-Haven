@@ -20,30 +20,30 @@ export const DEFAULT_HERITAGE_MORPH_CONFIG = {
     cta_link: "#duality"
 };
 
-// 19 Visual Photo Cards (9 Top + 10 Bottom surrounding the Middle Hero & Headline Divider)
+// 19 High-Res Visual Photo Cards (10 Top + 9 Bottom + 1 Morphing Hero Video)
 export const DEFAULT_HERITAGE_MICRO_CARDS = [
-    // ── TOP SECTION (9 CARDS ABOVE HEADLINE DIVIDER) ─────────────────────────
+    // ── TOP SECTION (10 CARDS ABOVE HEADLINE DIVIDER) ─────────────────────────
     { id: "top-1", image_url: SITE_MEDIA.heritage.duality_wura, position: 1 },
     { id: "top-2", image_url: SITE_MEDIA.heritage.duality_ewa, position: 2 },
     { id: "top-3", image_url: SITE_MEDIA.heritage.hero, position: 3 },
-    { id: "top-4", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", position: 4 },
-    { id: "top-5", image_url: SITE_MEDIA.lookbook.slide1, position: 5 },
-    { id: "top-6", image_url: SITE_MEDIA.lookbook.slide2, position: 6 },
-    { id: "top-7", image_url: SITE_MEDIA.heritage.duality_wura, position: 7 },
-    { id: "top-8", image_url: SITE_MEDIA.heritage.duality_ewa, position: 8 },
-    { id: "top-9", image_url: SITE_MEDIA.heritage.hero, position: 9 },
+    { id: "top-4", image_url: SITE_MEDIA.lookbook.slide1, position: 4 },
+    { id: "top-5", image_url: SITE_MEDIA.lookbook.slide2, position: 5 },
+    { id: "top-6", image_url: SITE_MEDIA.heritage.duality_wura, position: 6 },
+    { id: "top-7", image_url: SITE_MEDIA.heritage.duality_ewa, position: 7 },
+    { id: "top-8", image_url: SITE_MEDIA.heritage.hero, position: 8 },
+    { id: "top-9", image_url: SITE_MEDIA.lookbook.slide1, position: 9 },
+    { id: "top-10", image_url: SITE_MEDIA.lookbook.slide2, position: 10 },
 
-    // ── BOTTOM SECTION (10 CARDS BELOW HEADLINE DIVIDER) ──────────────────────
-    { id: "bot-1", image_url: SITE_MEDIA.lookbook.slide1, position: 10 },
-    { id: "bot-2", image_url: SITE_MEDIA.lookbook.slide2, position: 11 },
-    { id: "bot-3", image_url: SITE_MEDIA.heritage.duality_wura, position: 12 },
-    { id: "bot-4", image_url: SITE_MEDIA.heritage.duality_ewa, position: 13 },
-    { id: "bot-5", image_url: SITE_MEDIA.heritage.hero, position: 14 },
-    { id: "bot-6", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", position: 15 },
-    { id: "bot-7", image_url: SITE_MEDIA.lookbook.slide1, position: 16 },
-    { id: "bot-8", image_url: SITE_MEDIA.lookbook.slide2, position: 17 },
-    { id: "bot-9", image_url: SITE_MEDIA.heritage.duality_wura, position: 18 },
-    { id: "bot-10", image_url: SITE_MEDIA.heritage.duality_ewa, position: 19 },
+    // ── BOTTOM SECTION (9 CARDS BELOW HEADLINE DIVIDER) ──────────────────────
+    { id: "bot-1", image_url: SITE_MEDIA.heritage.duality_wura, position: 11 },
+    { id: "bot-2", image_url: SITE_MEDIA.heritage.duality_ewa, position: 12 },
+    { id: "bot-3", image_url: SITE_MEDIA.heritage.hero, position: 13 },
+    { id: "bot-4", image_url: SITE_MEDIA.lookbook.slide1, position: 14 },
+    { id: "bot-5", image_url: SITE_MEDIA.lookbook.slide2, position: 15 },
+    { id: "bot-6", image_url: SITE_MEDIA.heritage.duality_wura, position: 16 },
+    { id: "bot-7", image_url: SITE_MEDIA.heritage.duality_ewa, position: 17 },
+    { id: "bot-8", image_url: SITE_MEDIA.heritage.hero, position: 18 },
+    { id: "bot-9", image_url: SITE_MEDIA.lookbook.slide1, position: 19 },
 ];
 
 /**
