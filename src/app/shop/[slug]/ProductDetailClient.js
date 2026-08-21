@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Minus, Plus, ShoppingBag, Nfc } from "lucide-react";
+import { 
+    ChevronLeft, 
+    ChevronRight, 
+    Minus, 
+    Plus, 
+    ShoppingBag, 
+    Nfc, 
+    CheckCircle2, 
+    ArrowRight, 
+    Maximize2, 
+    X 
+} from "lucide-react";
 import styles from "./page.module.css";
 import { useCart } from "@/context/CartContext";
 
-// Helper: extract a value from WooCommerce product meta_data array by key
 function getMeta(meta_data = [], key) {
     const entry = meta_data.find(m => m.key === key);
     return entry?.value || null;
@@ -18,12 +28,60 @@ export default function ProductDetailClient({ product }) {
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [openSection, setOpenSection] = useState('story');
+    
+    // Gallery & Lightbox states
+    const [isZoomOpen, setIsZoomOpen] = useState(false);
+
+    // Cart feedback states
+    const [addedStatus, setAddedStatus] = useState(false);
+    const [showCartDrawer, setShowCartDrawer] = useState(false);
 
     const { addToCart } = useCart();
+    const images = product.images && product.images.length > 0 ? product.images : ["/images/spotlight.jpg"];
+
+    // Touch swipe handling for image gallery
+    const touchStartX = useRef(null);
+
+    const handleNextImage = useCallback(() => {
+        setActiveImage((prev) => (prev + 1) % images.length);
+    }, [images.length]);
+
+    const handlePrevImage = useCallback(() => {
+        setActiveImage((prev) => (prev - 1 + images.length) % images.length);
+    }, [images.length]);
+
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "ArrowRight") handleNextImage();
+            if (e.key === "ArrowLeft") handlePrevImage();
+            if (e.key === "Escape") setIsZoomOpen(false);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [handleNextImage, handlePrevImage]);
+
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+        if (!touchStartX.current) return;
+        const diffX = touchStartX.current - e.changedTouches[0].clientX;
+        if (diffX > 40) handleNextImage(); // Swiped left
+        if (diffX < -40) handlePrevImage(); // Swiped right
+        touchStartX.current = null;
+    };
 
     const toggleSection = (section) => {
         setOpenSection(openSection === section ? null : section);
     };
+
+    // Extract available sizes
+    const sizeAttribute = product.attributes?.find(attr =>
+        attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'sizes'
+    );
+    const availableSizes = sizeAttribute?.options || ['S', 'M', 'L', 'XL'];
 
     const handleAddToCart = () => {
         const sizeToUse = selectedSize || availableSizes[0] || "Standard";
@@ -31,22 +89,16 @@ export default function ProductDetailClient({ product }) {
             setSelectedSize(sizeToUse);
         }
         addToCart(product, sizeToUse, quantity);
+
+        // Explicit UI Feedback & Action Drawer
+        setAddedStatus(true);
+        setShowCartDrawer(true);
+
+        setTimeout(() => {
+            setAddedStatus(false);
+        }, 3000);
     };
 
-    // Extract available sizes from product attributes
-    const sizeAttribute = product.attributes?.find(attr =>
-        attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'sizes'
-    );
-    const availableSizes = sizeAttribute?.options || ['S', 'M', 'L', 'XL'];
-
-    // ── Extract garment detail fields from WooCommerce meta_data ──────────────
-    // To populate these: in WooCommerce wp-admin → Edit Product → Custom Fields
-    // Keys to add:
-    //   rh_origin    → Story / origin text (plain text)
-    //   rh_fabric    → Fabric & Design (plain text or JSON: {"material":"...","craftsmanship":"...","design":"..."})
-    //   rh_care      → Care instructions, one per line (use Enter/newline)
-    //   rh_styling   → Styling tips (plain text)
-    //   rh_ntag_id   → The NTAG serial / Supabase garment ID (links to /passport/[id])
     const meta = product.meta_data || [];
     const fabricRaw  = getMeta(meta, 'rh_fabric');
     const careRaw    = getMeta(meta, 'rh_care');
@@ -54,16 +106,14 @@ export default function ProductDetailClient({ product }) {
     const originRaw  = getMeta(meta, 'rh_origin');
     const ntagId     = getMeta(meta, 'rh_ntag_id');
 
-    // Fabric may be JSON (structured) or plain text
     let fabricData = null;
     try { fabricData = fabricRaw ? JSON.parse(fabricRaw) : null; } catch { fabricData = null; }
 
-    // Care may be a newline-separated list or plain text
     const careItems = careRaw ? careRaw.split('\n').filter(Boolean) : null;
 
     return (
         <main className={styles.container}>
-            {/* Breadcrumb / Back */}
+            {/* Breadcrumb / Back Link (With clear header clearance) */}
             <div className={styles.breadcrumb}>
                 <Link href="/shop" className={styles.backLink}>
                     <ChevronLeft size={16} /> Back to Shop
@@ -73,45 +123,81 @@ export default function ProductDetailClient({ product }) {
             <div className={styles.grid}>
                 {/* Left Column: Gallery */}
                 <div className={styles.gallery}>
-                    <div className={styles.mainImageWrapper}>
-                        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                            <Image
-                                src={product.images[activeImage]}
-                                alt={product.name}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                style={{ objectFit: 'cover' }}
-                                priority
-                            />
+                    <div 
+                        className={styles.mainImageWrapper}
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        <Image
+                            src={images[activeImage]}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 899px) 100vw, 55vw"
+                            className={styles.mainImage}
+                            priority
+                            onClick={() => setIsZoomOpen(true)}
+                        />
+
+                        {/* Interactive Left / Right Chevron Overlay Buttons */}
+                        {images.length > 1 && (
+                            <>
+                                <button 
+                                    className={`${styles.navArrow} ${styles.navPrev}`}
+                                    onClick={handlePrevImage}
+                                    aria-label="Previous photo"
+                                >
+                                    <ChevronLeft size={22} />
+                                </button>
+                                <button 
+                                    className={`${styles.navArrow} ${styles.navNext}`}
+                                    onClick={handleNextImage}
+                                    aria-label="Next photo"
+                                >
+                                    <ChevronRight size={22} />
+                                </button>
+                                <span className={styles.imageCounter}>
+                                    {activeImage + 1} / {images.length}
+                                </span>
+                            </>
+                        )}
+
+                        <button 
+                            className={styles.zoomBadge}
+                            onClick={() => setIsZoomOpen(true)}
+                        >
+                            <Maximize2 size={13} /> Zoom
+                        </button>
+                    </div>
+
+                    {/* Thumbnails list */}
+                    {images.length > 1 && (
+                        <div className={styles.thumbnails}>
+                            {images.map((img, index) => (
+                                <button
+                                    key={index}
+                                    className={`${styles.thumbBtn} ${activeImage === index ? styles.activeThumb : ''}`}
+                                    onClick={() => setActiveImage(index)}
+                                >
+                                    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                        <Image
+                                            src={img}
+                                            alt={`Thumbnail ${index + 1}`}
+                                            fill
+                                            sizes="80px"
+                                            className={styles.thumbImg}
+                                        />
+                                    </div>
+                                </button>
+                            ))}
                         </div>
-                    </div>
-                    <div className={styles.thumbnails}>
-                        {product.images.map((img, index) => (
-                            <button
-                                key={index}
-                                className={`${styles.thumbBtn} ${activeImage === index ? styles.activeThumb : ''}`}
-                                onClick={() => setActiveImage(index)}
-                            >
-                                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                                    <Image
-                                        src={img}
-                                        alt={`View ${index + 1}`}
-                                        fill
-                                        sizes="100px"
-                                        style={{ objectFit: 'cover' }}
-                                    />
-                                </div>
-                            </button>
-                        ))}
-                    </div>
+                    )}
                 </div>
 
                 {/* Right Column: Details */}
                 <div className={styles.details}>
                     <h1 className={styles.title}>{product.name}</h1>
-                    <p className={styles.price}>${product.price ? product.price.toFixed(2) : '0.00'}</p>
+                    <p className={styles.price}>${product.price ? product.price.toFixed(2) : '0.00'} CAD</p>
 
-                    {/* Short Description */}
                     {product.short_description && (
                         <div style={{ width: '100%', overflowX: 'hidden' }}>
                             <div
@@ -139,7 +225,7 @@ export default function ProductDetailClient({ product }) {
                         </div>
                     </div>
 
-                    {/* Quantity */}
+                    {/* Quantity Selector */}
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>Quantity</label>
                         <div className={styles.quantityControl}>
@@ -153,31 +239,58 @@ export default function ProductDetailClient({ product }) {
                         </div>
                     </div>
 
+                    {/* Add to Cart CTA Button */}
                     <button
-                        className={styles.addToCart}
-                        disabled={!selectedSize || product.stock_status === 'outofstock'}
+                        className={`${styles.addToCart} ${addedStatus ? styles.addToCartSuccess : ''}`}
+                        disabled={product.stock_status === 'outofstock'}
                         onClick={handleAddToCart}
                     >
-                        <ShoppingBag size={20} />
-                        {product.stock_status === 'outofstock'
-                            ? 'Out of Stock'
-                            : selectedSize
-                                ? `Add to Cart - $${(product.price * quantity).toFixed(2)}`
-                                : 'Select a Size'}
+                        {addedStatus ? (
+                            <>
+                                <CheckCircle2 size={20} color="#FAF9F6" />
+                                Added to Shopping Bag!
+                            </>
+                        ) : (
+                            <>
+                                <ShoppingBag size={20} />
+                                {product.stock_status === 'outofstock'
+                                    ? 'Out of Stock'
+                                    : `Add to Cart - $${((product.price || 0) * quantity).toFixed(2)} CAD`}
+                            </>
+                        )}
                     </button>
+
+                    {/* Clear Post-Add User Journey Action Drawer */}
+                    {showCartDrawer && (
+                        <div className={styles.cartActionDrawer}>
+                            <div className={styles.drawerTitle}>
+                                <CheckCircle2 size={18} /> Item added to your shopping bag
+                            </div>
+                            <div className={styles.drawerButtons}>
+                                <Link href="/checkout" className={styles.checkoutDrawerBtn}>
+                                    Proceed to Checkout <ArrowRight size={14} />
+                                </Link>
+                                <button 
+                                    className={styles.continueDrawerBtn}
+                                    onClick={() => setShowCartDrawer(false)}
+                                >
+                                    Continue Shopping
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Main WooCommerce Description */}
                     {product.description && (
                         <div style={{ width: '100%', overflowX: 'hidden' }}>
                             <div
                                 className={styles.description}
-                                style={{ marginTop: '2.5rem' }}
+                                style={{ marginTop: '1.5rem' }}
                                 dangerouslySetInnerHTML={{ __html: product.description }}
                             />
                         </div>
                     )}
 
-                    {/* NFC Passport Link — shows only if rh_ntag_id is set on the product */}
                     {ntagId && (
                         <Link
                             href={`/passport/${ntagId}`}
@@ -193,12 +306,11 @@ export default function ProductDetailClient({ product }) {
                         </Link>
                     )}
 
-                    {/* Smart Clothing / NFC Features */}
+                    {/* Smart Accordion Details */}
                     <div className={styles.smartFeatures}>
                         <h3 className={styles.smartTitle}>Smart Clothing Experience</h3>
                         <p className={styles.smartSubtitle}>Scan the NFC tag on your garment to access these details anytime.</p>
 
-                        {/* Story Behind the Style — from rh_origin meta or WooCommerce long description */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('story')}>
                                 <span>Story Behind the Style</span>
@@ -215,7 +327,6 @@ export default function ProductDetailClient({ product }) {
                             )}
                         </div>
 
-                        {/* Fabric & Design — from rh_fabric meta */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('fabric')}>
                                 <span>Fabric &amp; Design</span>
@@ -242,7 +353,6 @@ export default function ProductDetailClient({ product }) {
                             )}
                         </div>
 
-                        {/* Care Details — from rh_care meta (one line per bullet) */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('care')}>
                                 <span>Care Details</span>
@@ -266,7 +376,6 @@ export default function ProductDetailClient({ product }) {
                             )}
                         </div>
 
-                        {/* Styling Options — from rh_styling meta */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('styling')}>
                                 <span>Styling Options</span>
@@ -287,7 +396,6 @@ export default function ProductDetailClient({ product }) {
                             )}
                         </div>
 
-                        {/* Lookbook / VR */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('lookbook')}>
                                 <span>Lookbook &amp; VR Experience</span>
@@ -306,6 +414,38 @@ export default function ProductDetailClient({ product }) {
                     </div>
                 </div>
             </div>
+
+            {/* ── LIGHTBOX ZOOM MODAL ─────────────────────────────────────── */}
+            {isZoomOpen && (
+                <div className={styles.lightboxOverlay} onClick={() => setIsZoomOpen(false)}>
+                    <button className={styles.lightboxClose} onClick={() => setIsZoomOpen(false)}>
+                        <X size={24} />
+                    </button>
+                    <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+                        <img 
+                            src={images[activeImage]} 
+                            alt={product.name} 
+                            className={styles.lightboxImage} 
+                        />
+                        {images.length > 1 && (
+                            <>
+                                <button 
+                                    className={`${styles.navArrow} ${styles.navPrev}`}
+                                    onClick={handlePrevImage}
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button 
+                                    className={`${styles.navArrow} ${styles.navNext}`}
+                                    onClick={handleNextImage}
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </main>
     );
 }
