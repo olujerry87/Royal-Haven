@@ -16,109 +16,34 @@ export const DEFAULT_HERITAGE_MORPH_CONFIG = {
     badge_text: "ROYAL HAVEN ARCHIVES — EST. 2017",
     video_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/wura-ewa-hero-loop.mp4",
     poster_image: SITE_MEDIA.heritage.hero,
+    cta_text: "Explore Living Heritage",
+    cta_link: "#duality"
 };
 
-// Rich 11-card spatial matrix matching Square's dense multi-row canvas
+// 19 Visual Photo Cards (9 Top + 10 Bottom surrounding the Middle Hero & Headline Divider)
 export const DEFAULT_HERITAGE_MICRO_CARDS = [
-    {
-        id: "card-1",
-        title: "Wura Couture",
-        subtitle: "Tactile Indigenous Fashion",
-        badge: "COUTURE",
-        image_url: SITE_MEDIA.heritage.duality_wura,
-        link_url: "/shop",
-        position: 1
-    },
-    {
-        id: "card-2",
-        title: "Ewa Artistry",
-        subtitle: "Bridal & Beauty Services",
-        badge: "ARTISTRY",
-        image_url: SITE_MEDIA.heritage.duality_ewa,
-        link_url: "/services",
-        position: 2
-    },
-    {
-        id: "card-3",
-        title: "NTAG Passport",
-        subtitle: "Digital Provenance & Weather",
-        badge: "INNOVATION",
-        image_url: SITE_MEDIA.heritage.hero,
-        link_url: "#styling",
-        position: 3
-    },
-    {
-        id: "card-4",
-        title: "Royal Archives",
-        subtitle: "African Craftsmanship",
-        badge: "HERITAGE",
-        image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d",
-        link_url: "/lookbook",
-        position: 4
-    },
-    {
-        id: "card-5",
-        title: "Besano Atelier",
-        subtitle: "Custom Bespoke Tailoring",
-        badge: "BESPOKE",
-        image_url: SITE_MEDIA.lookbook.slide1,
-        link_url: "/services/book",
-        position: 5
-    },
-    {
-        id: "card-6",
-        title: "2026 Lookbook",
-        subtitle: "Modern Luxury Runway",
-        badge: "LOOKBOOK",
-        image_url: SITE_MEDIA.lookbook.slide2,
-        link_url: "/lookbook",
-        position: 6
-    },
-    {
-        id: "card-7",
-        title: "Àṣọ-Òkè Textiles",
-        subtitle: "Master Hand-Loom Fabrics",
-        badge: "TEXTILES",
-        image_url: SITE_MEDIA.heritage.duality_wura,
-        link_url: "/shop",
-        position: 7
-    },
-    {
-        id: "card-8",
-        title: "Bridal Styling",
-        subtitle: "Ethereal Essence",
-        badge: "BRIDAL",
-        image_url: SITE_MEDIA.heritage.duality_ewa,
-        link_url: "/services",
-        position: 8
-    },
-    {
-        id: "card-9",
-        title: "Garment NFC",
-        subtitle: "Encrypted Authenticity",
-        badge: "PASSPORT",
-        image_url: SITE_MEDIA.heritage.hero,
-        link_url: "#styling",
-        position: 9
-    },
-    {
-        id: "card-10",
-        title: "Pop-Up Terminal",
-        subtitle: "Ottawa Pop-up Store",
-        badge: "POPUP",
-        image_url: SITE_MEDIA.lookbook.slide1,
-        link_url: "/checkout",
-        position: 10
-    },
-    {
-        id: "card-11",
-        title: "Bezaleel Group",
-        subtitle: "Parent Enterprise",
-        badge: "CORPORATE",
-        image_url: SITE_MEDIA.lookbook.slide2,
-        link_url: "/heritage",
-        position: 11
-    }
+    // ── TOP SECTION (9 CARDS ABOVE HEADLINE DIVIDER) ─────────────────────────
+    { id: "top-1", image_url: SITE_MEDIA.heritage.duality_wura, position: 1 },
+    { id: "top-2", image_url: SITE_MEDIA.heritage.duality_ewa, position: 2 },
+    { id: "top-3", image_url: SITE_MEDIA.heritage.hero, position: 3 },
+    { id: "top-4", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", position: 4 },
+    { id: "top-5", image_url: SITE_MEDIA.lookbook.slide1, position: 5 },
+    { id: "top-6", image_url: SITE_MEDIA.lookbook.slide2, position: 6 },
+    { id: "top-7", image_url: SITE_MEDIA.heritage.duality_wura, position: 7 },
+    { id: "top-8", image_url: SITE_MEDIA.heritage.duality_ewa, position: 8 },
+    { id: "top-9", image_url: SITE_MEDIA.heritage.hero, position: 9 },
+
+    // ── BOTTOM SECTION (10 CARDS BELOW HEADLINE DIVIDER) ──────────────────────
+    { id: "bot-1", image_url: SITE_MEDIA.lookbook.slide1, position: 10 },
+    { id: "bot-2", image_url: SITE_MEDIA.lookbook.slide2, position: 11 },
+    { id: "bot-3", image_url: SITE_MEDIA.heritage.duality_wura, position: 12 },
+    { id: "bot-4", image_url: SITE_MEDIA.heritage.duality_ewa, position: 13 },
+    { id: "bot-5", image_url: SITE_MEDIA.heritage.hero, position: 14 },
+    { id: "bot-6", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", position: 15 },
+    { id: "bot-7", image_url: SITE_MEDIA.lookbook.slide1, position: 16 },
+    { id: "bot-8", image_url: SITE_MEDIA.lookbook.slide2, position: 17 },
+    { id: "bot-9", image_url: SITE_MEDIA.heritage.duality_wura, position: 18 },
+    { id: "bot-10", image_url: SITE_MEDIA.heritage.duality_ewa, position: 19 },
 ];
 
 /**
@@ -144,7 +69,7 @@ export async function getHeritageMorphData() {
             .order("position", { ascending: true });
 
         const config = configData ? { ...DEFAULT_HERITAGE_MORPH_CONFIG, ...configData } : DEFAULT_HERITAGE_MORPH_CONFIG;
-        const cards = (cardsData && cardsData.length >= 6) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
+        const cards = (cardsData && cardsData.length >= 10) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
 
         return { config, cards };
     } catch (err) {
