@@ -2,10 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Hero from "@/components/Hero";
+import SpatialMorphHero from "@/components/heritage/SpatialMorphHero";
 import HeritageAnimation from "@/components/HeritageAnimation";
 import styles from "./page.module.css";
-import WeatherStyling from "@/components/passport/WeatherStyling";
 import WardrobeWidget from "@/components/wardrobe/WardrobeWidget";
 import SocialShare from "@/components/passport/SocialShare";
 import { SITE_MEDIA } from "@/config/media";
@@ -14,19 +13,18 @@ export default function AboutClient({ page }) {
     // Fallback data
     const acf = page?.acf || {};
 
-    // Helper to safely get value
     const getVal = (key, fallback) => acf[key] || fallback;
 
     const data = {
         hero: {
             title: getVal('hero_title', 'Our Heritage'),
-            subtitle: getVal('hero_subtitle', 'The Convergence of Fashion & Artistry'),
+            subtitle: getVal('hero_subtitle', 'The Convergence of Indigenous Fashion & Modern Artistry'),
             image: getVal('hero_image', SITE_MEDIA.heritage.hero)
         },
         duality: {
             heading: getVal('duality_heading', 'Two Worlds. One Vision.'),
             lead: getVal('duality_lead', 'Wura & Ewa was born from the desire to merge the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.'),
-            text: getVal('duality_text', '"Wura" (Gold) represents our clothing line—precious, timeless, and forged with intent. "Ewa" (Beauty) embodies our artistry services—enhancing the natural essence of every individual. Together, they form a sanctuary of style known as Royal Haven, a subsidary of Bezaleel Group.'),
+            text: getVal('duality_text', '"Wura" (Gold) represents our clothing line—precious, timeless, and forged with intent. "Ewa" (Beauty) embodies our artistry services—enhancing the natural essence of every individual. Together, they form a sanctuary of style known as Royal Haven, a subsidiary of Bezaleel Group.'),
             image1: getVal('duality_image_1', SITE_MEDIA.heritage.duality_wura),
             image2: getVal('duality_image_2', SITE_MEDIA.heritage.duality_ewa)
         },
@@ -53,14 +51,10 @@ export default function AboutClient({ page }) {
 
     return (
         <main className={styles.main}>
-            <Hero
-                title={data.hero.title}
-                subtitle={data.hero.subtitle}
-                imagePath={data.hero.image}
-                overlayImage="https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d"
-            />
+            {/* High-Performance Scroll-Linked Spatial Morph Grid Reveal */}
+            <SpatialMorphHero />
 
-            {/* The Duality */}
+            {/* The Duality Narrative */}
             <section className={styles.section}>
                 <div className={styles.dualityContainer}>
                     <motion.div
@@ -163,9 +157,9 @@ export default function AboutClient({ page }) {
             </section>
 
             {/* Social Sharing */}
-             <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', paddingBottom: '4rem' }}>
+            <section className={styles.section} style={{ backgroundColor: 'var(--obsidian)', paddingBottom: '4rem' }}>
                 <div className={styles.journeySection}>
-                     <SocialShare 
+                    <SocialShare 
                         garment={{ 
                             garment_name: "Signature Wura Silk", 
                             collection: "Heritage", 
