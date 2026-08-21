@@ -18,10 +18,10 @@ export const DEFAULT_HERITAGE_MORPH_CONFIG = {
     poster_image: SITE_MEDIA.heritage.hero,
 };
 
-// Rich 6-card spatial matrix matching Square's canvas array
+// Rich 11-card spatial matrix matching Square's dense multi-row canvas
 export const DEFAULT_HERITAGE_MICRO_CARDS = [
     {
-        id: "card-wura-couture",
+        id: "card-1",
         title: "Wura Couture",
         subtitle: "Tactile Indigenous Fashion",
         badge: "COUTURE",
@@ -30,7 +30,7 @@ export const DEFAULT_HERITAGE_MICRO_CARDS = [
         position: 1
     },
     {
-        id: "card-ewa-artistry",
+        id: "card-2",
         title: "Ewa Artistry",
         subtitle: "Bridal & Beauty Services",
         badge: "ARTISTRY",
@@ -39,25 +39,25 @@ export const DEFAULT_HERITAGE_MICRO_CARDS = [
         position: 2
     },
     {
-        id: "card-ntag-passport",
+        id: "card-3",
         title: "NTAG Passport",
-        subtitle: "Digital Provenance & Weather Styling",
+        subtitle: "Digital Provenance & Weather",
         badge: "INNOVATION",
         image_url: SITE_MEDIA.heritage.hero,
         link_url: "#styling",
         position: 3
     },
     {
-        id: "card-royal-archives",
+        id: "card-4",
         title: "Royal Archives",
-        subtitle: "African Craftsmanship & Legacy",
+        subtitle: "African Craftsmanship",
         badge: "HERITAGE",
         image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d",
         link_url: "/lookbook",
         position: 4
     },
     {
-        id: "card-atelier",
+        id: "card-5",
         title: "Besano Atelier",
         subtitle: "Custom Bespoke Tailoring",
         badge: "BESPOKE",
@@ -66,13 +66,58 @@ export const DEFAULT_HERITAGE_MICRO_CARDS = [
         position: 5
     },
     {
-        id: "card-runway",
+        id: "card-6",
         title: "2026 Lookbook",
         subtitle: "Modern Luxury Runway",
         badge: "LOOKBOOK",
         image_url: SITE_MEDIA.lookbook.slide2,
         link_url: "/lookbook",
         position: 6
+    },
+    {
+        id: "card-7",
+        title: "Àṣọ-Òkè Textiles",
+        subtitle: "Master Hand-Loom Fabrics",
+        badge: "TEXTILES",
+        image_url: SITE_MEDIA.heritage.duality_wura,
+        link_url: "/shop",
+        position: 7
+    },
+    {
+        id: "card-8",
+        title: "Bridal Styling",
+        subtitle: "Ethereal Essence",
+        badge: "BRIDAL",
+        image_url: SITE_MEDIA.heritage.duality_ewa,
+        link_url: "/services",
+        position: 8
+    },
+    {
+        id: "card-9",
+        title: "Garment NFC",
+        subtitle: "Encrypted Authenticity",
+        badge: "PASSPORT",
+        image_url: SITE_MEDIA.heritage.hero,
+        link_url: "#styling",
+        position: 9
+    },
+    {
+        id: "card-10",
+        title: "Pop-Up Terminal",
+        subtitle: "Ottawa Pop-up Store",
+        badge: "POPUP",
+        image_url: SITE_MEDIA.lookbook.slide1,
+        link_url: "/checkout",
+        position: 10
+    },
+    {
+        id: "card-11",
+        title: "Bezaleel Group",
+        subtitle: "Parent Enterprise",
+        badge: "CORPORATE",
+        image_url: SITE_MEDIA.lookbook.slide2,
+        link_url: "/heritage",
+        position: 11
     }
 ];
 
@@ -99,7 +144,7 @@ export async function getHeritageMorphData() {
             .order("position", { ascending: true });
 
         const config = configData ? { ...DEFAULT_HERITAGE_MORPH_CONFIG, ...configData } : DEFAULT_HERITAGE_MORPH_CONFIG;
-        const cards = (cardsData && cardsData.length >= 4) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
+        const cards = (cardsData && cardsData.length >= 6) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
 
         return { config, cards };
     } catch (err) {

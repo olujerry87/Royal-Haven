@@ -1,6 +1,6 @@
 .trackContainer {
     position: relative;
-    height: 300vh;
+    height: 240vh; /* Reduced track height to ensure seamless unlock right as cards settle */
     width: 100%;
     background-color: var(--obsidian, #0B0B0B);
 }
@@ -15,103 +15,104 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: var(--page-top-offset, 116px);
+    padding-top: calc(var(--page-top-offset, 116px) - 10px);
     background-color: var(--obsidian, #0B0B0B);
     box-sizing: border-box;
 }
 
-/* ── Layer 1: Headline & Subtitle Layer (Phase 2 Reveal) ─────────────────── */
+/* ── Headline & Subtitle Layer ──────────────────────────────────────────── */
 .textContainer {
     text-align: center;
     z-index: 20;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     max-width: 850px;
     will-change: opacity, transform;
     pointer-events: none;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .badge {
     display: inline-block;
-    font-size: 0.75rem;
-    letter-spacing: 0.22em;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold, #D4AF37);
     border: 1px solid rgba(212, 175, 55, 0.4);
-    padding: 0.35rem 1.1rem;
+    padding: 0.3rem 0.95rem;
     border-radius: 40px;
-    margin-bottom: 0.75rem;
-    background: rgba(11, 11, 11, 0.6);
+    margin-bottom: 0.5rem;
+    background: rgba(11, 11, 11, 0.65);
     backdrop-filter: blur(8px);
 }
 
 .heading {
     font-family: var(--font-heritage, serif);
-    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    font-size: clamp(2rem, 4.2vw, 3.8rem);
     font-weight: 300;
     color: var(--gold, #D4AF37);
     line-height: 1.1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     letter-spacing: -0.01em;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
 .subheading {
     font-family: var(--font-body, sans-serif);
-    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
     color: #FAF9F6 !important; /* 100% legibility off-white */
-    line-height: 1.6;
+    line-height: 1.5;
     font-weight: 300;
-    max-width: 680px;
+    max-width: 640px;
     margin: 0 auto;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
-/* ── Layer 2: Grid Canvas (Phase 3 Cards Matrix) ────────────────────────── */
+/* ── Dense 5-Column Canvas Matrix (Square-Style Compact Grid) ─────────────── */
 .gridCanvas {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    max-width: 1140px;
-    width: 90%;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    max-width: 1240px;
+    width: 92%;
     margin: 0 auto;
     z-index: 15;
-    will-change: opacity, transform;
+    will-change: opacity, transform, scale;
     box-sizing: border-box;
 }
 
 .cardBase {
-    background: rgba(20, 20, 20, 0.85);
+    background: rgba(22, 22, 22, 0.85);
     border: 1px solid rgba(212, 175, 55, 0.25);
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(12px);
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     display: flex;
     flex-direction: column;
-    height: 350px;
+    height: 175px;
     box-sizing: border-box;
 }
 
 .cardBase:hover {
     border-color: var(--gold, #D4AF37);
-    box-shadow: 0 16px 36px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 12px 28px rgba(212, 175, 55, 0.25);
+    transform: translateY(-4px) scale(1.03);
 }
 
 /* Empty Placeholder Slot for Video Landing Target */
 .heroSlotTarget {
-    height: 350px;
-    border-radius: 20px;
+    height: 175px;
+    border-radius: 16px;
     border: 1px dashed rgba(212, 175, 55, 0.2);
-    visibility: hidden; /* Serves strictly as bounding box anchor */
+    visibility: hidden; /* Bounding box anchor for morphing video */
 }
 
 .cardImageWrapper {
     position: relative;
     width: 100%;
-    height: 190px;
+    height: 110px;
     overflow: hidden;
     background: #111;
 }
@@ -124,60 +125,54 @@
 }
 
 .cardBase:hover .cardImage {
-    transform: scale(1.06);
+    transform: scale(1.08);
 }
 
 .cardBadge {
     position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    background: rgba(11, 11, 11, 0.8);
+    top: 0.4rem;
+    left: 0.4rem;
+    background: rgba(11, 11, 11, 0.82);
     border: 1px solid rgba(212, 175, 55, 0.4);
     color: var(--gold, #D4AF37);
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 0.25rem 0.65rem;
-    border-radius: 20px;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
     backdrop-filter: blur(4px);
 }
 
 .cardContent {
-    padding: 1.1rem;
+    padding: 0.65rem 0.75rem;
     display: flex;
     flex-direction: column;
     flex: 1;
+    justify-content: center;
 }
 
 .cardTitle {
     font-family: var(--font-heritage, serif);
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     color: #FAF9F6;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cardSubtitle {
     font-family: var(--font-body, sans-serif);
-    font-size: 0.8rem;
-    color: rgba(250, 249, 246, 0.75);
-    line-height: 1.4;
-    margin-bottom: 0.75rem;
-    flex: 1;
+    font-size: 0.72rem;
+    color: rgba(250, 249, 246, 0.7);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.cardLinkText {
-    font-size: 0.75rem;
-    color: var(--gold, #D4AF37);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-/* ── Layer 3: MORPHING HERO VIDEO CARD (GPU Isolated Compositor Layer) ── */
+/* ── GPU Isolated Morphing Hero Video Card ──────────────────────────────── */
 .morphHeroVideoCard {
     position: absolute;
     top: 0;
@@ -238,7 +233,7 @@
 /* Scroll Helper Indicator */
 .scrollIndicator {
     position: absolute;
-    bottom: 2rem;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 50;
@@ -247,7 +242,7 @@
     align-items: center;
     gap: 0.35rem;
     color: rgba(250, 249, 246, 0.7);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     pointer-events: none;
@@ -256,7 +251,7 @@
 
 .scrollLine {
     width: 1px;
-    height: 28px;
+    height: 24px;
     background: linear-gradient(180deg, var(--gold, #D4AF37) 0%, rgba(212, 175, 55, 0) 100%);
     animation: scrollPulse 2s infinite;
 }
@@ -269,17 +264,20 @@
 
 @media (max-width: 1024px) {
     .gridCanvas {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         max-width: 720px;
     }
 }
 
 @media (max-width: 640px) {
     .gridCanvas {
-        grid-template-columns: 1fr;
-        max-width: 340px;
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 360px;
     }
     .cardBase, .heroSlotTarget {
-        height: 300px;
+        height: 160px;
+    }
+    .cardImageWrapper {
+        height: 95px;
     }
 }
