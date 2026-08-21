@@ -26,9 +26,11 @@ export default function ProductDetailClient({ product }) {
     };
 
     const handleAddToCart = () => {
-        if (!selectedSize) return;
-        addToCart(product, selectedSize, quantity);
-        // Toast notification is handled by <AddToCartNotification /> in layout.js
+        const sizeToUse = selectedSize || availableSizes[0] || "Standard";
+        if (!selectedSize) {
+            setSelectedSize(sizeToUse);
+        }
+        addToCart(product, sizeToUse, quantity);
     };
 
     // Extract available sizes from product attributes

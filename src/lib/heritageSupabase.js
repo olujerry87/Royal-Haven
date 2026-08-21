@@ -18,42 +18,66 @@ export const DEFAULT_HERITAGE_MORPH_CONFIG = {
     poster_image: SITE_MEDIA.heritage.hero,
 };
 
+// Rich 6-card spatial matrix matching Square's canvas array
 export const DEFAULT_HERITAGE_MICRO_CARDS = [
     {
-        id: "card-wura-1",
-        title: "Wura Collection",
-        subtitle: "Tactile Indigenous Couture",
-        badge: "Couture",
+        id: "card-wura-couture",
+        title: "Wura Couture",
+        subtitle: "Tactile Indigenous Fashion",
+        badge: "COUTURE",
         image_url: SITE_MEDIA.heritage.duality_wura,
-        video_url: null,
         link_url: "/shop",
         position: 1
     },
     {
-        id: "card-ewa-2",
+        id: "card-ewa-artistry",
         title: "Ewa Artistry",
-        subtitle: "Luxury Bridal & Styling",
-        badge: "Artistry",
+        subtitle: "Bridal & Beauty Services",
+        badge: "ARTISTRY",
         image_url: SITE_MEDIA.heritage.duality_ewa,
-        video_url: null,
         link_url: "/services",
         position: 2
     },
     {
-        id: "card-passport-3",
-        title: "NTAG Garment Passport",
+        id: "card-ntag-passport",
+        title: "NTAG Passport",
         subtitle: "Digital Provenance & Weather Styling",
-        badge: "Innovation",
+        badge: "INNOVATION",
         image_url: SITE_MEDIA.heritage.hero,
-        video_url: null,
         link_url: "#styling",
         position: 3
+    },
+    {
+        id: "card-royal-archives",
+        title: "Royal Archives",
+        subtitle: "African Craftsmanship & Legacy",
+        badge: "HERITAGE",
+        image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d",
+        link_url: "/lookbook",
+        position: 4
+    },
+    {
+        id: "card-atelier",
+        title: "Besano Atelier",
+        subtitle: "Custom Bespoke Tailoring",
+        badge: "BESPOKE",
+        image_url: SITE_MEDIA.lookbook.slide1,
+        link_url: "/services/book",
+        position: 5
+    },
+    {
+        id: "card-runway",
+        title: "2026 Lookbook",
+        subtitle: "Modern Luxury Runway",
+        badge: "LOOKBOOK",
+        image_url: SITE_MEDIA.lookbook.slide2,
+        link_url: "/lookbook",
+        position: 6
     }
 ];
 
 /**
  * Fetch Heritage Morph Configuration & Micro Cards from Supabase.
- * Falls back gracefully to default luxury assets if database tables are uninitialized.
  */
 export async function getHeritageMorphData() {
     if (!supabase) {
@@ -64,20 +88,18 @@ export async function getHeritageMorphData() {
     }
 
     try {
-        // Fetch config
         const { data: configData } = await supabase
             .from("heritage_morph_config")
             .select("*")
             .single();
 
-        // Fetch micro cards
         const { data: cardsData } = await supabase
             .from("heritage_micro_cards")
             .select("*")
             .order("position", { ascending: true });
 
         const config = configData ? { ...DEFAULT_HERITAGE_MORPH_CONFIG, ...configData } : DEFAULT_HERITAGE_MORPH_CONFIG;
-        const cards = (cardsData && cardsData.length > 0) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
+        const cards = (cardsData && cardsData.length >= 4) ? cardsData : DEFAULT_HERITAGE_MICRO_CARDS;
 
         return { config, cards };
     } catch (err) {
