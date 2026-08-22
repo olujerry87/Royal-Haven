@@ -2,15 +2,16 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import styles from "./SpatialMorphHero.module.css";
-import { getHeritageMorphData } from "@/lib/heritageSupabase";
+import { getHeritageMorphData, DEFAULT_HERITAGE_MICRO_CARDS } from "@/lib/heritageSupabase";
 
 export default function SpatialMorphHero({ initialConfig, initialCards }) {
     const trackRef = useRef(null);
     const stickyBoxRef = useRef(null);
-    const textContainerRef = useRef(null);
-    const gridRef = useRef(null);
+    const middleDividerRef = useRef(null);
+    const topCanvasRef = useRef(null);
+    const bottomCanvasRef = useRef(null);
     const slotTargetRef = useRef(null);
     const heroVideoCardRef = useRef(null);
     const videoHeroOverlayRef = useRef(null);
@@ -18,17 +19,19 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
     const scrollIndicatorRef = useRef(null);
 
     const [config, setConfig] = useState(initialConfig || null);
-    const [cards, setCards] = useState(initialCards || []);
+    const [cards, setCards] = useState(initialCards || DEFAULT_HERITAGE_MICRO_CARDS);
 
     // Load Supabase configuration & rich cards
     useEffect(() => {
         let isMounted = true;
         async function loadData() {
-            if (!config || cards.length < 6) {
+            if (!config || cards.length < 10) {
                 const { config: remoteConfig, cards: remoteCards } = await getHeritageMorphData();
                 if (isMounted) {
                     setConfig(remoteConfig);
-                    setCards(remoteCards);
+                    if (remoteCards && remoteCards.length >= 10) {
+                        setCards(remoteCards);
+                    }
                 }
             }
         }
@@ -51,29 +54,33 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         const currentScroll = -trackRect.top;
         const P = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
 
-        // ── Phase 1: Hero Overlay Title Fade Out (P: 0.0 -> 0.18) ────────────────
+        // ── Phase 1: Fullscreen Hero Overlay Title & CTA Fade Out (P: 0.0 -> 0.18) 
         if (videoHeroOverlayRef.current) {
             const overlayOpacity = Math.max(0, 1 - (P / 0.18));
             videoHeroOverlayRef.current.style.opacity = overlayOpacity.toString();
             videoHeroOverlayRef.current.style.transform = `translateY(${P * -60}px)`;
+            videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: Headline "Two Worlds. One Vision." Fade In (P: 0.15 -> 0.55) ─
-        if (textContainerRef.current) {
-            const textOpacity = Math.max(0, Math.min(1, (P - 0.15) / 0.35));
-            textContainerRef.current.style.opacity = textOpacity.toString();
-            textContainerRef.current.style.transform = `translateY(${(1 - textOpacity) * 25}px)`;
+        // ── Phase 2: Middle Headline Divider Fade In (P: 0.12 -> 0.55) ─────────────
+        if (middleDividerRef.current) {
+            const textOpacity = Math.max(0, Math.min(1, (P - 0.12) / 0.38));
+            middleDividerRef.current.style.opacity = textOpacity.toString();
+            middleDividerRef.current.style.transform = `translateY(${(1 - textOpacity) * 20}px)`;
         }
 
-        // ── Phase 3: UNIFIED SIMULTANEOUS BACKGROUND CARDS EXPANSION (P: 0.10 -> 0.70)
-        // Background cards AND hero morph together in one fluid, synchronized animation!
-        if (gridRef.current) {
-            const cardProgress = Math.max(0, Math.min(1, (P - 0.10) / 0.60));
-            const cardScale = 0.4 + (cardProgress * 0.6); // 0.4 -> 1.0
-            const cardTranslateY = (1 - cardProgress) * 60; // 60px -> 0px
+        // ── Phase 3: Synchronized Top & Bottom Canvas Reveal (P: 0.08 -> 0.68)
+        const canvasProgress = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
+        const canvasScale = 0.45 + (canvasProgress * 0.55); // 0.45 -> 1.0
 
-            gridRef.current.style.opacity = cardProgress.toString();
-            gridRef.current.style.transform = `scale(${cardScale}) translateY(${cardTranslateY}px)`;
+        if (topCanvasRef.current) {
+            topCanvasRef.current.style.opacity = canvasProgress.toString();
+            topCanvasRef.current.style.transform = `scale(${canvasScale})`;
+        }
+
+        if (bottomCanvasRef.current) {
+            bottomCanvasRef.current.style.opacity = canvasProgress.toString();
+            bottomCanvasRef.current.style.transform = `scale(${canvasScale})`;
         }
 
         // ── Scroll Indicator Fade Out ─────────────────────────────────────────────
@@ -82,9 +89,9 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
         }
 
-        // ── HERO VIDEO MORPH (100vw x 100vh -> Center Slot in 5-Column Matrix) ───
+        // ── HERO VIDEO MORPH (100vw x 100vh -> Bounding Center Slot Target) ──────
         if (slotTargetRef.current && heroVideoCardRef.current) {
-            const morphT = Math.max(0, Math.min(1, (P - 0.10) / 0.60));
+            const morphT = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
 
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
@@ -98,8 +105,8 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const currentHeight = windowHeight + (targetHeight - windowHeight) * morphT;
             const currentLeft = targetLeft * morphT;
             const currentTop = targetTop * morphT;
-            const currentRadius = morphT * 16; // 0px -> 16px
-            const shadowAlpha = morphT * 0.45;
+            const currentRadius = morphT * 28; // 0px -> 28px
+            const shadowAlpha = morphT * 0.18;
 
             heroVideoCardRef.current.style.width = `${currentWidth}px`;
             heroVideoCardRef.current.style.height = `${currentHeight}px`;
@@ -107,7 +114,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             heroVideoCardRef.current.style.top = `${currentTop}px`;
             heroVideoCardRef.current.style.borderRadius = `${currentRadius}px`;
             heroVideoCardRef.current.style.boxShadow = morphT > 0.1
-                ? `0 ${morphT * 16}px ${morphT * 32}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(212, 175, 55, ${morphT * 0.35})`
+                ? `0 ${morphT * 16}px ${morphT * 36}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(0, 0, 0, 0.08)`
                 : "none";
         }
     }, []);
@@ -140,87 +147,58 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         hero_title: "Our Heritage",
         hero_subtitle: "The Convergence of Indigenous Fashion & Modern Artistry",
         badge_text: "ROYAL HAVEN — EST. 2017",
-        video_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/wura-ewa-hero-loop.mp4"
+        video_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/wura-ewa-hero-loop.mp4",
+        cta_text: "Explore Living Heritage",
+        cta_link: "#duality"
     };
 
-    const defaultItems = [
-        { id: "c1", title: "Wura Couture", subtitle: "Tactile Indigenous Fashion", badge: "COUTURE", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/duality-wura.jpg", link_url: "/shop" },
-        { id: "c2", title: "Ewa Artistry", subtitle: "Bridal & Beauty", badge: "ARTISTRY", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/duality-ewa.jpg", link_url: "/services" },
-        { id: "c3", title: "NTAG Passport", subtitle: "Digital Provenance", badge: "INNOVATION", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/heritage-hero.jpg", link_url: "#styling" },
-        { id: "c4", title: "Royal Archives", subtitle: "African Craftsmanship", badge: "HERITAGE", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", link_url: "/lookbook" },
-        { id: "c5", title: "Besano Atelier", subtitle: "Bespoke Tailoring", badge: "BESPOKE", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/spotlight.jpg", link_url: "/services/book" },
-        { id: "c6", title: "2026 Runway", subtitle: "Modern Luxury", badge: "LOOKBOOK", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/duality-wura.jpg", link_url: "/lookbook" },
-        { id: "c7", title: "Àṣọ-Òkè Textiles", subtitle: "Hand-Loom Fabrics", badge: "TEXTILES", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/duality-ewa.jpg", link_url: "/shop" },
-        { id: "c8", title: "Bridal Styling", subtitle: "Ethereal Essence", badge: "BRIDAL", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/heritage-hero.jpg", link_url: "/services" },
-        { id: "c9", title: "Garment NFC", subtitle: "Encrypted Auth", badge: "PASSPORT", image_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/spotlight.jpg", link_url: "#styling" },
-        { id: "c10", title: "Pop-Up Terminal", subtitle: "Ottawa Pop-up", badge: "POPUP", image_url: "https://cdn.builder.io/api/v1/image/assets%2F48904b6ada2c4086ab7af82900bb21db%2Ff7dee33d8cd74ba183c59b0e10d0912d", link_url: "/checkout" },
-    ];
-
-    const displayCards = (cards && cards.length >= 6) ? cards : defaultItems;
+    const activeCards = (cards && cards.length >= 8) ? cards : DEFAULT_HERITAGE_MICRO_CARDS;
+    const top4 = activeCards.slice(0, 4);
+    const bot4 = activeCards.slice(4, 8);
 
     return (
         <div ref={trackRef} className={styles.trackContainer}>
             <div ref={stickyBoxRef} className={styles.stickyBox}>
 
-                {/* ── HEADLINE & SUBTITLE ────────────────────────────────────────── */}
-                <div ref={textContainerRef} className={styles.textContainer} style={{ opacity: 0 }}>
-                    <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}</span>
+                {/* ── TOP ROW (4 Micro Photo Cards) ────────────────────────────── */}
+                <div ref={topCanvasRef} className={styles.topCanvas} style={{ opacity: 0 }}>
+                    {top4.map((card, i) => (
+                        <div key={card.id || `top-${i}`} className={styles.photoTile}>
+                            <img src={card.image_url} alt="" className={styles.tileImg} />
+                        </div>
+                    ))}
+                </div>
+
+                {/* ── MIDDLE DIVIDER SECTION (Headline & Subtitle) ───────────────── */}
+                <div ref={middleDividerRef} className={styles.middleDivider} style={{ opacity: 0 }}>
+                    <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
                     <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
                     <p className={styles.subheading}>
                         Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
                     </p>
                 </div>
 
-                {/* ── DENSE 5-COLUMN CANVAS MATRIX ───────────────────────────────── */}
-                <div ref={gridRef} className={styles.gridCanvas} style={{ opacity: 0 }}>
+                {/* ── BOTTOM CANVAS (Center Hero Landing Slot + Surrounding Micro Cards) ── */}
+                <div ref={bottomCanvasRef} className={styles.bottomCanvas} style={{ opacity: 0 }}>
+                    <div className={styles.photoTile}>
+                        <img src={bot4[0]?.image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile}>
+                        <img src={bot4[1]?.image_url} alt="" className={styles.tileImg} />
+                    </div>
 
-                    {/* Row 1 */}
-                    {displayCards.slice(0, 2).map((c, i) => (
-                        <Link key={c.id || i} href={c.link_url || "/shop"} className={styles.cardBase}>
-                            <div className={styles.cardImageWrapper}>
-                                <img src={c.image_url} alt={c.title} className={styles.cardImage} />
-                                <span className={styles.cardBadge}>{c.badge}</span>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3 className={styles.cardTitle}>{c.title}</h3>
-                                <p className={styles.cardSubtitle}>{c.subtitle}</p>
-                            </div>
-                        </Link>
-                    ))}
-
-                    {/* CENTER SLOT (Row 1 Col 3 or Row 2 Col 3) - HERO TARGET */}
+                    {/* HERO CENTER TARGET SLOT (Fullscale Video Morphs Down to Land Cleanly Here!) */}
                     <div ref={slotTargetRef} className={styles.heroSlotTarget} />
 
-                    {displayCards.slice(2, 4).map((c, i) => (
-                        <Link key={c.id || `r1-${i}`} href={c.link_url || "/shop"} className={styles.cardBase}>
-                            <div className={styles.cardImageWrapper}>
-                                <img src={c.image_url} alt={c.title} className={styles.cardImage} />
-                                <span className={styles.cardBadge}>{c.badge}</span>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3 className={styles.cardTitle}>{c.title}</h3>
-                                <p className={styles.cardSubtitle}>{c.subtitle}</p>
-                            </div>
-                        </Link>
-                    ))}
-
-                    {/* Row 2 & 3 */}
-                    {displayCards.slice(4, 9).map((c, i) => (
-                        <Link key={c.id || `r2-${i}`} href={c.link_url || "/shop"} className={styles.cardBase}>
-                            <div className={styles.cardImageWrapper}>
-                                <img src={c.image_url} alt={c.title} className={styles.cardImage} />
-                                <span className={styles.cardBadge}>{c.badge}</span>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3 className={styles.cardTitle}>{c.title}</h3>
-                                <p className={styles.cardSubtitle}>{c.subtitle}</p>
-                            </div>
-                        </Link>
-                    ))}
-
+                    <div className={styles.photoTile}>
+                        <img src={bot4[2]?.image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile}>
+                        <img src={bot4[3]?.image_url} alt="" className={styles.tileImg} />
+                    </div>
                 </div>
 
-                {/* ── MORPHING HERO VIDEO CARD (GPU Compositor Layer) ─────────────── */}
+                {/* ── MORPHING HERO VIDEO CARD (GPU Isolated Compositor Layer) ─────────────── */}
                 <div ref={heroVideoCardRef} className={styles.morphHeroVideoCard}>
                     <video
                         ref={videoRef}
@@ -234,17 +212,26 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
                     />
                     
                     <div ref={videoHeroOverlayRef} className={styles.videoHeroOverlay}>
-                        <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}</span>
+                        <span className={styles.badge} style={{ color: "#FAF9F6", borderColor: "rgba(255,255,255,0.4)" }}>
+                            {currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}
+                        </span>
                         <h1 className={styles.heroTitle}>{currentConfig.hero_title || "Our Heritage"}</h1>
                         <p className={styles.heroSubtitle}>
                             {currentConfig.hero_subtitle || "The Convergence of Fashion & Artistry"}
                         </p>
+
+                        <a 
+                            href={currentConfig.cta_link || "#duality"} 
+                            className={styles.heroCtaBtn}
+                        >
+                            {currentConfig.cta_text || "Explore Living Heritage"} <ArrowDown size={14} />
+                        </a>
                     </div>
                 </div>
 
                 {/* Scroll Indicator */}
                 <div ref={scrollIndicatorRef} className={styles.scrollIndicator}>
-                    <span>Scroll To Morph Matrix</span>
+                    <span>Scroll To Morph Canvas</span>
                     <ChevronDown size={15} />
                     <div className={styles.scrollLine} />
                 </div>
