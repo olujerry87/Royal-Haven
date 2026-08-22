@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowDown, ChevronDown } from "lucide-react";
 import styles from "./SpatialMorphHero.module.css";
-import { getHeritageMorphData } from "@/lib/heritageSupabase";
+import { getHeritageMorphData, DEFAULT_HERITAGE_MICRO_CARDS } from "@/lib/heritageSupabase";
 
 export default function SpatialMorphHero({ initialConfig, initialCards }) {
     const trackRef = useRef(null);
@@ -19,7 +19,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
     const scrollIndicatorRef = useRef(null);
 
     const [config, setConfig] = useState(initialConfig || null);
-    const [cards, setCards] = useState(initialCards || []);
+    const [cards, setCards] = useState(initialCards || DEFAULT_HERITAGE_MICRO_CARDS);
 
     // Load Supabase configuration & rich cards
     useEffect(() => {
@@ -29,7 +29,9 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
                 const { config: remoteConfig, cards: remoteCards } = await getHeritageMorphData();
                 if (isMounted) {
                     setConfig(remoteConfig);
-                    setCards(remoteCards);
+                    if (remoteCards && remoteCards.length >= 10) {
+                        setCards(remoteCards);
+                    }
                 }
             }
         }
@@ -151,9 +153,10 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         cta_link: "#duality"
     };
 
-    // Exactly 10 Top Cards & 9 Bottom Cards (+ 1 Hero Target = 10 Bottom Cards)
-    const top10 = cards.slice(0, 10);
-    const bot9  = cards.slice(10, 19);
+    // Always fallback to DEFAULT_HERITAGE_MICRO_CARDS if cards array is loading or incomplete
+    const activeCards = (cards && cards.length >= 10) ? cards : DEFAULT_HERITAGE_MICRO_CARDS;
+    const top10 = activeCards.slice(0, 10);
+    const bot9  = activeCards.slice(10, 19);
 
     return (
         <div ref={trackRef} className={styles.trackContainer}>
@@ -162,18 +165,38 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
                 {/* ── TOP CANVAS (10 Visual Non-Clickable Photo Cards in Staggered Grid) ── */}
                 <div ref={topCanvasRef} className={styles.topCanvas} style={{ opacity: 0 }}>
                     {/* Row 1 (4 Cards: Cols 1, 3, 4, 6) */}
-                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={top10[0]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '3' }}><img src={top10[1]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={top10[2]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={top10[3]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}>
+                        <img src={top10[0]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[0].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '3' }}>
+                        <img src={top10[1]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[1].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}>
+                        <img src={top10[2]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[2].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}>
+                        <img src={top10[3]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[3].image_url} alt="" className={styles.tileImg} />
+                    </div>
 
                     {/* Row 2 (6 Cards: Cols 1, 2, 3, 4, 5, 6) */}
-                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={top10[4]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={top10[5]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '3' }}><img src={top10[6]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={top10[7]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={top10[8]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={top10[9]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}>
+                        <img src={top10[4]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[4].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}>
+                        <img src={top10[5]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[5].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '3' }}>
+                        <img src={top10[6]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[6].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}>
+                        <img src={top10[7]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[7].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}>
+                        <img src={top10[8]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[8].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}>
+                        <img src={top10[9]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[9].image_url} alt="" className={styles.tileImg} />
+                    </div>
                 </div>
 
                 {/* ── MIDDLE DIVIDER SECTION (Headline & Subtitle) ───────────────── */}
@@ -188,21 +211,39 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
                 {/* ── BOTTOM CANVAS (10 Cards Total: 9 Photo Tiles + 1 Hero Target) ── */}
                 <div ref={bottomCanvasRef} className={styles.bottomCanvas} style={{ opacity: 0 }}>
                     {/* Row 3 (5 Cards: Cols 1, 2, 4, 5, 6) */}
-                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={bot9[0]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={bot9[1]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={bot9[2]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={bot9[3]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '6' }}><img src={bot9[4]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}>
+                        <img src={bot9[0]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[10].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}>
+                        <img src={bot9[1]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[11].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}>
+                        <img src={bot9[2]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[12].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}>
+                        <img src={bot9[3]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[13].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '6' }}>
+                        <img src={bot9[4]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[14].image_url} alt="" className={styles.tileImg} />
+                    </div>
 
                     {/* Row 4 (5 Cards: Cols 1, 2, HERO TARGET AT COL 3, Cols 4, 5) */}
-                    <div className={styles.photoTile} style={{ gridColumn: '1' }}><img src={bot9[5]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '2' }}><img src={bot9[6]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '1' }}>
+                        <img src={bot9[5]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[15].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '2' }}>
+                        <img src={bot9[6]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[16].image_url} alt="" className={styles.tileImg} />
+                    </div>
                     
                     {/* Morphing Video Target Slot at Center Column 3! */}
                     <div ref={slotTargetRef} className={styles.heroSlotTarget} style={{ gridColumn: '3' }} />
 
-                    <div className={styles.photoTile} style={{ gridColumn: '4' }}><img src={bot9[7]?.image_url} alt="" className={styles.tileImg} /></div>
-                    <div className={styles.photoTile} style={{ gridColumn: '5' }}><img src={bot9[8]?.image_url} alt="" className={styles.tileImg} /></div>
+                    <div className={styles.photoTile} style={{ gridColumn: '4' }}>
+                        <img src={bot9[7]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[17].image_url} alt="" className={styles.tileImg} />
+                    </div>
+                    <div className={styles.photoTile} style={{ gridColumn: '5' }}>
+                        <img src={bot9[8]?.image_url || DEFAULT_HERITAGE_MICRO_CARDS[18].image_url} alt="" className={styles.tileImg} />
+                    </div>
                 </div>
 
                 {/* ── MORPHING HERO VIDEO CARD (GPU Isolated Compositor Layer) ─────────────── */}
