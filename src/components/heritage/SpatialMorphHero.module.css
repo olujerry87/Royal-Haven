@@ -1,6 +1,6 @@
 .trackContainer {
     position: relative;
-    height: 300vh; /* 300vh track for smooth 3-phase timeline */
+    height: 250vh;
     width: 100%;
     background-color: var(--off-white, #FAF9F6);
 }
@@ -15,15 +15,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 80px; /* Safe clearance for fixed top header */
-    padding-bottom: 1.5rem;
+    padding-top: 75px; /* Fixed header clearance */
+    padding-bottom: 1rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     background-color: var(--off-white, #FAF9F6);
     box-sizing: border-box;
 }
 
-/* ── Content Grid Matrix Container ───────────────────────────────────────── */
+/* ── Stable Content Matrix Container ─────────────────────────────────────── */
 .matrixContainer {
     display: flex;
     flex-direction: column;
@@ -32,13 +32,13 @@
     width: 100%;
     max-width: 1280px;
     height: 100%;
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - 90px);
     margin: 0 auto;
     position: relative;
     box-sizing: border-box;
 }
 
-/* ── Top Canvas Row (Micro Cards) ────────────────────────────────────────── */
+/* ── Top Canvas Row (Micro Photo Cards) ──────────────────────────────────── */
 .topCanvas {
     display: flex;
     align-items: center;
@@ -46,7 +46,6 @@
     gap: 1.5rem 2.5rem;
     width: 100%;
     margin-bottom: 0.75rem;
-    will-change: opacity, transform;
     pointer-events: none;
 }
 
@@ -56,7 +55,6 @@
     z-index: 20;
     padding: 0 1rem;
     max-width: 780px;
-    will-change: opacity, transform;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,14 +89,14 @@
 .subheading {
     font-family: var(--font-body, sans-serif);
     font-size: clamp(0.85rem, 1.3vw, 1.02rem);
-    color: #333333 !important; /* Crisp charcoal for white background */
+    color: #333333 !important; /* Crisp charcoal for off-white background */
     line-height: 1.45;
     font-weight: 400;
     max-width: 620px;
     margin: 0 auto;
 }
 
-/* ── Bottom Canvas Row (Center Hero Landing Target + Surrounding Micro Cards) */
+/* ── Bottom Canvas Row (Contains Hero Center Target Slot + Micro Photo Cards) */
 .bottomCanvas {
     display: flex;
     align-items: center;
@@ -106,7 +104,6 @@
     gap: 1.5rem 2.5rem;
     width: 100%;
     margin-top: 0.5rem;
-    will-change: opacity, transform;
     pointer-events: none;
 }
 
@@ -152,7 +149,7 @@
     overflow: hidden;
     z-index: 40;
     background: #000;
-    will-change: transform, width, height, border-radius, opacity, top, left;
+    will-change: width, height, border-radius, opacity, top, left;
     transform-origin: top left;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
