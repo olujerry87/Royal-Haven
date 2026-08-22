@@ -1,7 +1,7 @@
 .main {
     width: 100vw;
     min-height: 100vh;
-    padding-top: var(--page-top-offset, 116px);
+    padding-top: 0; /* SpatialMorphHero starts flush at top: 0 for 100% accurate sticky frame math */
     background-color: var(--off-white);
     color: var(--obsidian);
     overflow-x: hidden;

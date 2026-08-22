@@ -25,11 +25,11 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
     useEffect(() => {
         let isMounted = true;
         async function loadData() {
-            if (!config || cards.length < 10) {
+            if (!config || cards.length < 8) {
                 const { config: remoteConfig, cards: remoteCards } = await getHeritageMorphData();
                 if (isMounted) {
                     setConfig(remoteConfig);
-                    if (remoteCards && remoteCards.length >= 10) {
+                    if (remoteCards && remoteCards.length >= 8) {
                         setCards(remoteCards);
                     }
                 }
@@ -39,7 +39,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         return () => { isMounted = false; };
     }, [config, cards]);
 
-    // ── UNIFIED HIGH-PERFORMANCE DIRECT DOM SCROLL ENGINE ─────────────────────
+    // ── EXACT 3-PHASE SPATIAL MORPH ANIMATION ENGINE ──────────────────────────
     const updateScrollState = useCallback(() => {
         if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
 
@@ -54,45 +54,21 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         const currentScroll = -trackRect.top;
         const P = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
 
-        // ── Phase 1: Fullscreen Hero Overlay Title & CTA Fade Out (P: 0.0 -> 0.18) 
+        // ── Phase 1: Hero Isolation (Progress: 0.0 -> 0.25) ──────────────────────
+        // Main video occupies 100vw and 100vh with border-radius: 0px.
+        // Fullscreen overlay title, subtitle, and CTA button are visible.
         if (videoHeroOverlayRef.current) {
-            const overlayOpacity = Math.max(0, 1 - (P / 0.18));
+            const overlayOpacity = Math.max(0, 1 - (P / 0.22));
             videoHeroOverlayRef.current.style.opacity = overlayOpacity.toString();
-            videoHeroOverlayRef.current.style.transform = `translateY(${P * -60}px)`;
+            videoHeroOverlayRef.current.style.transform = `translateY(${P * -50}px)`;
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: Middle Headline Divider Fade In (P: 0.12 -> 0.55) ─────────────
-        if (middleDividerRef.current) {
-            const textOpacity = Math.max(0, Math.min(1, (P - 0.12) / 0.38));
-            middleDividerRef.current.style.opacity = textOpacity.toString();
-            middleDividerRef.current.style.transform = `translateY(${(1 - textOpacity) * 20}px)`;
-        }
+        // ── Phase 2: Spatial Morph (Progress: 0.25 -> 0.65) ─────────────────────
+        // Video container morphs down linearly from 100vw/100vh to target card box.
+        const morphT = Math.max(0, Math.min(1, (P - 0.22) / 0.40));
 
-        // ── Phase 3: Synchronized Top & Bottom Canvas Reveal (P: 0.08 -> 0.68)
-        const canvasProgress = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
-        const canvasScale = 0.45 + (canvasProgress * 0.55); // 0.45 -> 1.0
-
-        if (topCanvasRef.current) {
-            topCanvasRef.current.style.opacity = canvasProgress.toString();
-            topCanvasRef.current.style.transform = `scale(${canvasScale})`;
-        }
-
-        if (bottomCanvasRef.current) {
-            bottomCanvasRef.current.style.opacity = canvasProgress.toString();
-            bottomCanvasRef.current.style.transform = `scale(${canvasScale})`;
-        }
-
-        // ── Scroll Indicator Fade Out ─────────────────────────────────────────────
-        if (scrollIndicatorRef.current) {
-            const indicatorOpacity = Math.max(0, 1 - (P / 0.20));
-            scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
-        }
-
-        // ── HERO VIDEO MORPH (100vw x 100vh -> Bounding Center Slot Target) ──────
         if (slotTargetRef.current && heroVideoCardRef.current) {
-            const morphT = Math.max(0, Math.min(1, (P - 0.08) / 0.60));
-
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
 
@@ -105,7 +81,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const currentHeight = windowHeight + (targetHeight - windowHeight) * morphT;
             const currentLeft = targetLeft * morphT;
             const currentTop = targetTop * morphT;
-            const currentRadius = morphT * 28; // 0px -> 28px
+            const currentRadius = morphT * 24; // 0px -> 24px
             const shadowAlpha = morphT * 0.18;
 
             heroVideoCardRef.current.style.width = `${currentWidth}px`;
@@ -114,8 +90,34 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             heroVideoCardRef.current.style.top = `${currentTop}px`;
             heroVideoCardRef.current.style.borderRadius = `${currentRadius}px`;
             heroVideoCardRef.current.style.boxShadow = morphT > 0.1
-                ? `0 ${morphT * 16}px ${morphT * 36}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(0, 0, 0, 0.08)`
+                ? `0 ${morphT * 16}px ${morphT * 32}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(0, 0, 0, 0.08)`
                 : "none";
+        }
+
+        // ── Phase 3: Grid Mosaic Emergence (Progress: 0.40 -> 0.78) ─────────────
+        // Middle text narrative and surrounding photo tiles fade cleanly into view.
+        const emergenceT = Math.max(0, Math.min(1, (P - 0.35) / 0.35));
+        const canvasScale = 0.5 + (emergenceT * 0.5); // 0.5 -> 1.0
+
+        if (middleDividerRef.current) {
+            middleDividerRef.current.style.opacity = emergenceT.toString();
+            middleDividerRef.current.style.transform = `translateY(${(1 - emergenceT) * 20}px)`;
+        }
+
+        if (topCanvasRef.current) {
+            topCanvasRef.current.style.opacity = emergenceT.toString();
+            topCanvasRef.current.style.transform = `scale(${canvasScale})`;
+        }
+
+        if (bottomCanvasRef.current) {
+            bottomCanvasRef.current.style.opacity = emergenceT.toString();
+            bottomCanvasRef.current.style.transform = `scale(${canvasScale})`;
+        }
+
+        // ── Scroll Indicator Fade Out ─────────────────────────────────────────────
+        if (scrollIndicatorRef.current) {
+            const indicatorOpacity = Math.max(0, 1 - (P / 0.20));
+            scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
         }
     }, []);
 
@@ -159,46 +161,51 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
     return (
         <div ref={trackRef} className={styles.trackContainer}>
             <div ref={stickyBoxRef} className={styles.stickyBox}>
+                
+                {/* ── CONTENT GRID MATRIX ─────────────────────────────────────── */}
+                <div className={styles.matrixContainer}>
 
-                {/* ── TOP ROW (4 Micro Photo Cards) ────────────────────────────── */}
-                <div ref={topCanvasRef} className={styles.topCanvas} style={{ opacity: 0 }}>
-                    {top4.map((card, i) => (
-                        <div key={card.id || `top-${i}`} className={styles.photoTile}>
-                            <img src={card.image_url} alt="" className={styles.tileImg} />
+                    {/* Top Canvas Row (4 Micro Photo Cards) */}
+                    <div ref={topCanvasRef} className={styles.topCanvas} style={{ opacity: 0 }}>
+                        {top4.map((card, i) => (
+                            <div key={card.id || `top-${i}`} className={styles.photoTile}>
+                                <img src={card.image_url} alt="" className={styles.tileImg} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Middle Narrative Section */}
+                    <div ref={middleDividerRef} className={styles.middleDivider} style={{ opacity: 0 }}>
+                        <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
+                        <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
+                        <p className={styles.subheading}>
+                            Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
+                        </p>
+                    </div>
+
+                    {/* Bottom Canvas Row (Center Hero Video Landing Slot + 4 Surrounding Micro Cards) */}
+                    <div ref={bottomCanvasRef} className={styles.bottomCanvas} style={{ opacity: 0 }}>
+                        <div className={styles.photoTile}>
+                            <img src={bot4[0]?.image_url} alt="" className={styles.tileImg} />
                         </div>
-                    ))}
+                        <div className={styles.photoTile}>
+                            <img src={bot4[1]?.image_url} alt="" className={styles.tileImg} />
+                        </div>
+
+                        {/* HERO CENTER TARGET SLOT (Fullscale Video Morphs Down to Settle Cleanly Here!) */}
+                        <div ref={slotTargetRef} className={styles.heroSlotTarget} />
+
+                        <div className={styles.photoTile}>
+                            <img src={bot4[2]?.image_url} alt="" className={styles.tileImg} />
+                        </div>
+                        <div className={styles.photoTile}>
+                            <img src={bot4[3]?.image_url} alt="" className={styles.tileImg} />
+                        </div>
+                    </div>
+
                 </div>
 
-                {/* ── MIDDLE DIVIDER SECTION (Headline & Subtitle) ───────────────── */}
-                <div ref={middleDividerRef} className={styles.middleDivider} style={{ opacity: 0 }}>
-                    <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
-                    <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
-                    <p className={styles.subheading}>
-                        Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
-                    </p>
-                </div>
-
-                {/* ── BOTTOM CANVAS (Center Hero Landing Slot + Surrounding Micro Cards) ── */}
-                <div ref={bottomCanvasRef} className={styles.bottomCanvas} style={{ opacity: 0 }}>
-                    <div className={styles.photoTile}>
-                        <img src={bot4[0]?.image_url} alt="" className={styles.tileImg} />
-                    </div>
-                    <div className={styles.photoTile}>
-                        <img src={bot4[1]?.image_url} alt="" className={styles.tileImg} />
-                    </div>
-
-                    {/* HERO CENTER TARGET SLOT (Fullscale Video Morphs Down to Land Cleanly Here!) */}
-                    <div ref={slotTargetRef} className={styles.heroSlotTarget} />
-
-                    <div className={styles.photoTile}>
-                        <img src={bot4[2]?.image_url} alt="" className={styles.tileImg} />
-                    </div>
-                    <div className={styles.photoTile}>
-                        <img src={bot4[3]?.image_url} alt="" className={styles.tileImg} />
-                    </div>
-                </div>
-
-                {/* ── MORPHING HERO VIDEO CARD (GPU Isolated Compositor Layer) ─────────────── */}
+                {/* ── GPU ISOLATED MORPHING HERO VIDEO MODULE ─────────────────── */}
                 <div ref={heroVideoCardRef} className={styles.morphHeroVideoCard}>
                     <video
                         ref={videoRef}

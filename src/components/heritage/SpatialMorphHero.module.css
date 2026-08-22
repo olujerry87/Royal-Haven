@@ -1,6 +1,6 @@
 .trackContainer {
     position: relative;
-    height: 240vh;
+    height: 300vh; /* 300vh track for smooth 3-phase timeline */
     width: 100%;
     background-color: var(--off-white, #FAF9F6);
 }
@@ -15,8 +15,26 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding-top: 80px; /* Safe clearance for fixed top header */
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     background-color: var(--off-white, #FAF9F6);
+    box-sizing: border-box;
+}
+
+/* ── Content Grid Matrix Container ───────────────────────────────────────── */
+.matrixContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1280px;
+    height: 100%;
+    max-height: calc(100vh - 100px);
+    margin: 0 auto;
+    position: relative;
     box-sizing: border-box;
 }
 
@@ -24,71 +42,69 @@
 .topCanvas {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 1.5rem 2.5rem;
-    max-width: 1280px;
-    width: 95%;
-    margin-bottom: 1rem;
+    width: 100%;
+    margin-bottom: 0.75rem;
     will-change: opacity, transform;
     pointer-events: none;
 }
 
-/* ── Middle Divider Section (Headline & Subtitle) ───────────────────────── */
+/* ── Middle Narrative Section ───────────────────────────────────────────── */
 .middleDivider {
     text-align: center;
     z-index: 20;
     padding: 0 1rem;
-    max-width: 820px;
+    max-width: 780px;
     will-change: opacity, transform;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0.5rem 0 1rem 0;
+    margin: 0.25rem 0 0.75rem 0;
     pointer-events: none;
 }
 
 .badge {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--obsidian, #0B0B0B);
     border: 1px solid var(--gold, #D4AF37);
-    padding: 0.3rem 0.95rem;
+    padding: 0.25rem 0.85rem;
     border-radius: 40px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     background: rgba(212, 175, 55, 0.08);
 }
 
 .heading {
     font-family: var(--font-heritage, serif);
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 300;
     color: var(--obsidian, #0B0B0B);
     line-height: 1.1;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.3rem;
     letter-spacing: -0.01em;
 }
 
 .subheading {
     font-family: var(--font-body, sans-serif);
-    font-size: clamp(0.88rem, 1.4vw, 1.08rem);
-    color: #333333 !important; /* Crisp charcoal on white background */
-    line-height: 1.5;
+    font-size: clamp(0.85rem, 1.3vw, 1.02rem);
+    color: #333333 !important; /* Crisp charcoal for white background */
+    line-height: 1.45;
     font-weight: 400;
-    max-width: 640px;
+    max-width: 620px;
     margin: 0 auto;
 }
 
-/* ── Bottom Canvas Area (Contains Hero Target in Center + Surrounding Micro Cards) */
+/* ── Bottom Canvas Row (Center Hero Landing Target + Surrounding Micro Cards) */
 .bottomCanvas {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 1.5rem 2.5rem;
-    max-width: 1280px;
-    width: 95%;
+    width: 100%;
     margin-top: 0.5rem;
     will-change: opacity, transform;
     pointer-events: none;
@@ -96,8 +112,8 @@
 
 /* Micro Visual Photo Card */
 .photoTile {
-    width: 130px;
-    height: 130px;
+    width: clamp(100px, 11vw, 135px);
+    height: clamp(100px, 11vw, 135px);
     border-radius: 20px;
     overflow: hidden;
     background: #ffffff;
@@ -115,17 +131,17 @@
     display: block;
 }
 
-/* Hero Center Target Slot (Where Fullscreen Video Morphs Down to Land) */
+/* Center Video Target Slot (Where Fullscale Video Morphs Down to Land) */
 .heroSlotTarget {
-    width: clamp(240px, 28vw, 340px);
-    height: clamp(240px, 28vw, 340px);
-    border-radius: 28px;
+    width: clamp(220px, 25vw, 320px);
+    height: clamp(220px, 25vw, 320px);
+    border-radius: 24px;
     border: 1.5px dashed rgba(212, 175, 55, 0.4);
     visibility: hidden; /* Anchor box for morphing video target */
     flex-shrink: 0;
 }
 
-/* ── GPU Isolated Morphing Hero Video Card ──────────────────────────────── */
+/* ── GPU Isolated Morphing Hero Video Module ────────────────────────────── */
 .morphHeroVideoCard {
     position: absolute;
     top: 0;
@@ -182,7 +198,7 @@
     font-weight: 300;
 }
 
-/* Interactive CTA Button on Fullscale Hero (P=0) */
+/* Full scale hero interactive CTA button at P=0 */
 .heroCtaBtn {
     display: inline-flex;
     align-items: center;
@@ -207,7 +223,7 @@
     transform: translateY(-2px);
 }
 
-/* Scroll Indicator */
+/* Scroll Helper Indicator */
 .scrollIndicator {
     position: absolute;
     bottom: 1.5rem;
@@ -241,13 +257,13 @@
 
 @media (max-width: 1024px) {
     .photoTile {
-        width: 100px;
-        height: 100px;
+        width: 90px;
+        height: 90px;
         border-radius: 16px;
     }
     .heroSlotTarget {
-        width: 220px;
-        height: 220px;
+        width: 200px;
+        height: 200px;
         border-radius: 20px;
     }
 }
@@ -258,13 +274,13 @@
         flex-wrap: wrap;
     }
     .photoTile {
-        width: 80px;
-        height: 80px;
+        width: 75px;
+        height: 75px;
         border-radius: 14px;
     }
     .heroSlotTarget {
-        width: 180px;
-        height: 180px;
+        width: 160px;
+        height: 160px;
         border-radius: 18px;
     }
 }
