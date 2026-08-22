@@ -39,7 +39,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         return () => { isMounted = false; };
     }, [config, cards]);
 
-    // ── STABLE CENTER-INTERPOLATED SPATIAL MORPH ENGINE ───────────────────────
+    // ── ISOLATED SCROLL SCALE SPATIAL MORPH ENGINE (ZERO JS TOP-CALCULATIONS) ───
     const updateScrollState = useCallback(() => {
         if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
 
@@ -62,15 +62,12 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: CENTER-INTERPOLATED HERO VIDEO MORPH (P: 0.0 -> 0.65) ──────
+        // ── Phase 2: ISOLATED SCROLL SCALE TRANSITION (P: 0.0 -> 0.65) ─────────────
         const morphT = Math.max(0, Math.min(1, P / 0.65));
 
         if (slotTargetRef.current && heroVideoCardRef.current && stickyBoxRef.current) {
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
-
-            // Header clearance offset (90px)
-            const headerClearance = 85;
 
             // Target dimensions & relative coordinates inside stickyBox
             const targetLeft = slotRect.left - stickyRect.left;
@@ -84,26 +81,11 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const startWidth = windowWidth;
             const startHeight = windowHeight;
 
-            // Interpolate width and height
+            // Interpolate absolute bounding dimensions directly
             const currentWidth = startWidth + (targetWidth - startWidth) * morphT;
             const currentHeight = startHeight + (targetHeight - startHeight) * morphT;
-
-            // Center-point interpolation
-            const startCenterX = startLeft + startWidth / 2;
-            const startCenterY = startTop + startHeight / 2;
-            const targetCenterX = targetLeft + targetWidth / 2;
-            const targetCenterY = targetTop + targetHeight / 2;
-
-            const currentCenterX = startCenterX + (targetCenterX - startCenterX) * morphT;
-            const currentCenterY = startCenterY + (targetCenterY - startCenterY) * morphT;
-
-            let currentLeft = currentCenterX - currentWidth / 2;
-            let currentTop = currentCenterY - currentHeight / 2;
-
-            // Header Clearance Guard: Ensure video top edge never slips behind header once morph begins!
-            if (morphT > 0.05 && currentTop < headerClearance) {
-                currentTop = headerClearance + (targetTop - headerClearance) * ((morphT - 0.05) / 0.95);
-            }
+            const currentLeft = startLeft + (targetLeft - startLeft) * morphT;
+            const currentTop = startTop + (targetTop - startTop) * morphT;
 
             const currentRadius = morphT * 24; // 0px -> 24px
             const shadowAlpha = morphT * 0.18;
@@ -209,7 +191,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
 
                 </div>
 
-                {/* ── GPU ISOLATED MORPHING HERO VIDEO MODULE ─────────────────── */}
+                {/* ── GPU ISOLATED MORPHING HERO VIDEO MODULE (Rule 1: Absolute boundaries) ── */}
                 <div ref={heroVideoCardRef} className={styles.morphHeroVideoCard}>
                     <video
                         ref={videoRef}
