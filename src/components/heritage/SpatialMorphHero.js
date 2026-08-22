@@ -39,7 +39,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         return () => { isMounted = false; };
     }, [config, cards]);
 
-    // ── STABLE DIRECT DOM SPATIAL MORPH ENGINE ────────────────────────────────
+    // ── CENTER-INTERPOLATED HIGH-PERFORMANCE DIRECT DOM SCROLL ENGINE ────────
     const updateScrollState = useCallback(() => {
         if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
 
@@ -62,23 +62,40 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: HERO VIDEO MORPH (100vw x 100vh -> Center Target Slot) ─────
+        // ── Phase 2: CENTER-INTERPOLATED HERO VIDEO MORPH (P: 0.0 -> 0.65) ──────
         const morphT = Math.max(0, Math.min(1, P / 0.65));
 
         if (slotTargetRef.current && heroVideoCardRef.current && stickyBoxRef.current) {
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
 
-            // Compute target position relative to sticky container
+            // Target dimensions & relative coordinates inside stickyBox
             const targetLeft = slotRect.left - stickyRect.left;
             const targetTop = slotRect.top - stickyRect.top;
             const targetWidth = slotRect.width;
             const targetHeight = slotRect.height;
 
-            const currentWidth = windowWidth + (targetWidth - windowWidth) * morphT;
-            const currentHeight = windowHeight + (targetHeight - windowHeight) * morphT;
-            const currentLeft = targetLeft * morphT;
-            const currentTop = targetTop * morphT;
+            // Start dimensions & relative coordinates at P=0 (Fullscreen)
+            const startLeft = 0;
+            const startTop = 0;
+            const startWidth = windowWidth;
+            const startHeight = windowHeight;
+
+            // Interpolate width and height
+            const currentWidth = startWidth + (targetWidth - startWidth) * morphT;
+            const currentHeight = startHeight + (targetHeight - startHeight) * morphT;
+
+            // Center-point interpolation (keeps card perfectly centered in screen while shrinking!)
+            const startCenterX = startLeft + startWidth / 2;
+            const startCenterY = startTop + startHeight / 2;
+            const targetCenterX = targetLeft + targetWidth / 2;
+            const targetCenterY = targetTop + targetHeight / 2;
+
+            const currentCenterX = startCenterX + (targetCenterX - startCenterX) * morphT;
+            const currentCenterY = startCenterY + (targetCenterY - startCenterY) * morphT;
+
+            const currentLeft = currentCenterX - currentWidth / 2;
+            const currentTop = currentCenterY - currentHeight / 2;
             const currentRadius = morphT * 24; // 0px -> 24px
             const shadowAlpha = morphT * 0.18;
 
@@ -140,7 +157,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         <div ref={trackRef} className={styles.trackContainer}>
             <div ref={stickyBoxRef} className={styles.stickyBox}>
                 
-                {/* ── CONTENT GRID MATRIX (Rock-solid fixed layout for 100% target accuracy) ── */}
+                {/* ── CONTENT GRID MATRIX (100% Visible Backdrop Canvas) ──────── */}
                 <div className={styles.matrixContainer}>
 
                     {/* Top Canvas Row (4 Micro Photo Cards) */}
