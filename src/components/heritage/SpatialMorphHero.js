@@ -39,7 +39,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         return () => { isMounted = false; };
     }, [config, cards]);
 
-    // ── CENTER-INTERPOLATED HIGH-PERFORMANCE DIRECT DOM SCROLL ENGINE ────────
+    // ── STABLE CENTER-INTERPOLATED SPATIAL MORPH ENGINE ───────────────────────
     const updateScrollState = useCallback(() => {
         if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
 
@@ -54,9 +54,9 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         const currentScroll = -trackRect.top;
         const P = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
 
-        // ── Phase 1: Fullscreen Hero Overlay Title & CTA Fade Out (P: 0.0 -> 0.20) 
+        // ── Phase 1: Fullscreen Hero Overlay Title & CTA Fade Out (P: 0.0 -> 0.18) 
         if (videoHeroOverlayRef.current) {
-            const overlayOpacity = Math.max(0, 1 - (P / 0.20));
+            const overlayOpacity = Math.max(0, 1 - (P / 0.18));
             videoHeroOverlayRef.current.style.opacity = overlayOpacity.toString();
             videoHeroOverlayRef.current.style.transform = `translateY(${P * -50}px)`;
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
@@ -69,13 +69,16 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const slotRect = slotTargetRef.current.getBoundingClientRect();
             const stickyRect = stickyBoxRef.current.getBoundingClientRect();
 
+            // Header clearance offset (90px)
+            const headerClearance = 85;
+
             // Target dimensions & relative coordinates inside stickyBox
             const targetLeft = slotRect.left - stickyRect.left;
             const targetTop = slotRect.top - stickyRect.top;
             const targetWidth = slotRect.width;
             const targetHeight = slotRect.height;
 
-            // Start dimensions & relative coordinates at P=0 (Fullscreen)
+            // Start dimensions at P=0 (Fullscreen)
             const startLeft = 0;
             const startTop = 0;
             const startWidth = windowWidth;
@@ -85,7 +88,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const currentWidth = startWidth + (targetWidth - startWidth) * morphT;
             const currentHeight = startHeight + (targetHeight - startHeight) * morphT;
 
-            // Center-point interpolation (keeps card perfectly centered in screen while shrinking!)
+            // Center-point interpolation
             const startCenterX = startLeft + startWidth / 2;
             const startCenterY = startTop + startHeight / 2;
             const targetCenterX = targetLeft + targetWidth / 2;
@@ -94,8 +97,14 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const currentCenterX = startCenterX + (targetCenterX - startCenterX) * morphT;
             const currentCenterY = startCenterY + (targetCenterY - startCenterY) * morphT;
 
-            const currentLeft = currentCenterX - currentWidth / 2;
-            const currentTop = currentCenterY - currentHeight / 2;
+            let currentLeft = currentCenterX - currentWidth / 2;
+            let currentTop = currentCenterY - currentHeight / 2;
+
+            // Header Clearance Guard: Ensure video top edge never slips behind header once morph begins!
+            if (morphT > 0.05 && currentTop < headerClearance) {
+                currentTop = headerClearance + (targetTop - headerClearance) * ((morphT - 0.05) / 0.95);
+            }
+
             const currentRadius = morphT * 24; // 0px -> 24px
             const shadowAlpha = morphT * 0.18;
 
@@ -111,7 +120,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
 
         // ── Scroll Indicator Fade Out ─────────────────────────────────────────────
         if (scrollIndicatorRef.current) {
-            const indicatorOpacity = Math.max(0, 1 - (P / 0.20));
+            const indicatorOpacity = Math.max(0, 1 - (P / 0.18));
             scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
         }
     }, []);
