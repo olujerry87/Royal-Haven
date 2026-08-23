@@ -58,7 +58,6 @@
 .mainImageWrapper {
     position: relative;
     width: 100%;
-    /* Constrain height so the full garment fits within viewport borders without vertical scrolling */
     height: clamp(380px, 62vh, 580px);
     background-color: var(--stone, #F4F4F4);
     border-radius: 12px;
@@ -73,7 +72,7 @@
 .mainImage {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Guarantee full detail & garment shape fits inside container */
+    object-fit: contain;
     cursor: zoom-in;
     transition: transform 0.3s ease;
 }
@@ -263,7 +262,6 @@
     margin-bottom: 2rem;
 }
 
-/* Short description from WooCommerce */
 .shortDescription {
     font-family: var(--font-body);
     line-height: 1.6;
@@ -297,33 +295,119 @@
     font-weight: 600;
 }
 
+/* ── Fit Selection Pills (Regular, Tall, Petite) ────────────────────────── */
+.fitRow {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+.fitPill {
+    padding: 0.55rem 1.4rem;
+    border-radius: 30px;
+    border: 1.5px solid #d1d5db;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--obsidian, #0B0B0B);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fitPill:hover {
+    border-color: var(--obsidian, #0B0B0B);
+}
+
+.selectedFitPill {
+    background-color: #1E293B; /* Elegant dark navy / slate */
+    color: #FAF9F6;
+    border-color: #1E293B;
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+}
+
+/* ── Size Header & Interactive Size Guide Link ───────────────────────────── */
+.sizeHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.sizeGuideLink {
+    background: none;
+    border: none;
+    color: var(--obsidian, #0B0B0B);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 0.2s;
+    padding: 0;
+}
+
+.sizeGuideLink:hover {
+    color: var(--gold, #D4AF37);
+}
+
+/* ── Circular Size Buttons ────────────────────────────────────────────────── */
 .sizes {
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
 }
 
-.sizeBtn {
-    width: 52px;
-    height: 52px;
-    border: 1px solid var(--stone);
-    border-radius: 6px;
-    background: transparent;
+.sizeCircle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid #d1d5db;
+    background: #ffffff;
     font-family: var(--font-body);
+    font-size: 0.88rem;
     font-weight: 500;
+    color: var(--obsidian, #0B0B0B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.sizeBtn:hover {
-    border-color: var(--obsidian);
+.sizeCircle:hover {
+    border-color: var(--obsidian, #0B0B0B);
+    transform: scale(1.06);
 }
 
-.selectedSize {
-    background-color: var(--obsidian);
-    color: var(--gold);
-    border-color: var(--obsidian);
-    box-shadow: 0 0 0 2px var(--gold);
+.selectedSizeCircle {
+    background-color: var(--obsidian, #0B0B0B);
+    color: var(--gold, #D4AF37);
+    border-color: var(--obsidian, #0B0B0B);
+    box-shadow: 0 0 0 2px var(--obsidian, #0B0B0B), 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+}
+
+.sizeErrorNotice {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #DC2626;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.8rem;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }
 
 .quantityControl {
@@ -457,112 +541,228 @@
 }
 
 .continueDrawerBtn:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(11, 11, 11, 0.05);
 }
 
-.accordion {
-    border-top: 1px solid var(--stone);
-    border-bottom: 1px solid var(--stone);
+/* ── Interactive Size Guide Modal (Pop-up) ────────────────────────────────── */
+.sizeGuideOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
 }
 
-.accordionHeader {
+.sizeGuideModal {
+    background: #ffffff;
     width: 100%;
+    max-width: 640px;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalPopIn 0.3s ease;
+    box-sizing: border-box;
+}
+
+@keyframes modalPopIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modalTitle {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--obsidian, #0B0B0B);
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.modalCloseBtn {
     background: none;
     border: none;
-    padding: 1.5rem 0;
-    display: flex;
-    justify-content: space-between;
+    color: #4b5563;
     cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+    color: var(--obsidian, #0B0B0B);
+}
+
+/* Modal Main Navigation Tabs */
+.modalNavTabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modalTabBtn {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
     font-family: var(--font-body);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.accordionContent {
-    padding-bottom: 1.5rem;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--charcoal);
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-/* Smart Clothing Features */
-.smartFeatures {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 2px solid var(--obsidian);
-}
-
-.smartTitle {
-    font-family: var(--font-heritage);
-    font-size: 1.5rem;
-    color: var(--royal-purple);
-    margin-bottom: 0.5rem;
-}
-
-.smartSubtitle {
-    font-size: 0.9rem;
-    color: var(--charcoal);
-    margin-bottom: 2rem;
-    font-style: italic;
-    opacity: 0.8;
-}
-
-.placeholderVR {
-    background: #f5f5f5;
-    padding: 2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
     text-align: center;
+    transition: all 0.2s;
+}
+
+.modalTabActive {
+    color: var(--obsidian, #0B0B0B);
+    border-bottom-color: var(--obsidian, #0B0B0B);
+    font-weight: 700;
+}
+
+.modalBody {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Unit Toggle IN | CM */
+.unitToggleRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.unitToggleBtn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: #9ca3af;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+}
+
+.unitActive {
+    color: var(--obsidian, #0B0B0B);
+    font-weight: 800;
+}
+
+/* Sub-Category Tabs (Women's Regular, Petite, Tall) */
+.subTabsRow {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.subTabBtn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--obsidian, #0B0B0B);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.subTabActive {
+    background: var(--obsidian, #0B0B0B);
+    color: #ffffff;
+    border-color: var(--obsidian, #0B0B0B);
+}
+
+/* Size Matrix Table */
+.tableContainer {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.sizeMatrixTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+}
+
+.sizeMatrixTable th, 
+.sizeMatrixTable td {
+    padding: 0.85rem 0.75rem;
+    border: 1px solid #e5e7eb;
+}
+
+.sizeMatrixTable th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.sizeMatrixTable td:first-child {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #111827;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+/* Measuring Tips Container */
+.tipsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.tipCard {
+    background: #f9fafb;
+    padding: 1.25rem;
     border-radius: 8px;
-    border: 1px dashed var(--stone);
-    margin-top: 1rem;
+    border: 1px solid #e5e7eb;
 }
 
-/* ─── MOBILE RESPONSIVENESS ─── */
-@media (max-width: 899px) {
-    .container {
-        padding-top: var(--page-top-offset, 116px);
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    .mainImageWrapper {
-        height: clamp(340px, 55vh, 460px);
-    }
-
-    .navArrow {
-        width: 38px;
-        height: 38px;
-    }
-
-    .title {
-        font-size: 1.8rem;
-    }
-
-    .price {
-        font-size: 1.3rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .drawerButtons {
-        grid-template-columns: 1fr;
-    }
+.tipTitle {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--obsidian, #0B0B0B);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-@media (min-width: 900px) {
-    .container {
-        padding-left: 2.5rem;
-        padding-right: 2.5rem;
-    }
+.tipDesc {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: #4b5563;
+    margin: 0;
+}
 
+@media (min-width: 768px) {
     .grid {
-        grid-template-columns: 1.15fr 1fr;
-        gap: 4.5rem;
+        grid-template-columns: 1.2fr 1fr;
     }
 }

@@ -9,11 +9,13 @@ import {
     Minus, 
     Plus, 
     ShoppingBag, 
-    Nfc, 
     CheckCircle2, 
     ArrowRight, 
     Maximize2, 
-    X 
+    X,
+    Ruler,
+    AlertCircle,
+    XCircle
 } from "lucide-react";
 import styles from "./page.module.css";
 import { useCart } from "@/context/CartContext";
@@ -23,14 +25,48 @@ function getMeta(meta_data = [], key) {
     return entry?.value || null;
 }
 
+// Fit-based Size Mappings
+const FIT_SIZES_MAP = {
+    "Regular": ["XS", "S", "M", "L", "XL", "XXL", "2X"],
+    "Tall": ["S", "M", "L", "XL", "XXL", "3X"],
+    "Petite": ["XS", "S", "M", "L", "XL"]
+};
+
+// Size Matrix Measurement Data (IN & CM)
+const SIZE_MATRIX_DATA = {
+    IN: {
+        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        numeric: ["00", "0-2", "4-6", "8-10", "12-14", "16"],
+        chest: ["31.5\"", "32.5-33.5\"", "34.5-35.5\"", "36.5-38\"", "39.5-41\"", "42.5\""],
+        waist: ["24\"", "25-26\"", "27-28\"", "29-30.5\"", "32-33.5\"", "35\""],
+        hips: ["34.5\"", "35.5-36.5\"", "37.5-38.5\"", "39.5-41\"", "42.5-44\"", "45.5\""]
+    },
+    CM: {
+        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        numeric: ["00", "0-2", "4-6", "8-10", "12-14", "16"],
+        chest: ["80", "83-85", "88-90", "93-97", "100-104", "108"],
+        waist: ["61", "64-66", "69-71", "74-78", "81-85", "89"],
+        hips: ["88", "90-93", "95-98", "100-104", "108-112", "116"]
+    }
+};
+
 export default function ProductDetailClient({ product }) {
     const [activeImage, setActiveImage] = useState(0);
+    
+    // Advanced Configuration States
+    const [selectedFit, setSelectedFit] = useState("Regular");
     const [selectedSize, setSelectedSize] = useState(null);
+    const [sizeError, setSizeError] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const [openSection, setOpenSection] = useState('story');
     
     // Gallery & Lightbox states
     const [isZoomOpen, setIsZoomOpen] = useState(false);
+
+    // Size Guide Modal States
+    const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+    const [activeModalTab, setActiveModalTab] = useState("charts"); // 'charts' | 'tips'
+    const [unit, setUnit] = useState("IN"); // 'IN' | 'CM'
+    const [activeSubTab, setActiveSubTab] = useState("regular"); // 'regular' | 'petite' | 'tall'
 
     // Cart feedback states
     const [addedStatus, setAddedStatus] = useState(false);
@@ -50,12 +86,15 @@ export default function ProductDetailClient({ product }) {
         setActiveImage((prev) => (prev - 1 + images.length) % images.length);
     }, [images.length]);
 
-    // Keyboard navigation
+    // Keyboard navigation & modal escape listener
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "ArrowRight") handleNextImage();
             if (e.key === "ArrowLeft") handlePrevImage();
-            if (e.key === "Escape") setIsZoomOpen(false);
+            if (e.key === "Escape") {
+                setIsZoomOpen(false);
+                setIsSizeGuideOpen(false);
+            }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
@@ -68,52 +107,50 @@ export default function ProductDetailClient({ product }) {
     const handleTouchEnd = (e) => {
         if (!touchStartX.current) return;
         const diffX = touchStartX.current - e.changedTouches[0].clientX;
-        if (diffX > 40) handleNextImage(); // Swiped left
-        if (diffX < -40) handlePrevImage(); // Swiped right
+        if (diffX > 40) handleNextImage();
+        if (diffX < -40) handlePrevImage();
         touchStartX.current = null;
     };
 
-    const toggleSection = (section) => {
-        setOpenSection(openSection === section ? null : section);
+    // Available sizes for current selected fit
+    const availableSizesForFit = FIT_SIZES_MAP[selectedFit] || ["XS", "S", "M", "L", "XL"];
+
+    const handleFitSelect = (fit) => {
+        setSelectedFit(fit);
+        // Reset or adjust size if current selected size isn't in new fit options
+        if (selectedSize && !FIT_SIZES_MAP[fit].includes(selectedSize)) {
+            setSelectedSize(null);
+        }
     };
 
-    // Extract available sizes
-    const sizeAttribute = product.attributes?.find(attr =>
-        attr.name.toLowerCase() === 'size' || attr.name.toLowerCase() === 'sizes'
-    );
-    const availableSizes = sizeAttribute?.options || ['S', 'M', 'L', 'XL'];
+    const handleSizeSelect = (size) => {
+        setSelectedSize(size);
+        setSizeError(false); // Clear error on size selection
+    };
 
     const handleAddToCart = () => {
-        const sizeToUse = selectedSize || availableSizes[0] || "Standard";
         if (!selectedSize) {
-            setSelectedSize(sizeToUse);
+            setSizeError(true);
+            return;
         }
-        addToCart(product, sizeToUse, quantity);
 
-        // Explicit UI Feedback & Action Drawer
+        const sizeFormatted = `${selectedSize} (${selectedFit})`;
+        addToCart(product, sizeFormatted, quantity);
+
         setAddedStatus(true);
         setShowCartDrawer(true);
+        setSizeError(false);
 
         setTimeout(() => {
             setAddedStatus(false);
         }, 3000);
     };
 
-    const meta = product.meta_data || [];
-    const fabricRaw  = getMeta(meta, 'rh_fabric');
-    const careRaw    = getMeta(meta, 'rh_care');
-    const stylingRaw = getMeta(meta, 'rh_styling');
-    const originRaw  = getMeta(meta, 'rh_origin');
-    const ntagId     = getMeta(meta, 'rh_ntag_id');
-
-    let fabricData = null;
-    try { fabricData = fabricRaw ? JSON.parse(fabricRaw) : null; } catch { fabricData = null; }
-
-    const careItems = careRaw ? careRaw.split('\n').filter(Boolean) : null;
+    const currentMatrix = SIZE_MATRIX_DATA[unit];
 
     return (
         <main className={styles.container}>
-            {/* Breadcrumb / Back Link (With clear header clearance) */}
+            {/* Breadcrumb / Back Link */}
             <div className={styles.breadcrumb}>
                 <Link href="/shop" className={styles.backLink}>
                     <ChevronLeft size={16} /> Back to Shop
@@ -138,7 +175,6 @@ export default function ProductDetailClient({ product }) {
                             onClick={() => setIsZoomOpen(true)}
                         />
 
-                        {/* Interactive Left / Right Chevron Overlay Buttons */}
                         {images.length > 1 && (
                             <>
                                 <button 
@@ -169,7 +205,6 @@ export default function ProductDetailClient({ product }) {
                         </button>
                     </div>
 
-                    {/* Thumbnails list */}
                     {images.length > 1 && (
                         <div className={styles.thumbnails}>
                             {images.map((img, index) => (
@@ -193,7 +228,7 @@ export default function ProductDetailClient({ product }) {
                     )}
                 </div>
 
-                {/* Right Column: Details */}
+                {/* Right Column: Advanced Configuration & Details */}
                 <div className={styles.details}>
                     <h1 className={styles.title}>{product.name}</h1>
                     <p className={styles.price}>${product.price ? product.price.toFixed(2) : '0.00'} CAD</p>
@@ -209,20 +244,52 @@ export default function ProductDetailClient({ product }) {
 
                     <div className={styles.divider}></div>
 
-                    {/* Size Selector */}
+                    {/* 1. FIT SELECTION BUTTONS */}
                     <div className={styles.optionGroup}>
-                        <label className={styles.label}>Size</label>
+                        <label className={styles.label}>Fit</label>
+                        <div className={styles.fitRow}>
+                            {["Regular", "Tall", "Petite"].map((fit) => (
+                                <button
+                                    key={fit}
+                                    className={`${styles.fitPill} ${selectedFit === fit ? styles.selectedFitPill : ''}`}
+                                    onClick={() => handleFitSelect(fit)}
+                                >
+                                    {fit}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* 2. ADVANCED SIZE SELECTION & SIZE GUIDE LINK */}
+                    <div className={styles.optionGroup}>
+                        <div className={styles.sizeHeaderContainer}>
+                            <label className={styles.label} style={{ marginBottom: 0 }}>Size</label>
+                            <button 
+                                className={styles.sizeGuideLink}
+                                onClick={() => setIsSizeGuideOpen(true)}
+                            >
+                                <Ruler size={14} /> Size Guide
+                            </button>
+                        </div>
+
                         <div className={styles.sizes}>
-                            {availableSizes.map((size) => (
+                            {availableSizesForFit.map((size) => (
                                 <button
                                     key={size}
-                                    className={`${styles.sizeBtn} ${selectedSize === size ? styles.selectedSize : ''}`}
-                                    onClick={() => setSelectedSize(size)}
+                                    className={`${styles.sizeCircle} ${selectedSize === size ? styles.selectedSizeCircle : ''}`}
+                                    onClick={() => handleSizeSelect(size)}
                                 >
                                     {size}
                                 </button>
                             ))}
                         </div>
+
+                        {/* Size Selection Error Notice */}
+                        {sizeError && (
+                            <div className={styles.sizeErrorNotice}>
+                                <XCircle size={15} /> Select a size before adding to bag
+                            </div>
+                        )}
                     </div>
 
                     {/* Quantity Selector */}
@@ -260,7 +327,7 @@ export default function ProductDetailClient({ product }) {
                         )}
                     </button>
 
-                    {/* Clear Post-Add User Journey Action Drawer */}
+                    {/* Post-Add Action Drawer */}
                     {showCartDrawer && (
                         <div className={styles.cartActionDrawer}>
                             <div className={styles.drawerTitle}>
@@ -290,135 +357,17 @@ export default function ProductDetailClient({ product }) {
                             />
                         </div>
                     )}
-
-                    {ntagId && (
-                        <Link
-                            href={`/passport/${ntagId}`}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                marginTop: '1rem', fontSize: '0.85rem', color: 'var(--gold)',
-                                fontFamily: 'var(--font-body)', textDecoration: 'none',
-                                border: '1px solid rgba(212,175,55,0.3)', borderRadius: '8px',
-                                padding: '0.6rem 1rem'
-                            }}
-                        >
-                            <Nfc size={16} /> View Digital Passport for this garment
-                        </Link>
-                    )}
-
-                    {/* Smart Accordion Details */}
-                    <div className={styles.smartFeatures}>
-                        <h3 className={styles.smartTitle}>Smart Clothing Experience</h3>
-                        <p className={styles.smartSubtitle}>Scan the NFC tag on your garment to access these details anytime.</p>
-
-                        <div className={styles.accordion}>
-                            <button className={styles.accordionHeader} onClick={() => toggleSection('story')}>
-                                <span>Story Behind the Style</span>
-                                <span>{openSection === 'story' ? '-' : '+'}</span>
-                            </button>
-                            {openSection === 'story' && (
-                                <div className={styles.accordionContent}>
-                                    {originRaw ? (
-                                        <div dangerouslySetInnerHTML={{ __html: originRaw.replace(/\n/g, '<br/>') }} />
-                                    ) : (
-                                        <p>This piece is crafted with heritage in mind, weaving traditional motifs into modern silhouettes.</p>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={styles.accordion}>
-                            <button className={styles.accordionHeader} onClick={() => toggleSection('fabric')}>
-                                <span>Fabric &amp; Design</span>
-                                <span>{openSection === 'fabric' ? '-' : '+'}</span>
-                            </button>
-                            {openSection === 'fabric' && (
-                                <div className={styles.accordionContent}>
-                                    {fabricData ? (
-                                        <>
-                                            {fabricData.material && <p><strong>Material:</strong> {fabricData.material}</p>}
-                                            {fabricData.craftsmanship && <p><strong>Craftsmanship:</strong> {fabricData.craftsmanship}</p>}
-                                            {fabricData.design && <p><strong>Design:</strong> {fabricData.design}</p>}
-                                        </>
-                                    ) : fabricRaw ? (
-                                        <div dangerouslySetInnerHTML={{ __html: fabricRaw.replace(/\n/g, '<br/>') }} />
-                                    ) : (
-                                        <>
-                                            <p><strong>Material:</strong> Premium Silk / Cotton Blend.</p>
-                                            <p><strong>Craftsmanship:</strong> Handmade in Lagos by master artisans.</p>
-                                            <p><strong>Design:</strong> Features intricate embroidery symbolizing prosperity and strength.</p>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={styles.accordion}>
-                            <button className={styles.accordionHeader} onClick={() => toggleSection('care')}>
-                                <span>Care Details</span>
-                                <span>{openSection === 'care' ? '-' : '+'}</span>
-                            </button>
-                            {openSection === 'care' && (
-                                <div className={styles.accordionContent}>
-                                    {careItems ? (
-                                        <ul style={{ paddingLeft: '1.2rem' }}>
-                                            {careItems.map((item, i) => <li key={i}>{item}</li>)}
-                                        </ul>
-                                    ) : (
-                                        <ul style={{ paddingLeft: '1.2rem' }}>
-                                            <li>Dry clean recommended to preserve fabric sheen.</li>
-                                            <li>Cool iron on reverse side.</li>
-                                            <li>Do not bleach or tumble dry.</li>
-                                            <li>Store in a cool, dry place away from direct sunlight.</li>
-                                        </ul>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={styles.accordion}>
-                            <button className={styles.accordionHeader} onClick={() => toggleSection('styling')}>
-                                <span>Styling Options</span>
-                                <span>{openSection === 'styling' ? '-' : '+'}</span>
-                            </button>
-                            {openSection === 'styling' && (
-                                <div className={styles.accordionContent}>
-                                    {stylingRaw ? (
-                                        <div dangerouslySetInnerHTML={{ __html: stylingRaw.replace(/\n/g, '<br/>') }} />
-                                    ) : (
-                                        <>
-                                            <p><strong>Day Look:</strong> Pair with simple leather sandals and minimal jewelry.</p>
-                                            <p><strong>Evening Glam:</strong> Elevate with statement gold accessories and heels.</p>
-                                            <p><strong>Traditional:</strong> Complement with a matching Gele (headtie) for a complete regal look.</p>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={styles.accordion}>
-                            <button className={styles.accordionHeader} onClick={() => toggleSection('lookbook')}>
-                                <span>Lookbook &amp; VR Experience</span>
-                                <span>{openSection === 'lookbook' ? '-' : '+'}</span>
-                            </button>
-                            {openSection === 'lookbook' && (
-                                <div className={styles.accordionContent}>
-                                    <div className={styles.placeholderVR}>
-                                        <p>✨ Virtual Reality Experience Coming Soon.</p>
-                                        <p>Immerse yourself in the Royal Haven runway.</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                    </div>
                 </div>
             </div>
 
-            {/* ── LIGHTBOX ZOOM MODAL ─────────────────────────────────────── */}
+            {/* ── LIGHTBOX ZOOM MODAL ────────────────────────────────────── */}
             {isZoomOpen && (
                 <div className={styles.lightboxOverlay} onClick={() => setIsZoomOpen(false)}>
-                    <button className={styles.lightboxClose} onClick={() => setIsZoomOpen(false)}>
+                    <button 
+                        className={styles.lightboxClose}
+                        onClick={() => setIsZoomOpen(false)}
+                        aria-label="Close image zoom"
+                    >
                         <X size={24} />
                     </button>
                     <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
@@ -427,22 +376,155 @@ export default function ProductDetailClient({ product }) {
                             alt={product.name} 
                             className={styles.lightboxImage} 
                         />
-                        {images.length > 1 && (
-                            <>
-                                <button 
-                                    className={`${styles.navArrow} ${styles.navPrev}`}
-                                    onClick={handlePrevImage}
-                                >
-                                    <ChevronLeft size={24} />
-                                </button>
-                                <button 
-                                    className={`${styles.navArrow} ${styles.navNext}`}
-                                    onClick={handleNextImage}
-                                >
-                                    <ChevronRight size={24} />
-                                </button>
-                            </>
-                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* ── 3. INTERACTIVE SIZE GUIDE MODAL (POP-UP) ────────────────── */}
+            {isSizeGuideOpen && (
+                <div className={styles.sizeGuideOverlay} onClick={() => setIsSizeGuideOpen(false)}>
+                    <div className={styles.sizeGuideModal} onClick={(e) => e.stopPropagation()}>
+                        
+                        {/* Modal Header */}
+                        <div className={styles.modalHeader}>
+                            <h2 className={styles.modalTitle}>SIZE GUIDE</h2>
+                            <button 
+                                className={styles.modalCloseBtn}
+                                onClick={() => setIsSizeGuideOpen(false)}
+                                aria-label="Close size guide"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Navigation Tabs: Size Charts & Measuring Tips */}
+                        <div className={styles.modalNavTabs}>
+                            <button 
+                                className={`${styles.modalTabBtn} ${activeModalTab === 'charts' ? styles.modalTabActive : ''}`}
+                                onClick={() => setActiveModalTab('charts')}
+                            >
+                                size charts
+                            </button>
+                            <button 
+                                className={`${styles.modalTabBtn} ${activeModalTab === 'tips' ? styles.modalTabActive : ''}`}
+                                onClick={() => setActiveModalTab('tips')}
+                            >
+                                measuring tips
+                            </button>
+                        </div>
+
+                        <div className={styles.modalBody}>
+                            {activeModalTab === 'charts' ? (
+                                <>
+                                    {/* Unit Switcher IN | CM */}
+                                    <div className={styles.unitToggleRow}>
+                                        <button 
+                                            className={`${styles.unitToggleBtn} ${unit === 'IN' ? styles.unitActive : ''}`}
+                                            onClick={() => setUnit('IN')}
+                                        >
+                                            IN
+                                        </button>
+                                        <span style={{ color: '#d1d5db', fontWeight: 300 }}>|</span>
+                                        <button 
+                                            className={`${styles.unitToggleBtn} ${unit === 'CM' ? styles.unitActive : ''}`}
+                                            onClick={() => setUnit('CM')}
+                                        >
+                                            CM
+                                        </button>
+                                    </div>
+
+                                    {/* Sub-Tabs: Women's Regular, Petite, Tall */}
+                                    <div className={styles.subTabsRow}>
+                                        <button 
+                                            className={`${styles.subTabBtn} ${activeSubTab === 'regular' ? styles.subTabActive : ''}`}
+                                            onClick={() => setActiveSubTab('regular')}
+                                        >
+                                            women&apos;s regular
+                                        </button>
+                                        <button 
+                                            className={`${styles.subTabBtn} ${activeSubTab === 'petite' ? styles.subTabActive : ''}`}
+                                            onClick={() => setActiveSubTab('petite')}
+                                        >
+                                            women&apos;s petite
+                                        </button>
+                                        <button 
+                                            className={`${styles.subTabBtn} ${activeSubTab === 'tall' ? styles.subTabActive : ''}`}
+                                            onClick={() => setActiveSubTab('tall')}
+                                        >
+                                            women&apos;s tall
+                                        </button>
+                                    </div>
+
+                                    {/* Measurement Matrix Table */}
+                                    <div className={styles.tableContainer}>
+                                        <table className={styles.sizeMatrixTable}>
+                                            <thead>
+                                                <tr>
+                                                    <th>Size</th>
+                                                    {currentMatrix.sizes.map((s, idx) => (
+                                                        <th key={idx}>{s}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Numeric</td>
+                                                    {currentMatrix.numeric.map((val, idx) => (
+                                                        <td key={idx}>{val}</td>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    <td>Chest</td>
+                                                    {currentMatrix.chest.map((val, idx) => (
+                                                        <td key={idx}>{val}</td>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    <td>Waist</td>
+                                                    {currentMatrix.waist.map((val, idx) => (
+                                                        <td key={idx}>{val}</td>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    <td>Hips</td>
+                                                    {currentMatrix.hips.map((val, idx) => (
+                                                        <td key={idx}>{val}</td>
+                                                    ))}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            ) : (
+                                /* Measuring Tips Content */
+                                <div className={styles.tipsContainer}>
+                                    <div className={styles.tipCard}>
+                                        <div className={styles.tipTitle}>
+                                            1. Bust / Chest
+                                        </div>
+                                        <p className={styles.tipDesc}>
+                                            Measure around the fullest part of your chest/bust, keeping the measuring tape horizontal under your arms and flat across your back.
+                                        </p>
+                                    </div>
+                                    <div className={styles.tipCard}>
+                                        <div className={styles.tipTitle}>
+                                            2. Natural Waist
+                                        </div>
+                                        <p className={styles.tipDesc}>
+                                            Measure around your natural waistline (typically the narrowest part of your torso), keeping the tape comfortably loose.
+                                        </p>
+                                    </div>
+                                    <div className={styles.tipCard}>
+                                        <div className={styles.tipTitle}>
+                                            3. Hips
+                                        </div>
+                                        <p className={styles.tipDesc}>
+                                            Stand with your heels together and measure around the fullest part of your hips, keeping the tape level.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
