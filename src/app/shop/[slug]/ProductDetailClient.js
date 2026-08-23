@@ -264,12 +264,24 @@ export default function ProductDetailClient({ product }) {
                     <div className={styles.optionGroup}>
                         <div className={styles.sizeHeaderContainer}>
                             <label className={styles.label} style={{ marginBottom: 0 }}>Size</label>
-                            <button 
-                                className={styles.sizeGuideLink}
-                                onClick={() => setIsSizeGuideOpen(true)}
-                            >
-                                <Ruler size={14} /> Size Guide
-                            </button>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                                <button 
+                                    className={styles.sizeGuideLink}
+                                    onClick={() => setIsSizeGuideOpen(true)}
+                                    title="Quick size chart"
+                                >
+                                    <Ruler size={14} /> Quick Guide
+                                </button>
+                                <Link
+                                    href="/size-guide"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.sizeGuideLink}
+                                    style={{ color: "var(--gold, #D4AF37)", textDecoration: "underline" }}
+                                >
+                                    Full Size Guide ↗
+                                </Link>
+                            </div>
                         </div>
 
                         <div className={styles.sizes}>
