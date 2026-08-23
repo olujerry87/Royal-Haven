@@ -10,8 +10,8 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
     const trackRef = useRef(null);
     const stickyBoxRef = useRef(null);
     const middleDividerRef = useRef(null);
-    const topCanvasRef = useRef(null);
-    const bottomCanvasRef = useRef(null);
+    const leftColumnRef = useRef(null);
+    const rightColumnRef = useRef(null);
     const slotTargetRef = useRef(null);
     const heroVideoCardRef = useRef(null);
     const videoHeroOverlayRef = useRef(null);
@@ -39,7 +39,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         return () => { isMounted = false; };
     }, [config, cards]);
 
-    // ── ISOLATED SCROLL SCALE SPATIAL MORPH ENGINE (ZERO JS TOP-CALCULATIONS) ───
+    // ── ISOLATED SCROLL SCALE SPATIAL MORPH ENGINE (ZERO LOOSE JS TOP CALCULATIONS) ──
     const updateScrollState = useCallback(() => {
         if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
 
@@ -62,7 +62,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
         }
 
-        // ── Phase 2: ISOLATED SCROLL SCALE TRANSITION (P: 0.0 -> 0.65) ─────────────
+        // ── Phase 2: ISOLATED BOUNDING DIMENSIONS MORPH (P: 0.0 -> 0.65) ───────────
         const morphT = Math.max(0, Math.min(1, P / 0.65));
 
         if (slotTargetRef.current && heroVideoCardRef.current && stickyBoxRef.current) {
@@ -81,7 +81,7 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
             const startWidth = windowWidth;
             const startHeight = windowHeight;
 
-            // Interpolate absolute bounding dimensions directly
+            // Drive shrinking transition solely by updating wrapper container's absolute bounding dimensions
             const currentWidth = startWidth + (targetWidth - startWidth) * morphT;
             const currentHeight = startHeight + (targetHeight - startHeight) * morphT;
             const currentLeft = startLeft + (targetLeft - startLeft) * morphT;
@@ -140,59 +140,55 @@ export default function SpatialMorphHero({ initialConfig, initialCards }) {
         cta_link: "#duality"
     };
 
-    const activeCards = (cards && cards.length >= 8) ? cards : DEFAULT_HERITAGE_MICRO_CARDS;
-    const top4 = activeCards.slice(0, 4);
-    const bot4 = activeCards.slice(4, 8);
+    const activeCards = (cards && cards.length >= 6) ? cards : DEFAULT_HERITAGE_MICRO_CARDS;
+    const leftCards = activeCards.slice(0, 3);
+    const rightCards = activeCards.slice(3, 6);
 
     return (
         <div ref={trackRef} className={styles.trackContainer}>
             <div ref={stickyBoxRef} className={styles.stickyBox}>
                 
-                {/* ── CONTENT GRID MATRIX (100% Visible Backdrop Canvas) ──────── */}
+                {/* ── ISOLATED CONTENT FRAMING MATRIX (grid grid-cols-1 md:grid-cols-3 max-w-6xl) ── */}
                 <div className={styles.matrixContainer}>
 
-                    {/* Top Canvas Row (4 Micro Photo Cards) */}
-                    <div ref={topCanvasRef} className={styles.topCanvas}>
-                        {top4.map((card, i) => (
-                            <div key={card.id || `top-${i}`} className={styles.photoTile}>
+                    {/* Column 1: Left Micro Photo Cards & Details */}
+                    <div ref={leftColumnRef} className={styles.leftColumn}>
+                        {leftCards.map((card, i) => (
+                            <div key={card.id || `left-${i}`} className={styles.photoTile}>
                                 <img src={card.image_url} alt="" className={styles.tileImg} />
                             </div>
                         ))}
                     </div>
 
-                    {/* Middle Narrative Section */}
-                    <div ref={middleDividerRef} className={styles.middleDivider}>
-                        <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
-                        <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
-                        <p className={styles.subheading}>
-                            Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
-                        </p>
-                    </div>
-
-                    {/* Bottom Canvas Row (Center Hero Video Landing Slot + 4 Surrounding Micro Cards) */}
-                    <div ref={bottomCanvasRef} className={styles.bottomCanvas}>
-                        <div className={styles.photoTile}>
-                            <img src={bot4[0]?.image_url} alt="" className={styles.tileImg} />
-                        </div>
-                        <div className={styles.photoTile}>
-                            <img src={bot4[1]?.image_url} alt="" className={styles.tileImg} />
+                    {/* Column 2: Center Hero Target Container (Locked to h-[50vh] max-h-[50vh]) */}
+                    <div className={styles.centerColumn}>
+                        {/* Middle Narrative Copy */}
+                        <div ref={middleDividerRef} className={styles.middleDivider}>
+                            <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
+                            <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
+                            <p className={styles.subheading}>
+                                Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
+                            </p>
                         </div>
 
                         {/* HERO CENTER TARGET SLOT (Fullscale Video Morphs Down to Settle Cleanly Here!) */}
                         <div ref={slotTargetRef} className={styles.heroSlotTarget} />
+                    </div>
 
-                        <div className={styles.photoTile}>
-                            <img src={bot4[2]?.image_url} alt="" className={styles.tileImg} />
-                        </div>
-                        <div className={styles.photoTile}>
-                            <img src={bot4[3]?.image_url} alt="" className={styles.tileImg} />
-                        </div>
+                    {/* Column 3: Right Micro Photo Cards */}
+                    <div ref={rightColumnRef} className={styles.rightColumn}>
+                        {rightCards.map((card, i) => (
+                            <div key={card.id || `right-${i}`} className={styles.photoTile}>
+                                <img src={card.image_url} alt="" className={styles.tileImg} />
+                            </div>
+                        ))}
                     </div>
 
                 </div>
 
                 {/* ── GPU ISOLATED MORPHING HERO VIDEO MODULE (Rule 1: Absolute boundaries) ── */}
                 <div ref={heroVideoCardRef} className={styles.morphHeroVideoCard}>
+                    {/* Video target node reset: w-full h-full object-cover pointer-events-none */}
                     <video
                         ref={videoRef}
                         className={styles.heroVideoMedia}

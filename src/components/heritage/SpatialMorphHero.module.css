@@ -23,14 +23,14 @@
     box-sizing: border-box;
 }
 
-/* ── Content Matrix Container ─────────────────────────────────────────────── */
+/* ── Isolated Content Framing Matrix (Strict grid-cols-1 md:grid-cols-3 max-w-6xl) ── */
 .matrixContainer {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: center;
-    justify-content: center;
+    gap: 2rem;
     width: 100%;
-    max-width: 1280px;
+    max-width: 72rem; /* max-w-6xl */
     height: 100%;
     max-height: calc(100vh - 95px);
     margin: 0 auto;
@@ -38,73 +38,51 @@
     box-sizing: border-box;
 }
 
-/* ── Top Canvas Row (Micro Photo Cards) ──────────────────────────────────── */
-.topCanvas {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 1.5rem 2.5rem;
-    width: 100%;
-    margin-bottom: 0.75rem;
-    pointer-events: none;
+@media (min-width: 768px) {
+    .matrixContainer {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
-/* ── Middle Narrative Section ───────────────────────────────────────────── */
-.middleDivider {
-    text-align: center;
-    z-index: 20;
-    padding: 0 1rem;
-    max-width: 780px;
+/* ── Column 1: Left Narrative Content & Cards ────────────────────────────── */
+.leftColumn {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0.25rem 0 0.75rem 0;
-    pointer-events: none;
-}
-
-.badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--obsidian, #0B0B0B);
-    border: 1px solid var(--gold, #D4AF37);
-    padding: 0.25rem 0.85rem;
-    border-radius: 40px;
-    margin-bottom: 0.35rem;
-    background: rgba(212, 175, 55, 0.08);
-}
-
-.heading {
-    font-family: var(--font-heritage, serif);
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 300;
-    color: var(--obsidian, #0B0B0B);
-    line-height: 1.1;
-    margin-bottom: 0.3rem;
-    letter-spacing: -0.01em;
-}
-
-.subheading {
-    font-family: var(--font-body, sans-serif);
-    font-size: clamp(0.85rem, 1.3vw, 1.02rem);
-    color: #333333 !important;
-    line-height: 1.45;
-    font-weight: 400;
-    max-width: 620px;
-    margin: 0 auto;
-}
-
-/* ── Bottom Canvas Row (Contains Hero Center Target Slot + Micro Cards) ───── */
-.bottomCanvas {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 1.5rem 2.5rem;
+    gap: 1rem;
     width: 100%;
-    margin-top: 0.5rem;
-    pointer-events: none;
+}
+
+/* ── Column 2: Center Hero Target Container (Locked to h-[50vh] max-h-[50vh]) ── */
+.centerColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50vh;
+    max-height: 50vh; /* Locked strict height boundary */
+    position: relative;
+}
+
+.heroSlotTarget {
+    width: 100%;
+    height: 100%;
+    max-height: 50vh;
+    border-radius: 24px;
+    border: 1.5px dashed rgba(212, 175, 55, 0.4);
+    visibility: hidden; /* Anchor target for morphing video */
+}
+
+/* ── Column 3: Right Narrative & Photo Cards ────────────────────────────── */
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
 }
 
 /* Micro Visual Photo Card */
@@ -128,14 +106,38 @@
     display: block;
 }
 
-/* Center Video Target Slot (Where Fullscale Video Morphs Down to Land) */
-.heroSlotTarget {
-    width: clamp(220px, 25vw, 320px);
-    height: clamp(220px, 25vw, 320px);
-    border-radius: 24px;
-    border: 1.5px dashed rgba(212, 175, 55, 0.4);
-    visibility: hidden;
-    flex-shrink: 0;
+.badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--obsidian, #0B0B0B);
+    border: 1px solid var(--gold, #D4AF37);
+    padding: 0.25rem 0.85rem;
+    border-radius: 40px;
+    margin-bottom: 0.35rem;
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.heading {
+    font-family: var(--font-heritage, serif);
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300;
+    color: var(--obsidian, #0B0B0B);
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+    text-align: center;
+}
+
+.subheading {
+    font-family: var(--font-body, sans-serif);
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
+    color: #333333 !important;
+    line-height: 1.45;
+    font-weight: 400;
+    max-width: 420px;
+    text-align: center;
 }
 
 /* ── GPU Isolated Morphing Hero Video Module (Absolute viewport boundaries) ── */
@@ -149,14 +151,16 @@
     overflow: hidden;
     z-index: 40;
     background: #000;
-    will-change: transform, width, height, border-radius, opacity, top, left;
+    will-change: width, height, border-radius, opacity, top, left;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
+/* Video target node reset: w-full h-full object-cover pointer-events-none */
 .heroVideoMedia {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
     display: block;
 }
 
@@ -194,7 +198,6 @@
     font-weight: 300;
 }
 
-/* Full scale hero interactive CTA button at P=0 */
 .heroCtaBtn {
     display: inline-flex;
     align-items: center;
@@ -257,26 +260,12 @@
         height: 90px;
         border-radius: 16px;
     }
-    .heroSlotTarget {
-        width: 200px;
-        height: 200px;
-        border-radius: 20px;
-    }
 }
 
 @media (max-width: 640px) {
-    .topCanvas, .bottomCanvas {
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
     .photoTile {
         width: 75px;
         height: 75px;
         border-radius: 14px;
-    }
-    .heroSlotTarget {
-        width: 160px;
-        height: 160px;
-        border-radius: 18px;
     }
 }
