@@ -14,46 +14,35 @@ import {
     Maximize2, 
     X,
     Ruler,
-    XCircle
+    XCircle,
+    Download,
+    ExternalLink
 } from "lucide-react";
 import styles from "./page.module.css";
 import { useCart } from "@/context/CartContext";
+import { ROYAL_HAVEN_DESIGNS, getDesignForProduct } from "@/lib/sizeGuideData";
 
 function getMeta(meta_data = [], key) {
     const entry = meta_data.find(m => m.key === key);
     return entry?.value || null;
 }
 
-// Fit-based Size Mappings (fallback when WooCommerce has no 'size' attribute)
+// Fit-based Size Mappings (Standard scales)
 const FIT_SIZES_MAP = {
-    "Regular": ["XS", "S", "M", "L", "XL", "XXL", "2X"],
-    "Tall": ["S", "M", "L", "XL", "XXL", "3X"],
-    "Petite": ["XS", "S", "M", "L", "XL"]
+    "Regular": ["S", "M", "L", "XL"],
+    "Tall": ["S", "M", "L", "XL"],
+    "Petite": ["S", "M", "L", "XL"]
 };
 
-// Size Matrix Measurement Data (IN & CM) for Quick Guide Modal
-const SIZE_MATRIX_DATA = {
-    IN: {
-        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
-        numeric: ["00", "0-2", "4-6", "8-10", "12-14", "16"],
-        chest: ["31.5\"", "32.5-33.5\"", "34.5-35.5\"", "36.5-38\"", "39.5-41\"", "42.5\""],
-        waist: ["24\"", "25-26\"", "27-28\"", "29-30.5\"", "32-33.5\"", "35\""],
-        hips: ["34.5\"", "35.5-36.5\"", "37.5-38.5\"", "39.5-41\"", "42.5-44\"", "45.5\""]
-    },
-    CM: {
-        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
-        numeric: ["00", "0-2", "4-6", "8-10", "12-14", "16"],
-        chest: ["80", "83-85", "88-90", "93-97", "100-104", "108"],
-        waist: ["61", "64-66", "69-71", "74-78", "81-85", "89"],
-        hips: ["88", "90-93", "95-98", "100-104", "108-112", "116"]
-    }
-};
+// Default fabric/color options when product doesn't have explicit WooCommerce color attribute
+const DEFAULT_FABRIC_OPTIONS = ["Raw Indigo", "Fringe Denim", "Obsidian Black", "Gold Ochre"];
 
 // Helper: extract unique attribute options from product attributes
 function getAttrOptions(attributes, attrName) {
     const attr = attributes?.find(a => 
         a.name.toLowerCase() === attrName.toLowerCase() || 
-        a.name.toLowerCase() === `pa_${attrName.toLowerCase()}`
+        a.name.toLowerCase() === `pa_${attrName.toLowerCase()}` ||
+        a.name.toLowerCase().includes(attrName.toLowerCase())
     );
     return attr?.options || [];
 }
@@ -61,22 +50,41 @@ function getAttrOptions(attributes, attrName) {
 export default function ProductDetailClient({ product, variations = [], relatedProducts = [] }) {
     const [activeImage, setActiveImage] = useState(0);
     
-    // Advanced Configuration States
+    // Matched size chart design from official PDF
+    const matchedDesign = useMemo(() => {
+        return getDesignForProduct(product.name, product.slug);
+    }, [product.name, product.slug]);
+
+    // ── Extract Color / Fabric Options ─────────────────────────────────────────
+    const colorOptions = useMemo(() => {
+        const fromColor = getAttrOptions(product.attributes, 'color');
+        if (fromColor.length > 0) return fromColor;
+        const fromFabric = getAttrOptions(product.attributes, 'fabric');
+        if (fromFabric.length > 0) return fromFabric;
+        const fromMaterial = getAttrOptions(product.attributes, 'material');
+        if (fromMaterial.length > 0) return fromMaterial;
+        const fromPattern = getAttrOptions(product.attributes, 'pattern');
+        if (fromPattern.length > 0) return fromPattern;
+
+        // Fallback default fabric swatches so Color/Fabric is ALWAYS available
+        return DEFAULT_FABRIC_OPTIONS;
+    }, [product.attributes]);
+
+    // Selection States
+    const [selectedColor, setSelectedColor] = useState(colorOptions[0] || null);
     const [selectedFit, setSelectedFit] = useState("Regular");
     const [selectedSize, setSelectedSize] = useState(null);
-    const [selectedColor, setSelectedColor] = useState(null);
     const [sizeError, setSizeError] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const [openSection, setOpenSection] = useState('story');
     
     // Gallery & Lightbox states
     const [isZoomOpen, setIsZoomOpen] = useState(false);
 
     // Size Guide Modal States
     const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-    const [activeModalTab, setActiveModalTab] = useState("charts");
-    const [unit, setUnit] = useState("IN");
-    const [activeSubTab, setActiveSubTab] = useState("regular");
+    const [modalDesignId, setModalDesignId] = useState(matchedDesign.id);
+    const [activeModalTab, setActiveModalTab] = useState("charts"); // 'charts' | 'tips'
+    const [unit, setUnit] = useState("IN"); // 'IN' | 'CM'
 
     // Cart feedback states
     const [addedStatus, setAddedStatus] = useState(false);
@@ -117,82 +125,87 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         touchStartX.current = null;
     };
 
-    const toggleSection = (section) => {
-        setOpenSection(openSection === section ? null : section);
-    };
+    // Extract available sizes from design chart or WooCommerce
+    const availableSizesForFit = useMemo(() => {
+        // First check matched design chart sizes
+        if (matchedDesign?.measurements?.IN?.sizes) {
+            const chartSizes = matchedDesign.measurements.IN.sizes.map(s => {
+                const match = s.match(/\((.*?)\)/);
+                return match ? match[1] : s;
+            });
+            if (chartSizes.length > 0) return chartSizes;
+        }
 
-    // ── Extract WooCommerce attributes for Color/Fabric and Size ──────────
-    const colorOptions = getAttrOptions(product.attributes, 'color').length > 0
-        ? getAttrOptions(product.attributes, 'color')
-        : getAttrOptions(product.attributes, 'fabric');
-    const colorAttrLabel = getAttrOptions(product.attributes, 'color').length > 0 ? "Color" : "Fabric";
-    const hasColorOptions = colorOptions.length > 0;
+        const wooSizes = getAttrOptions(product.attributes, 'size');
+        if (wooSizes.length > 0) return wooSizes;
 
-    // Extract size options from WooCommerce attributes or use fit-based fallback
-    const wooSizeOptions = getAttrOptions(product.attributes, 'size');
-    const availableSizesForFit = wooSizeOptions.length > 0 
-        ? wooSizeOptions 
-        : (FIT_SIZES_MAP[selectedFit] || ["XS", "S", "M", "L", "XL"]);
+        return FIT_SIZES_MAP[selectedFit] || ["S", "M", "L", "XL"];
+    }, [matchedDesign, product.attributes, selectedFit]);
 
-    // ── Variation-based stock checking (for crossed-out sizes) ────────────
+    // Variation Stock Map
     const stockMap = useMemo(() => {
-        // Build a map: "color|size" => stock_status
-        // If no variations exist, everything is in stock (simple product)
-        if (variations.length === 0) return null;
+        if (variations.length === 0) {
+            // Check if product has individual size attribute stock
+            const wooSizes = getAttrOptions(product.attributes, 'size');
+            if (wooSizes.length > 0 && product.stock_status === 'instock') {
+                const map = {};
+                wooSizes.forEach(s => { map[`|${s.toLowerCase()}`] = 'instock'; });
+                return map;
+            }
+            return null;
+        }
 
         const map = {};
         for (const v of variations) {
             const vColor = v.attributes.find(a => 
-                a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'pa_color' ||
-                a.name.toLowerCase() === 'fabric' || a.name.toLowerCase() === 'pa_fabric'
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
             )?.option || '';
             const vSize = v.attributes.find(a => 
-                a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'pa_size'
+                a.name.toLowerCase().includes('size')
             )?.option || '';
 
             const key = `${vColor.toLowerCase()}|${vSize.toLowerCase()}`;
             map[key] = v.stock_status;
         }
         return map;
-    }, [variations]);
+    }, [variations, product.attributes, product.stock_status]);
 
-    // Check if a specific size is in stock for the currently selected color
+    // Check if size is in stock
     const isSizeInStock = useCallback((size) => {
-        if (!stockMap) return product.stock_status !== 'outofstock'; // simple product
-        if (!selectedColor && hasColorOptions) {
-            // Check if ANY color has this size in stock
-            return colorOptions.some(c => {
-                const key = `${c.toLowerCase()}|${size.toLowerCase()}`;
-                return stockMap[key] === 'instock';
-            });
+        if (!stockMap) {
+            // Check if product only specified one size in WooCommerce attribute
+            const wooSizes = getAttrOptions(product.attributes, 'size');
+            if (wooSizes.length > 0) {
+                return wooSizes.map(s => s.toLowerCase()).includes(size.toLowerCase());
+            }
+            return product.stock_status !== 'outofstock';
         }
+
         const color = selectedColor || '';
-        const key = `${color.toLowerCase()}|${size.toLowerCase()}`;
-        if (key in stockMap) return stockMap[key] === 'instock';
-        // If this specific combination doesn't exist as a variation, treat as in-stock
-        return true;
-    }, [stockMap, selectedColor, hasColorOptions, colorOptions, product.stock_status]);
+        const specificKey = `${color.toLowerCase()}|${size.toLowerCase()}`;
+        if (specificKey in stockMap) {
+            return stockMap[specificKey] === 'instock';
+        }
 
-    // Check if a specific color is in stock for ANY size
-    const isColorInStock = useCallback((color) => {
-        if (!stockMap) return true;
-        return availableSizesForFit.some(size => {
-            const key = `${color.toLowerCase()}|${size.toLowerCase()}`;
-            return stockMap[key] === 'instock';
-        });
-    }, [stockMap, availableSizesForFit]);
+        const anyColorKey = `|${size.toLowerCase()}`;
+        if (anyColorKey in stockMap) {
+            return stockMap[anyColorKey] === 'instock';
+        }
 
-    // Get the active variation price (if applicable)
+        // Check across all color combinations
+        return Object.keys(stockMap).some(k => k.endsWith(`|${size.toLowerCase()}`) && stockMap[k] === 'instock');
+    }, [stockMap, selectedColor, product.attributes, product.stock_status]);
+
+    // Active variation price calculation
     const activeVariation = useMemo(() => {
         if (variations.length === 0 || !selectedSize) return null;
         const color = selectedColor || '';
         return variations.find(v => {
             const vColor = v.attributes.find(a => 
-                a.name.toLowerCase() === 'color' || a.name.toLowerCase() === 'pa_color' ||
-                a.name.toLowerCase() === 'fabric' || a.name.toLowerCase() === 'pa_fabric'
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
             )?.option || '';
             const vSize = v.attributes.find(a => 
-                a.name.toLowerCase() === 'size' || a.name.toLowerCase() === 'pa_size'
+                a.name.toLowerCase().includes('size')
             )?.option || '';
             return vColor.toLowerCase() === color.toLowerCase() && vSize.toLowerCase() === selectedSize.toLowerCase();
         });
@@ -202,33 +215,19 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
     const handleFitSelect = (fit) => {
         setSelectedFit(fit);
-        if (selectedSize && !FIT_SIZES_MAP[fit]?.includes(selectedSize)) {
-            setSelectedSize(null);
-        }
     };
 
     const handleColorSelect = (color) => {
         setSelectedColor(color);
-        // If currently selected size is out of stock for new color, deselect
-        if (selectedSize && stockMap) {
-            const key = `${color.toLowerCase()}|${selectedSize.toLowerCase()}`;
-            if (stockMap[key] && stockMap[key] !== 'instock') {
-                setSelectedSize(null);
-            }
+        if (selectedSize && !isSizeInStock(selectedSize)) {
+            setSelectedSize(null);
         }
     };
 
     const handleSizeSelect = (size) => {
-        if (!isSizeInStock(size)) return; // can't select out-of-stock
+        if (!isSizeInStock(size)) return;
         setSelectedSize(size);
         setSizeError(false);
-    };
-
-    const canAddToCart = () => {
-        if (!selectedSize) return false;
-        if (hasColorOptions && !selectedColor) return false;
-        if (!isSizeInStock(selectedSize)) return false;
-        return true;
     };
 
     const handleAddToCart = () => {
@@ -236,7 +235,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
             setSizeError(true);
             return;
         }
-        if (hasColorOptions && !selectedColor) {
+        if (!selectedColor) {
             setSizeError(true);
             return;
         }
@@ -246,8 +245,8 @@ export default function ProductDetailClient({ product, variations = [], relatedP
             { ...product, price: displayPrice },
             sizeFormatted,
             quantity,
-            selectedColor || undefined,
-            selectedFit || undefined
+            selectedColor,
+            selectedFit
         );
 
         setAddedStatus(true);
@@ -257,9 +256,9 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         setTimeout(() => { setAddedStatus(false); }, 3000);
     };
 
-    const currentMatrix = SIZE_MATRIX_DATA[unit];
-    const meta = product.meta_data || [];
-    const ntagId = getMeta(meta, 'rh_ntag_id');
+    // Active modal design & measurement table
+    const modalDesign = ROYAL_HAVEN_DESIGNS.find(d => d.id === modalDesignId) || matchedDesign;
+    const modalChart = modalDesign.measurements[unit];
 
     return (
         <main className={styles.container}>
@@ -333,34 +332,30 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
                     <div className={styles.divider}></div>
 
-                    {/* ── COLOR / FABRIC SELECTION ─────────────────────────────── */}
-                    {hasColorOptions && (
-                        <div className={styles.optionGroup}>
-                            <label className={styles.label}>
-                                {colorAttrLabel} {selectedColor && <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>{selectedColor}</span>}
-                            </label>
-                            <div className={styles.colorSwatchRow}>
-                                {colorOptions.map((color) => {
-                                    const inStock = isColorInStock(color);
-                                    return (
-                                        <button
-                                            key={color}
-                                            className={`${styles.colorSwatch} ${selectedColor === color ? styles.selectedColorSwatch : ''} ${!inStock ? styles.outOfStockSwatch : ''}`}
-                                            onClick={() => inStock && handleColorSelect(color)}
-                                            title={color}
-                                            disabled={!inStock}
-                                            aria-label={`${color}${!inStock ? ' (Out of Stock)' : ''}`}
-                                        >
-                                            <span className={styles.swatchInner} style={{ background: getSwatchColor(color) }} />
-                                            {!inStock && <span className={styles.swatchStrikethrough} />}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                    {/* ── 1. COLOR / FABRIC SELECTION (ALWAYS VISIBLE) ───────────── */}
+                    <div className={styles.optionGroup}>
+                        <label className={styles.label}>
+                            Color / Fabric: {selectedColor && <span style={{ fontWeight: 600, color: "var(--obsidian, #0B0B0B)", textTransform: "none", letterSpacing: 0 }}>{selectedColor}</span>}
+                        </label>
+                        <div className={styles.colorSwatchRow}>
+                            {colorOptions.map((color) => {
+                                const isSelected = selectedColor === color;
+                                return (
+                                    <button
+                                        key={color}
+                                        className={`${styles.colorSwatch} ${isSelected ? styles.selectedColorSwatch : ''}`}
+                                        onClick={() => handleColorSelect(color)}
+                                        title={color}
+                                        aria-label={color}
+                                    >
+                                        <span className={styles.swatchInner} style={{ background: getSwatchColor(color) }} />
+                                    </button>
+                                );
+                            })}
                         </div>
-                    )}
+                    </div>
 
-                    {/* ── FIT SELECTION ─────────────────────────────────────────── */}
+                    {/* ── 2. FIT SELECTION (REGULAR, TALL, PETITE) ──────────────── */}
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>Fit</label>
                         <div className={styles.fitRow}>
@@ -376,15 +371,18 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         </div>
                     </div>
 
-                    {/* ── SIZE SELECTION ─────────────────────────────────────────── */}
+                    {/* ── 3. SIZE SELECTION & SIZE GUIDE LINKS ───────────────────── */}
                     <div className={styles.optionGroup}>
                         <div className={styles.sizeHeaderContainer}>
                             <label className={styles.label} style={{ marginBottom: 0 }}>Size</label>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                                 <button 
                                     className={styles.sizeGuideLink}
-                                    onClick={() => setIsSizeGuideOpen(true)}
-                                    title="Quick size chart"
+                                    onClick={() => {
+                                        setModalDesignId(matchedDesign.id);
+                                        setIsSizeGuideOpen(true);
+                                    }}
+                                    title="Quick size chart from official PDF"
                                 >
                                     <Ruler size={14} /> Quick Guide
                                 </button>
@@ -394,6 +392,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                     rel="noopener noreferrer"
                                     className={styles.sizeGuideLink}
                                     style={{ color: "var(--gold, #D4AF37)", textDecoration: "underline" }}
+                                    title="Open full size guide page in new tab"
                                 >
                                     Full Size Guide ↗
                                 </Link>
@@ -403,10 +402,11 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         <div className={styles.sizes}>
                             {availableSizesForFit.map((size) => {
                                 const inStock = isSizeInStock(size);
+                                const isSelected = selectedSize === size;
                                 return (
                                     <button
                                         key={size}
-                                        className={`${styles.sizeCircle} ${selectedSize === size ? styles.selectedSizeCircle : ''} ${!inStock ? styles.outOfStockSize : ''}`}
+                                        className={`${styles.sizeCircle} ${isSelected ? styles.selectedSizeCircle : ''} ${!inStock ? styles.outOfStockSize : ''}`}
                                         onClick={() => handleSizeSelect(size)}
                                         disabled={!inStock}
                                         aria-label={`${size}${!inStock ? ' (Out of Stock)' : ''}`}
@@ -420,15 +420,12 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
                         {sizeError && (
                             <div className={styles.sizeErrorNotice}>
-                                <XCircle size={15} /> 
-                                {hasColorOptions && !selectedColor 
-                                    ? `Select a ${colorAttrLabel.toLowerCase()} and size before adding to bag`
-                                    : 'Select a size before adding to bag'}
+                                <XCircle size={15} /> Select a color/fabric and size before adding to bag
                             </div>
                         )}
                     </div>
 
-                    {/* ── Quantity Selector ──────────────────────────────────────── */}
+                    {/* ── 4. Quantity Selector ──────────────────────────────────── */}
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>Quantity</label>
                         <div className={styles.quantityControl}>
@@ -438,7 +435,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         </div>
                     </div>
 
-                    {/* ── Add to Cart CTA ───────────────────────────────────────── */}
+                    {/* ── 5. Add to Cart CTA ───────────────────────────────────── */}
                     <button
                         className={`${styles.addToCart} ${addedStatus ? styles.addToCartSuccess : ''}`}
                         disabled={product.stock_status === 'outofstock'}
@@ -532,51 +529,160 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                 </div>
             )}
 
-            {/* ── INTERACTIVE SIZE GUIDE MODAL ─────────────────────────────── */}
+            {/* ── INTERACTIVE SIZE GUIDE MODAL (REFLECTS ACTUAL PDF) ───────── */}
             {isSizeGuideOpen && (
                 <div className={styles.sizeGuideOverlay} onClick={() => setIsSizeGuideOpen(false)}>
                     <div className={styles.sizeGuideModal} onClick={(e) => e.stopPropagation()}>
+                        
+                        {/* Modal Header */}
                         <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>SIZE GUIDE</h2>
+                            <div>
+                                <h2 className={styles.modalTitle}>SIZE GUIDE</h2>
+                                <span style={{ fontSize: "0.8rem", color: "var(--gold, #D4AF37)", fontWeight: 600 }}>
+                                    Official Royal Haven PDF Specifications
+                                </span>
+                            </div>
                             <button className={styles.modalCloseBtn} onClick={() => setIsSizeGuideOpen(false)} aria-label="Close size guide">
                                 <X size={20} />
                             </button>
                         </div>
+
+                        {/* Navigation Tabs */}
                         <div className={styles.modalNavTabs}>
-                            <button className={`${styles.modalTabBtn} ${activeModalTab === 'charts' ? styles.modalTabActive : ''}`} onClick={() => setActiveModalTab('charts')}>size charts</button>
-                            <button className={`${styles.modalTabBtn} ${activeModalTab === 'tips' ? styles.modalTabActive : ''}`} onClick={() => setActiveModalTab('tips')}>measuring tips</button>
+                            <button 
+                                className={`${styles.modalTabBtn} ${activeModalTab === 'charts' ? styles.modalTabActive : ''}`} 
+                                onClick={() => setActiveModalTab('charts')}
+                            >
+                                size charts
+                            </button>
+                            <button 
+                                className={`${styles.modalTabBtn} ${activeModalTab === 'tips' ? styles.modalTabActive : ''}`} 
+                                onClick={() => setActiveModalTab('tips')}
+                            >
+                                measuring tips
+                            </button>
                         </div>
+
                         <div className={styles.modalBody}>
                             {activeModalTab === 'charts' ? (
                                 <>
-                                    <div className={styles.unitToggleRow}>
-                                        <button className={`${styles.unitToggleBtn} ${unit === 'IN' ? styles.unitActive : ''}`} onClick={() => setUnit('IN')}>IN</button>
-                                        <span style={{ color: '#d1d5db', fontWeight: 300 }}>|</span>
-                                        <button className={`${styles.unitToggleBtn} ${unit === 'CM' ? styles.unitActive : ''}`} onClick={() => setUnit('CM')}>CM</button>
+                                    {/* Design Selector & Unit Switcher */}
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                                        <select
+                                            value={modalDesignId}
+                                            onChange={(e) => setModalDesignId(e.target.value)}
+                                            style={{
+                                                padding: "0.45rem 0.85rem",
+                                                borderRadius: "6px",
+                                                border: "1.5px solid #d1d5db",
+                                                fontFamily: "var(--font-body)",
+                                                fontSize: "0.85rem",
+                                                fontWeight: 600,
+                                                color: "var(--obsidian, #0B0B0B)",
+                                                background: "#f9fafb",
+                                                maxWidth: "320px"
+                                            }}
+                                        >
+                                            {ROYAL_HAVEN_DESIGNS.map(d => (
+                                                <option key={d.id} value={d.id}>{d.name}</option>
+                                            ))}
+                                        </select>
+
+                                        {/* Unit Toggle */}
+                                        <div className={styles.unitToggleRow} style={{ marginBottom: 0 }}>
+                                            <button className={`${styles.unitToggleBtn} ${unit === 'IN' ? styles.unitActive : ''}`} onClick={() => setUnit('IN')}>IN</button>
+                                            <span style={{ color: '#d1d5db', fontWeight: 300 }}>|</span>
+                                            <button className={`${styles.unitToggleBtn} ${unit === 'CM' ? styles.unitActive : ''}`} onClick={() => setUnit('CM')}>CM</button>
+                                        </div>
                                     </div>
-                                    <div className={styles.subTabsRow}>
-                                        {[{k:'regular',l:"women's regular"},{k:'petite',l:"women's petite"},{k:'tall',l:"women's tall"}].map(({k,l}) => (
-                                            <button key={k} className={`${styles.subTabBtn} ${activeSubTab === k ? styles.subTabActive : ''}`} onClick={() => setActiveSubTab(k)}>{l}</button>
-                                        ))}
-                                    </div>
-                                    <div className={styles.tableContainer}>
+
+                                    {/* Primary Measurement Table */}
+                                    <div className={styles.tableContainer} style={{ marginBottom: "1.25rem" }}>
                                         <table className={styles.sizeMatrixTable}>
-                                            <thead><tr><th>Size</th>{currentMatrix.sizes.map((s, i) => <th key={i}>{s}</th>)}</tr></thead>
+                                            <thead>
+                                                <tr>
+                                                    <th>Body Part / Size ({unit.toLowerCase()})</th>
+                                                    {modalChart.sizes.map((s, i) => <th key={i}>{s}</th>)}
+                                                </tr>
+                                            </thead>
                                             <tbody>
-                                                <tr><td>Numeric</td>{currentMatrix.numeric.map((v, i) => <td key={i}>{v}</td>)}</tr>
-                                                <tr><td>Chest</td>{currentMatrix.chest.map((v, i) => <td key={i}>{v}</td>)}</tr>
-                                                <tr><td>Waist</td>{currentMatrix.waist.map((v, i) => <td key={i}>{v}</td>)}</tr>
-                                                <tr><td>Hips</td>{currentMatrix.hips.map((v, i) => <td key={i}>{v}</td>)}</tr>
+                                                {modalChart.rows.map((r, rIdx) => (
+                                                    <tr key={rIdx}>
+                                                        <td>{r.label}</td>
+                                                        {r.values.map((v, vIdx) => <td key={vIdx}>{v}</td>)}
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
+                                    </div>
+
+                                    {/* Length Breakdown by Fit */}
+                                    {modalChart.lengths && (
+                                        <div style={{ marginBottom: "1.5rem" }}>
+                                            <span style={{ fontSize: "0.82rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#374151", display: "block", marginBottom: "0.5rem" }}>
+                                                Length by Fit ({modalChart.lengths.label})
+                                            </span>
+                                            <div className={styles.tableContainer}>
+                                                <table className={styles.sizeMatrixTable}>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Fit Type</th>
+                                                            {modalChart.lengths.values.map((l, i) => <th key={i}>{l.fit}</th>)}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>{modalChart.lengths.label}</td>
+                                                            {modalChart.lengths.values.map((l, i) => <td key={i}>{l.val}</td>)}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* PDF Links inside Modal */}
+                                    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", paddingTop: "0.75rem", borderTop: "1px solid #f3f4f6" }}>
+                                        <a
+                                            href="/docs/royal-haven-size-guide.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "0.4rem",
+                                                fontSize: "0.82rem",
+                                                color: "var(--obsidian, #0B0B0B)",
+                                                textDecoration: "underline",
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            <ExternalLink size={13} /> Open PDF In New Window
+                                        </a>
+                                        <a
+                                            href="/docs/royal-haven-size-guide.pdf"
+                                            download="Royal-Haven-Size-Guide.pdf"
+                                            style={{
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "0.4rem",
+                                                fontSize: "0.82rem",
+                                                color: "var(--gold, #D4AF37)",
+                                                textDecoration: "underline",
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            <Download size={13} /> Download PDF
+                                        </a>
                                     </div>
                                 </>
                             ) : (
                                 <div className={styles.tipsContainer}>
                                     {[
                                         { t: "1. Bust / Chest", d: "Measure around the fullest part of your chest/bust, keeping the measuring tape horizontal under your arms and flat across your back." },
-                                        { t: "2. Natural Waist", d: "Measure around your natural waistline (typically the narrowest part of your torso), keeping the tape comfortably loose." },
+                                        { t: "2. Natural Waist", d: "Measure around your natural waistline (typically the narrowest part of your torso, usually 1 inch above your belly button), keeping the tape comfortably loose." },
                                         { t: "3. Hips", d: "Stand with your heels together and measure around the fullest part of your hips, keeping the tape level." },
+                                        { t: "4. Fit Lengths", d: "Petit is proportioned with shorter hem/inseam lengths; Regular is standard length; Tall features extended torso, inseam, and hem lengths." }
                                     ].map(({ t, d }, i) => (
                                         <div key={i} className={styles.tipCard}>
                                             <div className={styles.tipTitle}>{t}</div>
@@ -597,14 +703,16 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 function getSwatchColor(name) {
     const n = name.toLowerCase().trim();
     const colorMap = {
-        'black': '#0B0B0B', 'white': '#ffffff', 'red': '#DC2626', 'burgundy': '#800020',
-        'navy': '#1e3a5f', 'blue': '#2563eb', 'green': '#16a34a', 'olive': '#6b7a2c',
-        'brown': '#8B4513', 'tan': '#d2b48c', 'beige': '#f5f5dc', 'cream': '#fffdd0',
-        'grey': '#6b7280', 'gray': '#6b7280', 'charcoal': '#333333', 'pink': '#ec4899',
-        'purple': '#7c3aed', 'gold': '#D4AF37', 'yellow': '#eab308', 'orange': '#f97316',
-        'ivory': '#fffff0', 'denim': '#3b5998', 'medium wash': '#5b7eab', 'dark wash': '#2c4f7c',
-        'light wash': '#a8c4e0', 'plaid': 'repeating-conic-gradient(#8B4513 0% 25%, #d2b48c 0% 50%) 50% / 12px 12px',
+        'black': '#0B0B0B', 'obsidian black': '#0B0B0B', 'white': '#ffffff', 'red': '#DC2626',
+        'burgundy': '#800020', 'navy': '#1e3a5f', 'blue': '#2563eb', 'green': '#16a34a',
+        'olive': '#6b7a2c', 'brown': '#8B4513', 'tan': '#d2b48c', 'beige': '#f5f5dc',
+        'cream': '#fffdd0', 'grey': '#6b7280', 'gray': '#6b7280', 'charcoal': '#333333',
+        'pink': '#ec4899', 'purple': '#7c3aed', 'gold': '#D4AF37', 'gold ochre': '#C5A059',
+        'yellow': '#eab308', 'orange': '#f97316', 'ivory': '#fffff0', 'denim': '#3b5998',
+        'raw indigo': '#1C2833', 'fringe denim': '#4A6572', 'medium wash': '#5b7eab',
+        'dark wash': '#2c4f7c', 'light wash': '#a8c4e0', 'signature fabric': '#2E4053',
+        'woven denim': '#34495E', 'plaid': 'repeating-conic-gradient(#8B4513 0% 25%, #d2b48c 0% 50%) 50% / 12px 12px',
         'leopard': '#c4a35a', 'floral': '#ec4899', 'stripe': 'repeating-linear-gradient(90deg, #0B0B0B 0px, #0B0B0B 3px, #fff 3px, #fff 6px)',
     };
-    return colorMap[n] || `hsl(${n.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 60%, 50%)`;
+    return colorMap[n] || `hsl(${n.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 50%, 40%)`;
 }
