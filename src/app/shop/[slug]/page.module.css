@@ -295,6 +295,62 @@
     font-weight: 600;
 }
 
+/* ── Color / Fabric Swatches ──────────────────────────────────────────────── */
+.colorSwatchRow {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 0.4rem;
+}
+
+.colorSwatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    padding: 2px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.colorSwatch:hover:not(:disabled) {
+    transform: scale(1.1);
+    border-color: #9ca3af;
+}
+
+.selectedColorSwatch {
+    border-color: var(--obsidian, #0B0B0B);
+    box-shadow: 0 0 0 1px var(--obsidian, #0B0B0B);
+}
+
+.swatchInner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.outOfStockSwatch {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.swatchStrikethrough {
+    position: absolute;
+    width: 100%;
+    height: 1.5px;
+    background: #6b7280;
+    transform: rotate(-45deg);
+    pointer-events: none;
+}
+
 /* ── Fit Selection Pills (Regular, Tall, Petite) ────────────────────────── */
 .fitRow {
     display: flex;
@@ -391,6 +447,29 @@
     border-color: var(--obsidian, #0B0B0B);
     box-shadow: 0 0 0 2px var(--obsidian, #0B0B0B), 0 4px 12px rgba(0, 0, 0, 0.2);
     font-weight: 600;
+}
+
+.outOfStockSize {
+    position: relative;
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+}
+
+.outOfStockSize:hover {
+    border-color: #e5e7eb;
+    transform: none;
+}
+
+.sizeStrikethrough {
+    position: absolute;
+    width: 75%;
+    height: 1.5px;
+    background: #374151;
+    transform: rotate(-45deg);
+    pointer-events: none;
 }
 
 .sizeErrorNotice {
@@ -759,6 +838,116 @@
     line-height: 1.5;
     color: #4b5563;
     margin: 0;
+}
+
+/* ── You May Also Like Section ────────────────────────────────────────────── */
+.relatedSection {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid #e5e7eb;
+    width: 100%;
+}
+
+.relatedTitle {
+    font-family: var(--font-heritage, serif);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 300;
+    color: var(--obsidian, #0B0B0B);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.01em;
+}
+
+.relatedGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .relatedGrid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .relatedGrid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.relatedCard {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease;
+}
+
+.relatedCard:hover {
+    transform: translateY(-4px);
+}
+
+.relatedImageWrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #f4f4f4;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.85rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.relatedImage {
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.relatedCard:hover .relatedImage {
+    transform: scale(1.04);
+}
+
+.relatedBadgeOOS {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: rgba(11, 11, 11, 0.85);
+    color: #FAF9F6;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.relatedInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.relatedName {
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--obsidian, #0B0B0B);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.relatedPrice {
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #4b5563;
 }
 
 @media (min-width: 768px) {

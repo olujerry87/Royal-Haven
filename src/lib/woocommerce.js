@@ -140,13 +140,58 @@ export async function getOrdersByEmail(email) {
 }
 
 /**
+ * Fetch all variations for a variable product.
+ * Returns array of variation objects with id, attributes, price, stock_status, image.
+ * @param {number} productId
+ */
+export async function getProductVariations(productId) {
+    try {
+        const { data } = await api.get(`products/${productId}/variations`, { per_page: 100 });
+        return data || [];
+    } catch (error) {
+        console.error(`[WooCommerce] getProductVariations(${productId}) failed:`, error.response?.data || error.message);
+        return [];
+    }
+}
+
+/**
+ * Fetch related products from same categories (excluding current product).
+ * @param {object} product - Product object with id and categories array
+ * @param {number} limit - Max number of related products to return
+ */
+export async function getRelatedProducts(product, limit = 8) {
+    try {
+        const categoryIds = (product.categories || []).map(c => c.id).filter(Boolean);
+        if (categoryIds.length === 0) {
+            // Fallback: just get recent products excluding current
+            const { data } = await api.get('products', { per_page: limit + 1, status: 'publish', exclude: [product.id] });
+            return (data || []).slice(0, limit);
+        }
+        const { data } = await api.get('products', {
+            category: categoryIds.join(','),
+            per_page: limit + 1,
+            status: 'publish',
+            exclude: [product.id],
+        });
+        return (data || []).slice(0, limit);
+    } catch (error) {
+        console.error(`[WooCommerce] getRelatedProducts failed:`, error.response?.data || error.message);
+        return [];
+    }
+}
+
+/**
  * Convert cart items to WooCommerce order format.
  * @param {array} cartItems
  * @param {object} customerData
  */
 export function formatOrderData(cartItems, customerData) {
     const lineItems = cartItems.map(item => {
-        const meta = [{ key: "Size", value: item.size || "Fixed" }];
+        const meta = [
+            { key: "Size", value: item.size || "Fixed" },
+            ...(item.color ? [{ key: "Color", value: item.color }] : []),
+            ...(item.fit ? [{ key: "Fit", value: item.fit }] : []),
+        ];
         
         // Add Omnichannel Square Gift Card metadata if item is a digital gift card
         if (item.recipient_email || item.title?.includes("Gift Card")) {

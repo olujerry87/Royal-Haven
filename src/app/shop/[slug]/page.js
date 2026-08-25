@@ -1,17 +1,13 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/woocommerce";
+import { getProductBySlug, getProductVariations, getRelatedProducts } from "@/lib/woocommerce";
 import ProductDetailClient from "./ProductDetailClient";
 
 // Force-dynamic: product pages always fetch fresh data from WooCommerce
-// This ensures custom fields and gallery images are never stale-cached.
 export const dynamic = 'force-dynamic';
 
-// In Next.js 15, params is a Promise that needs to be awaited
 export default async function ProductPage({ params }) {
-    // Await params in Next.js 15+
     const { slug } = await params;
 
-    // Fetch product from WooCommerce
     let product = null;
     try {
         product = await getProductBySlug(slug);
@@ -29,6 +25,12 @@ export default async function ProductPage({ params }) {
         redirect('/gift-card');
     }
 
+    // Fetch variations (for variable products) and related products in parallel
+    const [variations, relatedRaw] = await Promise.all([
+        product.type === 'variable' ? getProductVariations(product.id) : Promise.resolve([]),
+        getRelatedProducts(product),
+    ]);
+
     // Transform WooCommerce product data to our format
     const transformedProduct = {
         id: product.id,
@@ -36,6 +38,8 @@ export default async function ProductPage({ params }) {
         price: product.price && !isNaN(parseFloat(product.price))
             ? parseFloat(product.price)
             : 0,
+        regular_price: product.regular_price ? parseFloat(product.regular_price) : null,
+        sale_price: product.sale_price ? parseFloat(product.sale_price) : null,
         images: product.images && product.images.length > 0
             ? product.images.map(img => img.src)
             : ['/images/placeholder.jpg'],
@@ -46,9 +50,39 @@ export default async function ProductPage({ params }) {
         sku: product.sku || '',
         stock_status: product.stock_status || 'instock',
         categories: product.categories || [],
-        // ✅ Pass WooCommerce custom fields (rh_origin, rh_fabric, rh_care, rh_styling, rh_ntag_id)
+        type: product.type || 'simple',
         meta_data: product.meta_data || [],
     };
 
-    return <ProductDetailClient product={transformedProduct} />;
+    // Transform variations for client
+    const transformedVariations = variations.map(v => ({
+        id: v.id,
+        attributes: v.attributes || [],
+        price: v.price ? parseFloat(v.price) : transformedProduct.price,
+        regular_price: v.regular_price ? parseFloat(v.regular_price) : null,
+        sale_price: v.sale_price ? parseFloat(v.sale_price) : null,
+        stock_status: v.stock_status || 'instock',
+        stock_quantity: v.stock_quantity,
+        image: v.image?.src || null,
+    }));
+
+    // Transform related products for client
+    const relatedProducts = relatedRaw.map(p => ({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        price: p.price && !isNaN(parseFloat(p.price)) ? parseFloat(p.price) : 0,
+        regular_price: p.regular_price ? parseFloat(p.regular_price) : null,
+        sale_price: p.sale_price ? parseFloat(p.sale_price) : null,
+        image: p.images?.[0]?.src || '/images/placeholder.jpg',
+        stock_status: p.stock_status || 'instock',
+    }));
+
+    return (
+        <ProductDetailClient 
+            product={transformedProduct} 
+            variations={transformedVariations}
+            relatedProducts={relatedProducts}
+        />
+    );
 }

@@ -50,9 +50,11 @@ export function CartProvider({ children }) {
         }
     }, [appliedGiftCard]);
 
-    const addToCart = (product, size, quantity) => {
+    const addToCart = (product, size, quantity, color, fit) => {
         const addedQty = quantity || product.quantity || 1;
         const selectedSize = size || product.size || "Default";
+        const selectedColor = color || product.color || null;
+        const selectedFit = fit || product.fit || null;
         
         setCart((prevCart) => {
             if (!size && product.recipient_email) {
@@ -60,7 +62,10 @@ export function CartProvider({ children }) {
             }
 
             const existingItemIndex = prevCart.findIndex(
-                (item) => item.id === product.id && item.size === selectedSize
+                (item) => item.id === product.id && 
+                          item.size === selectedSize &&
+                          (selectedColor ? item.color === selectedColor : true) &&
+                          (selectedFit ? item.fit === selectedFit : true)
             );
 
             if (existingItemIndex > -1) {
@@ -68,27 +73,49 @@ export function CartProvider({ children }) {
                 newCart[existingItemIndex].quantity += addedQty;
                 return newCart;
             } else {
-                return [...prevCart, { ...product, size: selectedSize, quantity: addedQty }];
+                return [...prevCart, { 
+                    ...product, 
+                    size: selectedSize, 
+                    color: selectedColor,
+                    fit: selectedFit,
+                    quantity: addedQty 
+                }];
             }
         });
 
         // Set feedback notification item & trigger refined slide-over toast
-        setLastAddedItem({ ...product, size: selectedSize, quantity: addedQty });
+        setLastAddedItem({ 
+            ...product, 
+            size: selectedSize, 
+            color: selectedColor,
+            fit: selectedFit,
+            quantity: addedQty 
+        });
         setIsAddToCartToastOpen(true);
     };
 
-    const removeFromCart = (id, size) => {
-        setCart((prevCart) => prevCart.filter(item => !(item.id === id && item.size === size)));
+    const removeFromCart = (id, size, color, fit) => {
+        setCart((prevCart) => prevCart.filter(item => {
+            const matchId = item.id === id;
+            const matchSize = size ? item.size === size : true;
+            const matchColor = color ? item.color === color : true;
+            const matchFit = fit ? item.fit === fit : true;
+            return !(matchId && matchSize && matchColor && matchFit);
+        }));
     };
 
-    const updateQuantity = (id, size, newQty) => {
+    const updateQuantity = (id, size, newQty, color, fit) => {
         if (newQty < 1) return;
         setCart((prevCart) =>
-            prevCart.map(item =>
-                (item.id === id && item.size === size)
+            prevCart.map(item => {
+                const matchId = item.id === id;
+                const matchSize = size ? item.size === size : true;
+                const matchColor = color ? item.color === color : true;
+                const matchFit = fit ? item.fit === fit : true;
+                return (matchId && matchSize && matchColor && matchFit)
                     ? { ...item, quantity: newQty }
-                    : item
-            )
+                    : item;
+            })
         );
     };
 
