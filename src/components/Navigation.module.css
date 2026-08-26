@@ -78,6 +78,17 @@
     color: var(--gold);
 }
 
+.mobileLangSlot {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobileLangSlot {
+        display: flex;
+        align-items: center;
+    }
+}
+
 .mobileToggle {
     background: none;
     border: none;

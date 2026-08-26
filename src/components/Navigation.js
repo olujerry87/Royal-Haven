@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, ShoppingBag, Calendar } from "lucide-react";
 import styles from "./Navigation.module.css";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 import { SITE_MEDIA } from "@/config/media";
 
 export default function Navigation({ wuraCategories = [] }) {
@@ -14,6 +16,7 @@ export default function Navigation({ wuraCategories = [] }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mobileEwaOpen, setMobileEwaOpen] = useState(false);
     const { cartCount } = useCart();
+    const { t } = useLanguage();
     const pathname = usePathname();
 
     // Scroll detection for transparent-to-solid effect
@@ -46,28 +49,28 @@ export default function Navigation({ wuraCategories = [] }) {
                 <div className={styles.desktopMenu}>
                     <div className={styles.menuItem}>
                         <Link href="/shop" className={styles.link}>
-                            Wura (Clothing) <ChevronDown size={14} />
+                            {t("nav.wura", "Wura (Clothing)")} <ChevronDown size={14} />
                         </Link>
                         <div className={styles.megaMenu}>
                             <div className={styles.megaContent}>
                                 <div className={styles.column}>
-                                    <h3>Collections</h3>
+                                    <h3>{t("nav.collections", "Collections")}</h3>
                                     {wuraCategories.length > 0 ? (
                                         wuraCategories.map(cat => (
                                             <Link key={cat.id} href={`/shop?category=${encodeURIComponent(cat.name)}`}>{cat.name}</Link>
                                         ))
                                     ) : (
                                         <>
-                                            <Link href="/shop">All Products</Link>
-                                            <Link href="/shop">Unisex Heritage</Link>
-                                            <Link href="/shop">Female Contemporary</Link>
+                                            <Link href="/shop">{t("nav.allProducts", "All Products")}</Link>
+                                            <Link href="/shop">{t("nav.unisexHeritage", "Unisex Heritage")}</Link>
+                                            <Link href="/shop">{t("nav.femaleContemporary", "Female Contemporary")}</Link>
                                         </>
                                     )}
                                 </div>
                                 <div className={styles.column}>
-                                    <h3>Featured</h3>
-                                    <Link href="/shop">New Arrivals</Link>
-                                    <Link href="/shop">Best Sellers</Link>
+                                    <h3>{t("nav.featured", "Featured")}</h3>
+                                    <Link href="/shop">{t("nav.newArrivals", "New Arrivals")}</Link>
+                                    <Link href="/shop">{t("nav.bestSellers", "Best Sellers")}</Link>
                                 </div>
                                 {/* Image Placeholder */}
                                 <div className={styles.promoImage}>
@@ -79,20 +82,20 @@ export default function Navigation({ wuraCategories = [] }) {
 
                     <div className={styles.menuItem}>
                         <Link href="/services" className={styles.link}>
-                            Ewa (Artistry) <ChevronDown size={14} />
+                            {t("nav.ewa", "Ewa (Artistry)")} <ChevronDown size={14} />
                         </Link>
                         <div className={styles.megaMenu}>
                             <div className={styles.megaContent}>
                                 <div className={styles.column}>
-                                    <h3>Services</h3>
-                                    <Link href="/services/details#makeup">Makeup</Link>
-                                    <Link href="/services/details#hair">Hair</Link>
-                                    <Link href="/services/details#gele">Gele</Link>
+                                    <h3>{t("nav.services", "Services")}</h3>
+                                    <Link href="/services/details#makeup">{t("nav.makeup", "Makeup")}</Link>
+                                    <Link href="/services/details#hair">{t("nav.hair", "Hair")}</Link>
+                                    <Link href="/services/details#gele">{t("nav.gele", "Gele")}</Link>
                                 </div>
                                 <div className={styles.column}>
-                                    <h3>Studio</h3>
-                                    <Link href="/services/book">Book Appointment</Link>
-                                    <Link href="/lookbook">Lookbook</Link>
+                                    <h3>{t("nav.studio", "Studio")}</h3>
+                                    <Link href="/services/book">{t("nav.bookAppointment", "Book Appointment")}</Link>
+                                    <Link href="/lookbook">{t("nav.lookbook", "Lookbook")}</Link>
                                 </div>
                                 <div className={styles.promoImage}>
                                     <div className={styles.placeholder}>Glam</div>
@@ -102,17 +105,22 @@ export default function Navigation({ wuraCategories = [] }) {
                     </div>
 
                     <Link href="/heritage" className={styles.link}>
-                        Heritage
+                        {t("nav.heritage", "Heritage")}
                     </Link>
 
                     <Link href="/heritage#styling" className={styles.link} style={{ color: 'var(--gold)', fontWeight: 600 }}>
-                        Styling Intelligence ✨
+                        {t("nav.styling", "Styling Intelligence ✨")}
                     </Link>
                 </div>
 
-                {/* Icons */}
+                {/* Icons & Actions */}
                 <div className={styles.actions}>
-                    <Link href="/services/book" className={styles.iconBtn} aria-label="Book Appointment">
+                    {/* Mobile Quick Language Toggle */}
+                    <div className={styles.mobileLangSlot}>
+                        <LanguageToggle variant="mobile-header" />
+                    </div>
+
+                    <Link href="/services/book" className={styles.iconBtn} aria-label={t("nav.bookAppointment", "Book Appointment")}>
                         <Calendar size={20} />
                     </Link>
                     <Link href="/cart" className={styles.iconBtn} aria-label={`View Cart, ${cartCount} items`} style={{ position: 'relative' }}>
@@ -151,8 +159,13 @@ export default function Navigation({ wuraCategories = [] }) {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div className={`${styles.mobileMenu} glass-panel`}>
+                    {/* Top Drawer Language Switcher */}
+                    <LanguageToggle variant="drawer" />
+
                     <div className={styles.mobileLinks}>
-                        <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Wura</Link>
+                        <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>
+                            {t("nav.shopWura", "Shop Wura")}
+                        </Link>
 
                         {/* Book Ewa expandable sub-section */}
                         <button
@@ -163,20 +176,24 @@ export default function Navigation({ wuraCategories = [] }) {
                                 cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '0.5rem'
                             }}
                         >
-                            Book Ewa <ChevronDown size={18} style={{ transform: mobileEwaOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+                            {t("nav.bookEwa", "Book Ewa")} <ChevronDown size={18} style={{ transform: mobileEwaOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
                         </button>
                         {mobileEwaOpen && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingLeft: '1.2rem', borderLeft: '1px solid rgba(212,175,55,0.4)' }}>
-                                <Link href="/lookbook" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem', color: 'var(--gold)' }}>✦ Lookbook</Link>
-                                <Link href="/services/book" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Book Appointment</Link>
-                                <Link href="/services/details#makeup" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Makeup</Link>
-                                <Link href="/services/details#hair" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Hair</Link>
-                                <Link href="/services/details#gele" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>Gele</Link>
+                                <Link href="/lookbook" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem', color: 'var(--gold)' }}>✦ {t("nav.lookbook", "Lookbook")}</Link>
+                                <Link href="/services/book" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>{t("nav.bookAppointment", "Book Appointment")}</Link>
+                                <Link href="/services/details#makeup" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>{t("nav.makeup", "Makeup")}</Link>
+                                <Link href="/services/details#hair" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>{t("nav.hair", "Hair")}</Link>
+                                <Link href="/services/details#gele" onClick={() => { setIsMobileMenuOpen(false); setMobileEwaOpen(false); }} style={{ fontSize: '1.2rem' }}>{t("nav.gele", "Gele")}</Link>
                             </div>
                         )}
 
-                        <Link href="/heritage" onClick={() => setIsMobileMenuOpen(false)}>Our Heritage</Link>
-                        <Link href="/heritage#styling" onClick={() => setIsMobileMenuOpen(false)} style={{ color: 'var(--gold)' }}>Stylist AI ✨</Link>
+                        <Link href="/heritage" onClick={() => setIsMobileMenuOpen(false)}>
+                            {t("nav.ourHeritage", "Our Heritage")}
+                        </Link>
+                        <Link href="/heritage#styling" onClick={() => setIsMobileMenuOpen(false)} style={{ color: 'var(--gold)' }}>
+                            {t("nav.stylistAi", "Stylist AI ✨")}
+                        </Link>
                     </div>
                 </div>
             )}

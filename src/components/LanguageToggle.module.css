@@ -1,0 +1,87 @@
+.announcementToggle {
+    background: none;
+    border: none;
+    color: var(--off-white, #FAF9F6);
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.announcementToggle:hover {
+    color: var(--gold, #D4AF37);
+    border-color: var(--gold, #D4AF37);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.mobileHeaderToggle {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--off-white, #FAF9F6);
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+}
+
+.mobileHeaderToggle:hover {
+    border-color: var(--gold, #D4AF37);
+    color: var(--gold, #D4AF37);
+}
+
+.drawerToggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    font-family: var(--font-body, sans-serif);
+    color: var(--off-white, #FAF9F6);
+    transition: background 0.2s ease;
+}
+
+.drawerToggle:hover {
+    background: rgba(212, 175, 55, 0.12);
+}
+
+.drawerLabel {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gold, #D4AF37);
+}
+
+.drawerTarget {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--obsidian, #0B0B0B);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}

@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Langue",
+    "toggleTo": "English",
+    "currentLang": "FR",
+    "back": "Retour",
+    "loading": "Chargement..."
+  },
+  "announcement": {
+    "text": "LIVRAISON GRATUITE dès 150 $ | Fièrement fabriqué au Canada"
+  },
+  "nav": {
+    "wura": "Wura (Vêtements)",
+    "ewa": "Ewa (Art & Beauté)",
+    "heritage": "Héritage",
+    "styling": "Intelligence Stylistique ✨",
+    "collections": "Collections",
+    "featured": "En vedette",
+    "services": "Services",
+    "studio": "Studio",
+    "allProducts": "Tous les produits",
+    "unisexHeritage": "Héritage Unisexe",
+    "femaleContemporary": "Femme Contemporaine",
+    "newArrivals": "Nouveautés",
+    "bestSellers": "Meilleures Ventes",
+    "makeup": "Maquillage",
+    "hair": "Coiffure",
+    "gele": "Gele",
+    "bookAppointment": "Prendre Rendez-vous",
+    "lookbook": "Lookbook",
+    "shopWura": "Boutique Wura",
+    "bookEwa": "Réserver Ewa",
+    "ourHeritage": "Notre Héritage",
+    "stylistAi": "Styliste IA ✨"
+  },
+  "pdp": {
+    "backToShop": "Retour à la boutique",
+    "colorFabric": "Couleur / Tissu",
+    "fit": "Coupe",
+    "size": "Taille",
+    "quantity": "Quantité",
+    "addToCart": "Ajouter au panier",
+    "addedToCart": "Ajouté au sac de shopping !",
+    "outOfStock": "Rupture de stock",
+    "soldOut": "Épuisé",
+    "quickGuide": "Guide rapide",
+    "fullSizeGuide": "Guide des tailles complet ↗",
+    "selectColorSize": "Veuillez sélectionner une couleur/tissu et une taille",
+    "proceedToCheckout": "Passer à la caisse",
+    "continueShopping": "Continuer vos achats",
+    "itemAdded": "Article ajouté à votre panier",
+    "youMayAlsoLike": "Vous aimerez aussi",
+    "storyBehindStyle": "L'Histoire du Modèle",
+    "fabricDesign": "Tissu & Confection",
+    "careDetails": "Conseils d'Entretien",
+    "stylingOptions": "Idées de Style",
+    "lookbookVr": "Lookbook & Expérience RV"
+  },
+  "sizeGuide": {
+    "title": "Guide des Tailles",
+    "subtitle": "Trouvez la coupe parfaite grâce à nos tableaux de mesures détaillés, disponibles en pouces et en centimètres pour les coupes Régulière, Petite et Grande.",
+    "downloadPdf": "Télécharger le Guide PDF",
+    "viewPdf": "Ouvrir le PDF dans le navigateur",
+    "sizeCharts": "tableaux des tailles",
+    "measuringTips": "conseils de mesure",
+    "selectGarment": "Sélectionner un vêtement",
+    "units": "Unités",
+    "bodyPart": "Partie du corps / Taille",
+    "fitType": "Type de coupe"
+  }
+}

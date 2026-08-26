@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import LiquidBackground from "@/components/LiquidBackground";
 import { CartProvider } from "@/context/CartContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import BuilderRegistry from "@/components/BuilderRegistry";
 import { getProductCategories } from "@/lib/woocommerce";
 import "./globals.css";
@@ -45,14 +46,16 @@ export default async function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={`${cormorant.variable} ${montserrat.variable} antialiased`} suppressHydrationWarning>
         <CartProvider>
-          <BuilderRegistry />
-          <LiquidBackground />
-          <AnnouncementBar />
-          <FloatingBadge />
-          <AddToCartNotification />
-          <Navigation wuraCategories={categories} />
-          {children}
-          <Footer />
+          <LanguageProvider>
+            <BuilderRegistry />
+            <LiquidBackground />
+            <AnnouncementBar />
+            <FloatingBadge />
+            <AddToCartNotification />
+            <Navigation wuraCategories={categories} />
+            {children}
+            <Footer />
+          </LanguageProvider>
         </CartProvider>
       </body>
     </html>

@@ -1,29 +1,30 @@
-import styles from './AnnouncementBar.module.css';
-import { getPageBySlug } from '@/lib/wordpress';
+"use client";
 
-export default async function AnnouncementBar() {
-    let content = "FREE SHIPPING ... | Natural & Made in Canada";
-    
-    try {
-        const page = await getPageBySlug('announcement-bar');
-        if (page && page.content && page.content.rendered) {
-            // Strip outermost wrapping paragraphs if they exist to keep it inline
-            let html = page.content.rendered.replace(/^<p>/, '').replace(/<\/p>\s*$/, '');
-            content = html;
-            
-            return (
-                <div className={styles.bar}>
-                    <div dangerouslySetInnerHTML={{ __html: content }} />
-                </div>
-            );
-        }
-    } catch (error) {
-        console.warn("Could not fetch Announcement Bar from WordPress");
-    }
+import styles from "./AnnouncementBar.module.css";
+import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "@/context/LanguageContext";
+
+export default function AnnouncementBar() {
+    const { t } = useLanguage();
+
+    const announcementText = t("announcement.text", "FREE SHIPPING over $150 | Proudly Made in Canada");
 
     return (
-        <div className={styles.bar}>
-            <p>FREE SHIPPING over $150 | Proudly Made in Canada</p>
-        </div>
+        <aside className={styles.bar} aria-label="Announcement">
+            <div className={styles.container}>
+                {/* Left Spacer on Desktop to balance the center text */}
+                <div className={styles.spacerLeft} aria-hidden="true" />
+
+                {/* Centered Announcement Message */}
+                <div className={styles.centerText}>
+                    <p>{announcementText}</p>
+                </div>
+
+                {/* Right Side Desktop Language Toggle */}
+                <div className={styles.desktopToggle}>
+                    <LanguageToggle variant="announcement" />
+                </div>
+            </div>
+        </aside>
     );
 }

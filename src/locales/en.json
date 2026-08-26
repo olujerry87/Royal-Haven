@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Language",
+    "toggleTo": "Français",
+    "currentLang": "EN",
+    "back": "Back",
+    "loading": "Loading..."
+  },
+  "announcement": {
+    "text": "FREE SHIPPING over $150 | Proudly Made in Canada"
+  },
+  "nav": {
+    "wura": "Wura (Clothing)",
+    "ewa": "Ewa (Artistry)",
+    "heritage": "Heritage",
+    "styling": "Styling Intelligence ✨",
+    "collections": "Collections",
+    "featured": "Featured",
+    "services": "Services",
+    "studio": "Studio",
+    "allProducts": "All Products",
+    "unisexHeritage": "Unisex Heritage",
+    "femaleContemporary": "Female Contemporary",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "makeup": "Makeup",
+    "hair": "Hair",
+    "gele": "Gele",
+    "bookAppointment": "Book Appointment",
+    "lookbook": "Lookbook",
+    "shopWura": "Shop Wura",
+    "bookEwa": "Book Ewa",
+    "ourHeritage": "Our Heritage",
+    "stylistAi": "Stylist AI ✨"
+  },
+  "pdp": {
+    "backToShop": "Back to Shop",
+    "colorFabric": "Color / Fabric",
+    "fit": "Fit",
+    "size": "Size",
+    "quantity": "Quantity",
+    "addToCart": "Add to Cart",
+    "addedToCart": "Added to Shopping Bag!",
+    "outOfStock": "Out of Stock",
+    "soldOut": "Sold Out",
+    "quickGuide": "Quick Guide",
+    "fullSizeGuide": "Full Size Guide ↗",
+    "selectColorSize": "Select a color/fabric and size before adding to bag",
+    "proceedToCheckout": "Proceed to Checkout",
+    "continueShopping": "Continue Shopping",
+    "itemAdded": "Item added to your shopping bag",
+    "youMayAlsoLike": "You May Also Like",
+    "storyBehindStyle": "Story Behind the Style",
+    "fabricDesign": "Fabric & Design",
+    "careDetails": "Care Details",
+    "stylingOptions": "Styling Options",
+    "lookbookVr": "Lookbook & VR Experience"
+  },
+  "sizeGuide": {
+    "title": "Size Guide",
+    "subtitle": "Find your perfect fit with our detailed measurement charts, available in inches and centimeters across Regular, Petite, and Tall sizing.",
+    "downloadPdf": "Download PDF Size Guide",
+    "viewPdf": "View PDF In Browser",
+    "sizeCharts": "size charts",
+    "measuringTips": "measuring tips",
+    "selectGarment": "Select Garment",
+    "units": "Units",
+    "bodyPart": "Body part / Size",
+    "fitType": "Fit Type"
+  }
+}

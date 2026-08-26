@@ -1,12 +1,10 @@
 .bar {
     width: 100%;
-    background-color: var(--obsidian); /* changed from green to dark */
-    color: var(--off-white);
-    text-align: center;
-    padding: 0;
-    height: 36px; /* fixed height for predictable header offset */
-    font-family: var(--font-body);
-    font-size: 0.85rem;
+    background-color: var(--obsidian, #0B0B0B);
+    color: var(--off-white, #FAF9F6);
+    height: 36px;
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.82rem;
     font-weight: 400;
     letter-spacing: 0.5px;
     z-index: 1100;
@@ -14,25 +12,70 @@
     top: 0;
     left: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.bar a {
+.container {
+    max-width: var(--max-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.spacerLeft {
+    width: 100px;
+    display: none;
+}
+
+.centerText {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.centerText p {
+    margin: 0;
+    display: inline;
+}
+
+.centerText a {
     color: white;
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
-.bar p {
-    margin: 0;
-    display: inline;
+.desktopToggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+@media (min-width: 768px) {
+    .spacerLeft {
+        display: block; /* balances center alignment */
+    }
 }
 
 @media (max-width: 768px) {
     .bar {
-        font-size: 0.75rem;
-        padding: 0.5rem 1rem;
+        font-size: 0.72rem;
+    }
+    
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .desktopToggle {
+        display: none; /* Shown in mobile nav on small screens */
     }
 }
