@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { X, CheckCircle2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 import styles from './FloatingBadge.module.css';
 
 export default function FloatingBadge() {
     const [isVisible, setIsVisible] = useState(true);
     const [activated, setActivated] = useState(false);
     const { applyFirstOrderCoupon, appliedCoupon } = useCart();
+    const { t } = useLanguage();
 
     if (!isVisible) return null;
 
     const isApplied = activated || !!appliedCoupon;
 
-    const handleActivate = (e) => {
+    const handleActivate = () => {
         applyFirstOrderCoupon("FIRST10");
         setActivated(true);
     };
@@ -39,10 +40,10 @@ export default function FloatingBadge() {
                 {isApplied ? (
                     <>
                         <CheckCircle2 size={14} color="var(--gold, #D4AF37)" />
-                        <span>10% Off First Order Applied!</span>
+                        <span>{t('coupon.firstOrderApplied', '10% Off First Order Applied!')}</span>
                     </>
                 ) : (
-                    <span>10% Off — First Order</span>
+                    <span>{t('coupon.firstOrderBadge', '10% Off — First Order')}</span>
                 )}
             </button>
             <button 

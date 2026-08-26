@@ -9,6 +9,23 @@
   "announcement": {
     "text": "FREE SHIPPING over $150 | Proudly Made in Canada"
   },
+  "hero": {
+    "wura_subtitle": "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
+    "wura_cta": "SHOP THE COLLECTION",
+    "ewa_subtitle": "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
+    "ewa_cta": "BOOK APPOINTMENT"
+  },
+  "coupon": {
+    "firstOrderBadge": "10% Off — First Order",
+    "firstOrderApplied": "10% Off First Order Applied!"
+  },
+  "spotlight": {
+    "effortlessTitle": "Set For Effortless Intentions",
+    "effortlessDesc": "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
+    "aiStylistTitle": "Your Personal AI Stylist",
+    "aiStylistDesc": "Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically.",
+    "startStyling": "Start Styling"
+  },
   "nav": {
     "wura": "Wura (Clothing)",
     "ewa": "Ewa (Artistry)",

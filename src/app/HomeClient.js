@@ -14,6 +14,7 @@ import Reviews from "@/components/Reviews";
 import ScrollProgress from "@/components/ScrollProgress";
 import TrustBadges from "@/components/TrustBadges";
 import { SITE_MEDIA } from "@/config/media";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function HomeClient({ 
     acf,
@@ -29,21 +30,24 @@ export default function HomeClient({
     spotlight2Image,
 }) {
     const [hoveredSection, setHoveredSection] = useState(null);
+    const { t } = useLanguage();
 
-    // Fallback data if ACF/Builder is missing/empty
+    // Multilingual dynamic data with ACF fallback
     const data = {
         wura: {
             bgImage: wuraBgImage || acf?.wura_bg_image || SITE_MEDIA.heritage.duality_wura,
             bgVideo: wuraBgVideo || acf?.wura_bg_video || SITE_MEDIA.home.wura_video,
             logo: acf?.wura_logo || SITE_MEDIA.logos.wura,
-            subtitle: wuraSubtitle || acf?.wura_subtitle || "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
+            subtitle: wuraSubtitle || (acf?.wura_subtitle ? acf.wura_subtitle : t("hero.wura_subtitle", "Modern Indigenous Fashion. <br /> Unisex & Female Collections.")),
+            cta: t("hero.wura_cta", "SHOP THE COLLECTION"),
             link: acf?.wura_link || "/shop"
         },
         ewa: {
             bgImage: ewaBgImage || acf?.ewa_bg_image || SITE_MEDIA.heritage.duality_ewa,
             bgVideo: ewaBgVideo || acf?.ewa_bg_video || SITE_MEDIA.home.ewa_video,
             logo: acf?.ewa_logo || SITE_MEDIA.logos.ewa,
-            subtitle: ewaSubtitle || acf?.ewa_subtitle || "Luxury Artistry. <br /> Bridal, Editorial & Hair.",
+            subtitle: ewaSubtitle || (acf?.ewa_subtitle ? acf.ewa_subtitle : t("hero.ewa_subtitle", "Luxury Artistry. <br /> Bridal, Editorial & Hair.")),
+            cta: t("hero.ewa_cta", "BOOK APPOINTMENT"),
             link: acf?.ewa_link || "/services"
         },
         heritage: {
@@ -57,10 +61,10 @@ export default function HomeClient({
             image: slide.image,
             alt: slide.alt_text || "Promo",
             link: slide.link || "/shop"
-        })) : undefined, // undefined triggers default in component
+        })) : undefined,
         spotlight1: {
-            title: spotlight1Title || acf?.spotlight_1_title || "Set For Effortless Intentions",
-            description: spotlight1Desc || acf?.spotlight_1_desc || "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
+            title: spotlight1Title || (acf?.spotlight_1_title ? acf.spotlight_1_title : t("spotlight.effortlessTitle", "Set For Effortless Intentions")),
+            description: spotlight1Desc || (acf?.spotlight_1_desc ? acf.spotlight_1_desc : t("spotlight.effortlessDesc", "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.")),
             image: spotlight1Image || acf?.spotlight_1_image || SITE_MEDIA.home.spotlight_1,
             link: acf?.spotlight_1_link || "/shop"
         },
@@ -141,7 +145,7 @@ export default function HomeClient({
                             transition={{ delay: 0.9, duration: 0.8 }}
                         >
                             <Link href={data.wura.link} className="btn-primary">
-                                Shop The Collection
+                                {data.wura.cta}
                             </Link>
                         </motion.div>
                     </div>
@@ -211,7 +215,7 @@ export default function HomeClient({
                             transition={{ delay: 1, duration: 0.8 }}
                         >
                             <Link href={data.ewa.link} className="btn-primary">
-                                Book Appointment <ArrowRight size={16} style={{ display: 'inline', marginLeft: '8px' }} />
+                                {data.ewa.cta} <ArrowRight size={16} style={{ display: 'inline', marginLeft: '8px' }} />
                             </Link>
                         </motion.div>
                     </div>
@@ -239,12 +243,10 @@ export default function HomeClient({
 
             <div style={{ height: '80px', backgroundColor: '#FFFFFF', width: '100%' }} className={styles.mobileDivider} />
 
-
-
             <FeaturedSpotlight
-                title="Your Personal AI Stylist"
-                description="Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically."
-                ctaText="Start Styling"
+                title={t("spotlight.aiStylistTitle", "Your Personal AI Stylist")}
+                description={t("spotlight.aiStylistDesc", "Beat closet paralysis. Our intelligent Styling Engine analyzes your wardrobe, today's weather, and your vibe to build the perfect outfit automatically.")}
+                ctaText={t("spotlight.startStyling", "Start Styling")}
                 ctaLink="/heritage#styling"
                 imagePath={SITE_MEDIA.home.spotlight_ai}
                 hasGlassCard={true}

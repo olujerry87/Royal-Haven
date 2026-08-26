@@ -9,6 +9,23 @@
   "announcement": {
     "text": "LIVRAISON GRATUITE dès 150 $ | Fièrement fabriqué au Canada"
   },
+  "hero": {
+    "wura_subtitle": "Mode Autochtone Contemporaine. <br /> Collections Mixtes et Féminines.",
+    "wura_cta": "DÉCOUVRIR LA COLLECTION",
+    "ewa_subtitle": "Art et Beauté de Prestige. <br /> Mariage, Éditorial et Coiffure.",
+    "ewa_cta": "RÉSERVER UN RENDEZ-VOUS"
+  },
+  "coupon": {
+    "firstOrderBadge": "10 % de réduction — 1ère commande",
+    "firstOrderApplied": "10 % de réduction 1ère commande appliquée !"
+  },
+  "spotlight": {
+    "effortlessTitle": "Conçu Pour des Intentions Fluides",
+    "effortlessDesc": "Avancez avec détermination. Respirez avec aisance. <br /> Notre nouvelle collection Héritage est conçue pour des instants de pure clarté et d'élégance naturelle.",
+    "aiStylistTitle": "Votre Styliste Personnel IA",
+    "aiStylistDesc": "Finie l'indécision devant votre garde-robe. Notre moteur de style intelligent analyse votre dressing, la météo du jour et vos envies pour composer automatiquement la tenue parfaite.",
+    "startStyling": "Commencer le Relooking"
+  },
   "nav": {
     "wura": "Wura (Vêtements)",
     "ewa": "Ewa (Art & Beauté)",
