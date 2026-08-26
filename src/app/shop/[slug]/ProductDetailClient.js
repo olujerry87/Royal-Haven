@@ -256,6 +256,25 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         setTimeout(() => { setAddedStatus(false); }, 3000);
     };
 
+    // Accordion state & toggle
+    const [openSection, setOpenSection] = useState('story');
+    const toggleSection = (section) => {
+        setOpenSection(openSection === section ? null : section);
+    };
+
+    // WordPress ACF custom fields
+    const meta = product.meta_data || [];
+    const fabricRaw  = getMeta(meta, 'rh_fabric') || product.acf?.rh_fabric || product.rh_fabric;
+    const careRaw    = getMeta(meta, 'rh_care') || product.acf?.rh_care || product.rh_care;
+    const stylingRaw = getMeta(meta, 'rh_styling') || product.acf?.rh_styling || product.rh_styling;
+    const originRaw  = getMeta(meta, 'rh_origin') || product.acf?.rh_origin || product.rh_origin;
+    const ntagId     = getMeta(meta, 'rh_ntag_id') || product.acf?.rh_ntag_id || product.rh_ntag_id;
+
+    let fabricData = null;
+    try { fabricData = fabricRaw ? JSON.parse(fabricRaw) : null; } catch { fabricData = null; }
+
+    const careItems = careRaw ? careRaw.split('\n').filter(Boolean) : null;
+
     // Active modal design & measurement table
     const modalDesign = ROYAL_HAVEN_DESIGNS.find(d => d.id === modalDesignId) || matchedDesign;
     const modalChart = modalDesign.measurements[unit];
@@ -474,6 +493,136 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                             <div className={styles.description} style={{ marginTop: '1.5rem' }} dangerouslySetInnerHTML={{ __html: product.description }} />
                         </div>
                     )}
+
+                    {/* ── WordPress ACF Custom Fields Accordions ────────────────── */}
+                    <div className={styles.accordionGroup}>
+                        
+                        {/* 1. Story Behind the Style */}
+                        <div className={styles.accordion}>
+                            <button className={styles.accordionHeader} onClick={() => toggleSection('story')}>
+                                <span>Story Behind the Style</span>
+                                <span>{openSection === 'story' ? '−' : '+'}</span>
+                            </button>
+                            {openSection === 'story' && (
+                                <div className={styles.accordionContent}>
+                                    {originRaw ? (
+                                        <div dangerouslySetInnerHTML={{ __html: originRaw.replace(/\n/g, '<br/>') }} />
+                                    ) : (
+                                        <p>This piece is crafted with heritage in mind, weaving traditional motifs into modern silhouettes.</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 2. Fabric & Design */}
+                        <div className={styles.accordion}>
+                            <button className={styles.accordionHeader} onClick={() => toggleSection('fabric')}>
+                                <span>Fabric &amp; Design</span>
+                                <span>{openSection === 'fabric' ? '−' : '+'}</span>
+                            </button>
+                            {openSection === 'fabric' && (
+                                <div className={styles.accordionContent}>
+                                    {fabricData ? (
+                                        <>
+                                            {fabricData.material && <p><strong>Material:</strong> {fabricData.material}</p>}
+                                            {fabricData.craftsmanship && <p><strong>Craftsmanship:</strong> {fabricData.craftsmanship}</p>}
+                                            {fabricData.design && <p><strong>Design:</strong> {fabricData.design}</p>}
+                                        </>
+                                    ) : fabricRaw ? (
+                                        <div dangerouslySetInnerHTML={{ __html: fabricRaw.replace(/\n/g, '<br/>') }} />
+                                    ) : (
+                                        <>
+                                            <p><strong>Material:</strong> Premium Silk / Cotton Blend.</p>
+                                            <p><strong>Craftsmanship:</strong> Handmade in Lagos by master artisans.</p>
+                                            <p><strong>Design:</strong> Features intricate embroidery symbolizing prosperity and strength.</p>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 3. Care Details */}
+                        <div className={styles.accordion}>
+                            <button className={styles.accordionHeader} onClick={() => toggleSection('care')}>
+                                <span>Care Details</span>
+                                <span>{openSection === 'care' ? '−' : '+'}</span>
+                            </button>
+                            {openSection === 'care' && (
+                                <div className={styles.accordionContent}>
+                                    {careItems ? (
+                                        <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+                                            {careItems.map((item, i) => <li key={i}>{item}</li>)}
+                                        </ul>
+                                    ) : (
+                                        <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+                                            <li>Dry clean recommended to preserve fabric sheen.</li>
+                                            <li>Cool iron on reverse side.</li>
+                                            <li>Do not bleach or tumble dry.</li>
+                                            <li>Store in a cool, dry place away from direct sunlight.</li>
+                                        </ul>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 4. Styling Options */}
+                        <div className={styles.accordion}>
+                            <button className={styles.accordionHeader} onClick={() => toggleSection('styling')}>
+                                <span>Styling Options</span>
+                                <span>{openSection === 'styling' ? '−' : '+'}</span>
+                            </button>
+                            {openSection === 'styling' && (
+                                <div className={styles.accordionContent}>
+                                    {stylingRaw ? (
+                                        <div dangerouslySetInnerHTML={{ __html: stylingRaw.replace(/\n/g, '<br/>') }} />
+                                    ) : (
+                                        <>
+                                            <p><strong>Day Look:</strong> Pair with simple leather sandals and minimal jewelry.</p>
+                                            <p><strong>Evening Glam:</strong> Elevate with statement gold accessories and heels.</p>
+                                            <p><strong>Traditional:</strong> Complement with a matching Gele (headtie) for a complete regal look.</p>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 5. Lookbook & VR Experience / Passport */}
+                        <div className={styles.accordion}>
+                            <button className={styles.accordionHeader} onClick={() => toggleSection('lookbook')}>
+                                <span>Lookbook &amp; VR Experience</span>
+                                <span>{openSection === 'lookbook' ? '−' : '+'}</span>
+                            </button>
+                            {openSection === 'lookbook' && (
+                                <div className={styles.accordionContent}>
+                                    {ntagId ? (
+                                        <div style={{ marginTop: '0.5rem' }}>
+                                            <p>This garment is linked to a digital provenance identity.</p>
+                                            <Link 
+                                                href={`/passport/${ntagId}`}
+                                                style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.4rem',
+                                                    color: 'var(--gold, #D4AF37)',
+                                                    fontWeight: 600,
+                                                    textDecoration: 'none',
+                                                    marginTop: '0.5rem'
+                                                }}
+                                            >
+                                                View Digital Product Passport →
+                                            </Link>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.placeholderVR}>
+                                            <p style={{ margin: 0, fontWeight: 600, color: 'var(--obsidian, #0B0B0B)' }}>✨ Virtual Reality Experience Coming Soon.</p>
+                                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>Immerse yourself in the Royal Haven runway.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
