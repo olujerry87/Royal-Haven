@@ -127,8 +127,12 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
     // ── All Sizes defined on the product or variations in canonical order ───────
     const allSizes = useMemo(() => {
-        const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "2X", "3X", "One Size"];
+        const SIZE_ORDER = [
+            "6", "8", "10", "12", "14", "16", "18", "20", "22", "24",
+            "XS", "S", "M", "L", "XL", "XXL", "2X", "3X", "One Size"
+        ];
         const sizesSet = new Set();
+
 
         // 1. From WooCommerce size attribute
         const wooSizes = getAttrOptions(product.attributes, 'size').map(s => decodeHtml(s));
@@ -1076,7 +1080,11 @@ function getSwatchColor(name) {
     // Explicit Fabric and Color Mapping
     const colorMap = {
         // Royal Haven Signature African Fabrics & Collections
+        'neon aztec eclipse': 'linear-gradient(135deg, #f97316 0%, #7c3aed 50%, #0B0B0B 100%)',
+        'neon prism': 'conic-gradient(from 45deg, #f97316, #ec4899, #7c3aed, #2563eb, #eab308, #f97316)',
+        'akoma': 'linear-gradient(135deg, #f97316 0%, #D4AF37 50%, #7c3aed 100%)',
         'olive & gold abstract adire': 'linear-gradient(135deg, #6b7a2c 0%, #D4AF37 100%)',
+
         'carnival fiesta patchwork ankara': 'conic-gradient(from 45deg, #7c3aed, #ec4899, #f97316, #eab308, #7c3aed)',
         'autumn earth branch ankara': 'linear-gradient(135deg, #8B4513 0%, #d2b48c 50%, #C5A059 100%)',
         'chocolate blossom': 'linear-gradient(135deg, #3E2723 0%, #D7CCC8 50%, #8D6E63 100%)',

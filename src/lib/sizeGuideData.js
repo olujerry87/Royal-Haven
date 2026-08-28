@@ -324,6 +324,47 @@ export const ROYAL_HAVEN_DESIGNS = [
         }
     },
     {
+        id: "akoma-neon-prism",
+        name: "Akoma: Neon Prism (Boubou Nzuri: Liquid Regal Dress)",
+        keywords: ["akoma", "neon prism", "prism", "boubou", "nzuri", "liquid regal", "neon aztec"],
+        measurements: {
+            IN: {
+                sizes: ["Small (Size 6)", "Medium (Sizes 8–12)", "Large (Sizes 14–18)", "Extra Large (Sizes 20–24)"],
+                rows: [
+                    { label: "Numeric Size Mapping", values: ["6", "8, 10, 12", "14, 16, 18", "20, 22, 24"] },
+                    { label: "Bust", values: ["33\"", "35\" - 40\"", "42\" - 48\"", "52\" - 56\""] },
+                    { label: "Waist", values: ["25\"", "28\" - 33\"", "35\" - 43\"", "46\" - 51\""] },
+                    { label: "Hip", values: ["35\"", "37\" - 42.5\"", "44\" - 53\"", "56\" - 62\""] },
+                ],
+                lengths: {
+                    label: "Length Breakdown",
+                    values: [
+                        { fit: "Petit", val: "52\" (-2\" proportional flow)" },
+                        { fit: "Regular", val: "56\" (Standard regal flow)" },
+                        { fit: "Tall", val: "60\" (+2\" extended regal flow)" },
+                    ]
+                }
+            },
+            CM: {
+                sizes: ["Small (Size 6)", "Medium (Sizes 8–12)", "Large (Sizes 14–18)", "Extra Large (Sizes 20–24)"],
+                rows: [
+                    { label: "Numeric Size Mapping", values: ["6", "8, 10, 12", "14, 16, 18", "20, 22, 24"] },
+                    { label: "Bust", values: ["84 cm", "89 - 102 cm", "107 - 122 cm", "132 - 142 cm"] },
+                    { label: "Waist", values: ["64 cm", "71 - 84 cm", "89 - 109 cm", "117 - 130 cm"] },
+                    { label: "Hip", values: ["89 cm", "94 - 108 cm", "112 - 135 cm", "142 - 157 cm"] },
+                ],
+                lengths: {
+                    label: "Length Breakdown",
+                    values: [
+                        { fit: "Petit", val: "132 cm (-5 cm proportional flow)" },
+                        { fit: "Regular", val: "142 cm (Standard regal flow)" },
+                        { fit: "Tall", val: "152 cm (+5 cm extended regal flow)" },
+                    ]
+                }
+            }
+        }
+    },
+    {
         id: "ankara-zubair-others",
         name: "Ankara Short Dress & Zubair Bomber Jacket (Standard Sizing)",
         keywords: ["ankara", "zubair", "bomber", "jacket", "dress"],
@@ -362,6 +403,7 @@ export const ROYAL_HAVEN_DESIGNS = [
             }
         }
     }
+
 ];
 
 /**
