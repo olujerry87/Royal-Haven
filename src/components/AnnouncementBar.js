@@ -7,17 +7,26 @@ import { useLanguage } from "@/context/LanguageContext";
 export default function AnnouncementBar() {
     const { t } = useLanguage();
 
-    const announcementText = t("announcement.text", "FREE SHIPPING over $150 | Proudly Made in Canada");
+    const announcements = [
+        t("announcement.freeShipping", "🚚 FREE SHIPPING on orders over $150 (Canada-wide)"),
+        t("announcement.launchSale", "✨ SITE-WIDE WEBSITE LAUNCH SALE LIVE NOW — LIMITED TIME ONLY"),
+        t("announcement.madeInCanada", "🇨🇦 PROUDLY DESIGNED & HANDCRAFTED IN CANADA"),
+    ];
 
     return (
-        <aside className={styles.bar} aria-label="Announcement">
+        <aside className={styles.bar} aria-label="Announcements">
             <div className={styles.container}>
-                {/* Left Spacer on Desktop to balance the center text */}
-                <div className={styles.spacerLeft} aria-hidden="true" />
-
-                {/* Centered Announcement Message */}
-                <div className={styles.centerText}>
-                    <p>{announcementText}</p>
+                {/* Scrolling Ticker Track */}
+                <div className={styles.tickerWrapper}>
+                    <div className={styles.tickerTrack}>
+                        {/* Duplicate for seamless infinite loop */}
+                        {[...announcements, ...announcements, ...announcements].map((item, idx) => (
+                            <span key={idx} className={styles.tickerItem}>
+                                {item}
+                                <span className={styles.separator} aria-hidden="true">•</span>
+                            </span>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Right Side Desktop Language Toggle */}
@@ -28,3 +37,4 @@ export default function AnnouncementBar() {
         </aside>
     );
 }
+

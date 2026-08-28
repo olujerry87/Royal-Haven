@@ -5,8 +5,11 @@ import Image from "next/image";
 import { Instagram, Facebook, Mail } from "lucide-react";
 import styles from "./Footer.module.css";
 import { SITE_MEDIA } from "@/config/media";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
+    const { t } = useLanguage();
+
     return (
         <footer className={styles.footer}>
             {/* Three-layer dynamic sliding waves — 3-period SVG tiles with independent speeds */}
@@ -65,8 +68,7 @@ export default function Footer() {
                             />
                         </div>
                         <p className={styles.tagline}>
-                            Where heritage meets modern luxury. <br />
-                            Fashion &amp; Artistry redefined.
+                            {t("footer.tagline", "Where heritage meets modern luxury. Fashion & Artistry redefined.")}
                         </p>
                         {/* Miniature Proportional Canada flag matching user attachment */}
                         <svg
@@ -94,32 +96,32 @@ export default function Footer() {
 
                     {/* Explore Column */}
                     <div className={styles.column}>
-                        <h4>Explore</h4>
-                        <Link href="/shop" className={styles.link}>Shop Wura</Link>
-                        <Link href="/services" className={styles.link}>Book Ewa</Link>
-                        <Link href="/about" className={styles.link}>Our Heritage</Link>
-                        <Link href="/gift-card" className={styles.link}>Gift Cards</Link>
+                        <h4>{t("footer.explore", "Explore")}</h4>
+                        <Link href="/shop" className={styles.link}>{t("nav.shop", "Shop Wura")}</Link>
+                        <Link href="/services" className={styles.link}>{t("nav.services", "Book Ewa")}</Link>
+                        <Link href="/about" className={styles.link}>{t("nav.heritage", "Our Heritage")}</Link>
+                        <Link href="/gift-card" className={styles.link}>{t("nav.giftCards", "Gift Cards")}</Link>
                     </div>
 
                     {/* Support Column */}
                     <div className={styles.column}>
-                        <h4>Support</h4>
-                        <Link href="/services/book" className={styles.link}>Contact Us</Link>
-                        <Link href="/shipping" className={styles.link}>Shipping & Returns</Link>
-                        <Link href="/#faq" className={styles.link}>FAQ</Link>
+                        <h4>{t("footer.support", "Support")}</h4>
+                        <Link href="/services/book" className={styles.link}>{t("footer.contactUs", "Contact Us")}</Link>
+                        <Link href="/shipping" className={styles.link}>{t("footer.shippingReturns", "Shipping & Returns")}</Link>
+                        <Link href="/#faq" className={styles.link}>{t("footer.faq", "FAQ")}</Link>
                     </div>
 
                     {/* Legal Column */}
                     <div className={styles.column}>
-                        <h4>Legal</h4>
-                        <Link href="/accessibility" className={styles.link}>Accessibility</Link>
-                        <Link href="/terms" className={styles.link}>Terms of Use</Link>
-                        <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
+                        <h4>{t("footer.legal", "Legal")}</h4>
+                        <Link href="/accessibility" className={styles.link}>{t("footer.accessibility", "Accessibility")}</Link>
+                        <Link href="/terms" className={styles.link}>{t("footer.terms", "Terms of Use")}</Link>
+                        <Link href="/privacy" className={styles.link}>{t("footer.privacy", "Privacy Policy")}</Link>
                     </div>
 
                     {/* Social/Newsletter Column */}
                     <div className={styles.column}>
-                        <h4>Connect</h4>
+                        <h4>{t("footer.connect", "Connect")}</h4>
                         <div className={styles.socials}>
                             <a 
                                 href={process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/royal_haven?igsh=MXZhM3MwdnpyOXZoYQ=="} 
@@ -144,20 +146,21 @@ export default function Footer() {
                             <p>+1 (613) 286-0661</p>
                         </div>
                         <div className={styles.newsletter}>
-                            <p>Subscribe for exclusive updates.</p>
+                            <p>{t("footer.newsletterText", "Subscribe for exclusive updates.")}</p>
                             <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
                                 <label htmlFor="newsletter-email" className="sr-only">Email Address</label>
                                 <input 
                                     type="email" 
                                     id="newsletter-email"
-                                    placeholder="Your email" 
+                                    placeholder={t("footer.newsletterPlaceholder", "Your email")} 
                                     className={styles.input} 
                                 />
-                                <button type="submit" className={styles.btn} aria-label="Subscribe to newsletter">Join</button>
+                                <button type="submit" className={styles.btn} aria-label="Subscribe to newsletter">{t("footer.newsletterButton", "Join")}</button>
                             </form>
                         </div>
                     </div>
                 </div>
+
 
                 <div className={styles.bottom}>
                     <p className={styles.scripture}>

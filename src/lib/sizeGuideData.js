@@ -289,9 +289,9 @@ export const ROYAL_HAVEN_DESIGNS = [
         }
     },
     {
-        id: "tanzanian-bubu",
-        name: "Tanzanian Bubu",
-        keywords: ["tanzanian", "bubu"],
+        id: "boubou-nzuri",
+        name: "Boubou Nzuri: Liquid Regal Dress",
+        keywords: ["boubou nzuri", "liquid regal", "boubou", "nzuri", "tanzanian", "bubu"],
         measurements: {
             IN: {
                 sizes: ["One Size (Fits All)"],
@@ -325,8 +325,8 @@ export const ROYAL_HAVEN_DESIGNS = [
     },
     {
         id: "akoma-neon-prism",
-        name: "Akoma: Neon Prism (Boubou Nzuri: Liquid Regal Dress)",
-        keywords: ["akoma", "neon prism", "prism", "boubou", "nzuri", "liquid regal", "neon aztec"],
+        name: "Akoma: Neon Prism",
+        keywords: ["akoma", "neon prism", "prism", "neon aztec"],
         measurements: {
             IN: {
                 sizes: ["Small (Size 6)", "Medium (Sizes 8–12)", "Large (Sizes 14–18)", "Extra Large (Sizes 20–24)"],
@@ -364,6 +364,7 @@ export const ROYAL_HAVEN_DESIGNS = [
             }
         }
     },
+
     {
         id: "ankara-zubair-others",
         name: "Ankara Short Dress & Zubair Bomber Jacket (Standard Sizing)",

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import styles from "./ProductCard.module.css";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Normalize WooCommerce image format: can be { src: '...' } objects or plain strings
 function getImageSrc(img) {
@@ -13,6 +14,7 @@ function getImageSrc(img) {
 }
 
 export default function ProductCard({ product, productId }) {
+    const { t } = useLanguage();
     const [isHovered, setIsHovered] = useState(false);
     if (!product) return null;
 
@@ -37,7 +39,8 @@ export default function ProductCard({ product, productId }) {
             <Link href={`/shop/${product.slug}`}>
                 <div className={styles.imageContainer}>
                     {/* Sale Badge */}
-                    {isSale && <span className={styles.saleBadge}>SALE</span>}
+                    {isSale && <span className={styles.saleBadge}>{t("shop.sale", "SALE")}</span>}
+
 
                     {/* Primary Image */}
                     <div className={styles.imgWrapper}>
@@ -65,8 +68,9 @@ export default function ProductCard({ product, productId }) {
 
                     {/* Quick Add Button */}
                     <button className={`${styles.quickAdd} ${isHovered ? styles.btnVisible : ''}`}>
-                        <ShoppingBag size={18} /> Quick Add
+                        <ShoppingBag size={18} /> {t("shop.quickAdd", "Quick Add")}
                     </button>
+
                 </div>
 
                 <div className={styles.details}>

@@ -3,8 +3,10 @@
 import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import styles from "./page.module.css";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function ShopClient({ products, initialCategory = "All" }) {
+    const { t } = useLanguage();
     const [activeCategory, setActiveCategory] = useState(initialCategory);
 
     // Extract unique categories from WooCommerce products
@@ -24,7 +26,7 @@ export default function ShopClient({ products, initialCategory = "All" }) {
         <div className={styles.layout}>
             {/* Sidebar */}
             <aside className={styles.sidebar}>
-                <h3 className={styles.filterTitle}>Category</h3>
+                <h3 className={styles.filterTitle}>{t("shop.category", "Category")}</h3>
                 <ul className={styles.categoryList}>
                     {uniqueCategories.map(cat => (
                         <li key={cat}>
@@ -32,12 +34,13 @@ export default function ShopClient({ products, initialCategory = "All" }) {
                                 className={`${styles.filterBtn} ${activeCategory === cat ? styles.active : ''}`}
                                 onClick={() => setActiveCategory(cat)}
                             >
-                                {cat}
+                                {cat === "All" ? t("shop.all", "All") : cat}
                             </button>
                         </li>
                     ))}
                 </ul>
             </aside>
+
 
             {/* Product Grid */}
             <section className={styles.grid}>

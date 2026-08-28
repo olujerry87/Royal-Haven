@@ -10,6 +10,7 @@ import { placeOrder, verifyFirstOrderEligibility } from "./actions";
 import GiftCardInput from "@/components/GiftCardInput";
 import SquarePaymentForm from "@/components/SquarePaymentForm";
 import { isDisposableEmail } from "@/lib/disposableEmailDomains";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ── Country list ─────────────────────────────────────────────────────────────
 const COUNTRIES = [
@@ -39,6 +40,7 @@ const CA_PROVINCES = [
 ];
 
 export default function Checkout() {
+    const { t } = useLanguage();
     const { 
         cart, 
         cartTotal, 
@@ -51,6 +53,7 @@ export default function Checkout() {
         appliedGiftCard, 
         clearCart 
     } = useCart();
+
     
     const router = useRouter();
     const squareRef = useRef(null);
@@ -317,17 +320,17 @@ export default function Checkout() {
                 <div className={styles.formSection}>
                     <div className={styles.header}>
                         <Link href="/cart" className={styles.backLink}>
-                            <ArrowLeft size={16} /> Return to Cart
+                            <ArrowLeft size={16} /> {t("common.back", "Return to Cart")}
                         </Link>
                         <img src="/logos/header-logo.png" alt="Logo" className={styles.logo} />
                     </div>
 
                     <form onSubmit={handlePayment} className={styles.form} noValidate>
-                        <h2 className={styles.sectionTitle}>Contact Information</h2>
+                        <h2 className={styles.sectionTitle}>{t("checkout.contactInfo", "Contact Information")}</h2>
                         <input
                             type="email"
                             name="email"
-                            placeholder="Email address"
+                            placeholder={t("checkout.email", "Email Address")}
                             required
                             className={`${styles.input} ${isDisposableError ? styles.inputError : ''}`}
                             value={formData.email}
@@ -336,7 +339,7 @@ export default function Checkout() {
                         />
                         {isCheckingEmail && (
                             <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '-0.5rem', marginBottom: '0.75rem' }}>
-                                Verifying email address...
+                                {t("common.loading", "Verifying email address...")}
                             </p>
                         )}
                         {emailNotice && (
@@ -353,11 +356,11 @@ export default function Checkout() {
                             </div>
                         )}
 
-                        <h2 className={styles.sectionTitle}>Shipping Address</h2>
+                        <h2 className={styles.sectionTitle}>{t("checkout.shippingAddress", "Shipping Address")}</h2>
                         
                         <div style={{ marginBottom: '1rem' }}>
                             <label style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--charcoal)', display: 'block', marginBottom: '0.35rem' }}>
-                                <Globe size={14} style={{ verticalAlign: 'middle', marginRight: '0.35rem' }} /> Destination Country
+                                <Globe size={14} style={{ verticalAlign: 'middle', marginRight: '0.35rem' }} /> {t("checkout.country", "Country")}
                             </label>
                             <select
                                 name="country"
@@ -376,7 +379,7 @@ export default function Checkout() {
                             <input
                                 type="text"
                                 name="firstName"
-                                placeholder="First Name"
+                                placeholder={t("checkout.firstName", "First Name")}
                                 required
                                 className={styles.input}
                                 value={formData.firstName}
@@ -385,7 +388,7 @@ export default function Checkout() {
                             <input
                                 type="text"
                                 name="lastName"
-                                placeholder="Last Name"
+                                placeholder={t("checkout.lastName", "Last Name")}
                                 required
                                 className={styles.input}
                                 value={formData.lastName}
@@ -395,7 +398,7 @@ export default function Checkout() {
                         <input
                             type="text"
                             name="address1"
-                            placeholder="Address"
+                            placeholder={t("checkout.address", "Street Address")}
                             required
                             className={styles.input}
                             value={formData.address1}
@@ -404,7 +407,7 @@ export default function Checkout() {
                         <input
                             type="text"
                             name="address2"
-                            placeholder="Apartment, suite, etc. (optional)"
+                            placeholder={t("checkout.apartment", "Apartment, suite, unit (optional)")}
                             className={styles.input}
                             value={formData.address2}
                             onChange={handleInputChange}
@@ -413,7 +416,7 @@ export default function Checkout() {
                             <input
                                 type="text"
                                 name="city"
-                                placeholder="City"
+                                placeholder={t("checkout.city", "City")}
                                 required
                                 className={styles.input}
                                 value={formData.city}
@@ -435,7 +438,7 @@ export default function Checkout() {
                                 <input
                                     type="text"
                                     name="state"
-                                    placeholder="State / Region"
+                                    placeholder={t("checkout.province", "Province / State")}
                                     required
                                     className={styles.input}
                                     value={formData.state}
@@ -445,7 +448,7 @@ export default function Checkout() {
                             <input
                                 type="text"
                                 name="postcode"
-                                placeholder="Postal Code / Zip"
+                                placeholder={t("checkout.postalCode", "Postal / ZIP Code")}
                                 required
                                 className={styles.input}
                                 value={formData.postcode}
@@ -455,7 +458,7 @@ export default function Checkout() {
                         <input
                             type="tel"
                             name="phone"
-                            placeholder="Phone"
+                            placeholder={t("checkout.phone", "Phone Number")}
                             required
                             className={styles.input}
                             value={formData.phone}
@@ -465,7 +468,7 @@ export default function Checkout() {
                         {/* ── Shipping Method Selection ─────────────────────────── */}
                         <h2 className={styles.sectionTitle}>
                             <Truck size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
-                            Shipping Method ({isDomesticCanada ? "Domestic Canada" : "International Freight"})
+                            {t("checkout.shippingMethod", "Shipping Method")} ({isDomesticCanada ? "Canada" : "International"})
                         </h2>
                         <div className={styles.shippingOptions}>
                             {SHIPPING_OPTIONS.map(opt => {
@@ -499,7 +502,7 @@ export default function Checkout() {
                                             )}
                                         </div>
                                         <span className={styles.shippingPrice}>
-                                            {displayPrice === 0 ? "Free" : `$${displayPrice.toFixed(2)}`}
+                                            {displayPrice === 0 ? t("checkout.free", "Free") : `$${displayPrice.toFixed(2)} CAD`}
                                         </span>
                                     </label>
                                 );
@@ -516,7 +519,7 @@ export default function Checkout() {
                         {/* ── Official Square Web Payments SDK ──────────────────── */}
                         <h2 className={styles.sectionTitle}>
                             <CreditCard size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
-                            Payment Method
+                            {t("checkout.payment", "Payment Method")}
                         </h2>
 
                         {/* Square Web Payments SDK iframe container */}
@@ -533,10 +536,10 @@ export default function Checkout() {
                             className={styles.payBtn}
                             disabled={isProcessing || !isFormValid}
                         >
-                            {isProcessing ? "Authorizing Payment..." : `Place Order - $${orderTotal.toFixed(2)} CAD`}
+                            {isProcessing ? t("checkout.processing", "Processing Order...") : `${t("checkout.placeOrder", "Place Order")} - $${orderTotal.toFixed(2)} CAD`}
                         </button>
                         <p className={styles.secureNote}>
-                            🔒 Tax included · Shipping calculated above
+                            {t("checkout.secureCheckout", "🔒 256-Bit Encrypted Secure Checkout")}
                         </p>
                     </form>
                 </div>
@@ -558,40 +561,41 @@ export default function Checkout() {
                                     <span className={styles.name}>{item.name}</span>
                                     <span className={styles.variant}>{item.size || "Fixed"}</span>
                                 </div>
-                                <span className={styles.price}>${item.price * item.quantity}</span>
+                                <span className={styles.price}>${(item.price * item.quantity).toFixed(2)} CAD</span>
                             </div>
                         ))}
                     </div>
 
                     <div className={styles.costs}>
                         <div className={styles.costRow}>
-                            <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>{t("cart.subtotal", "Subtotal")}</span>
+                            <span>${cartTotal.toFixed(2)} CAD</span>
                         </div>
                         {appliedCoupon && firstOrderDiscount > 0 && (
                             <div className={styles.costRow} style={{ color: 'var(--gold, #D4AF37)' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                     <Tag size={13} /> {appliedCoupon.label || "First Order (10% Off)"}
                                 </span>
-                                <span>-${firstOrderDiscount.toFixed(2)}</span>
+                                <span>-${firstOrderDiscount.toFixed(2)} CAD</span>
                             </div>
                         )}
                         {giftCardDiscount > 0 && (
                             <div className={styles.costRow} style={{ color: 'var(--gold, #D4AF37)' }}>
-                                <span>Gift Card Balance</span>
-                                <span>-${giftCardDiscount.toFixed(2)}</span>
+                                <span>{t("checkout.discount", "Gift Card Balance")}</span>
+                                <span>-${giftCardDiscount.toFixed(2)} CAD</span>
                             </div>
                         )}
                         <div className={styles.costRow}>
-                            <span>Shipping</span>
+                            <span>{t("checkout.shipping", "Shipping")}</span>
                             <span>{renderShippingLabel()}</span>
                         </div>
                         <div className={`${styles.costRow} ${styles.total}`}>
-                            <span>Total Due</span>
+                            <span>{t("cart.total", "Total Due")}</span>
                             <span>${orderTotal.toFixed(2)} CAD</span>
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
     );

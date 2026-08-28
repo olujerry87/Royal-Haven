@@ -21,6 +21,7 @@ import {
 import styles from "./page.module.css";
 import { useCart } from "@/context/CartContext";
 import { ROYAL_HAVEN_DESIGNS, getDesignForProduct } from "@/lib/sizeGuideData";
+import { useLanguage } from "@/context/LanguageContext";
 
 function getMeta(meta_data = [], key) {
     const entry = meta_data.find(m => m.key === key);
@@ -41,6 +42,10 @@ function decodeHtml(html) {
         .replace(/&quot;/g, '"')
         .replace(/&#039;/g, "'")
         .replace(/&#038;/g, '&')
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8216;/g, "'")
+        .replace(/&#8220;/g, '"')
+        .replace(/&#8221;/g, '"')
         .replace(/&nbsp;/g, ' ')
         .trim();
 }
@@ -59,7 +64,9 @@ function getAttrOptions(attributes, attrName) {
 }
 
 export default function ProductDetailClient({ product, variations = [], relatedProducts = [] }) {
+    const { t } = useLanguage();
     const [activeImage, setActiveImage] = useState(0);
+
     
     // Matched size chart design from official PDF
     const matchedDesign = useMemo(() => {
@@ -431,7 +438,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
             {/* Breadcrumb */}
             <div className={styles.breadcrumb}>
                 <Link href="/shop" className={styles.backLink}>
-                    <ChevronLeft size={16} /> Back to Shop
+                    <ChevronLeft size={16} /> {t("pdp.backToShop", "Back to Shop")}
                 </Link>
             </div>
 
@@ -504,7 +511,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         <div className={styles.priceRow}>
                             <span className={styles.salePrice}>${displayPrice ? displayPrice.toFixed(2) : '0.00'} CAD</span>
                             <span className={styles.regularPriceStrikethrough}>${displayRegularPrice ? Number(displayRegularPrice).toFixed(2) : '0.00'} CAD</span>
-                            <span className={styles.saleBadge}>Save ${savingsAmount} CAD</span>
+                            <span className={styles.saleBadge}>{t("pdp.save", "Save")} ${savingsAmount} CAD</span>
                         </div>
                     ) : (
                         <p className={styles.price}>${displayPrice ? displayPrice.toFixed(2) : '0.00'} CAD</p>
@@ -521,7 +528,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                     {/* ── 1. COLOR / FABRIC SELECTION (ALWAYS VISIBLE) ───────────── */}
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>
-                            Color / Fabric: {selectedColor && <span style={{ fontWeight: 600, color: "var(--obsidian, #0B0B0B)", textTransform: "none", letterSpacing: 0 }}>{selectedColor}</span>}
+                            {t("pdp.colorFabric", "Color / Fabric")}: {selectedColor && <span style={{ fontWeight: 600, color: "var(--obsidian, #0B0B0B)", textTransform: "none", letterSpacing: 0 }}>{selectedColor}</span>}
                         </label>
                         <div className={styles.colorSwatchRow}>
                             {colorOptions.map((color) => {
@@ -563,7 +570,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                         setIsZoomOpen(true);
                                     }
                                 }}
-                                title={colorImageMap[selectedColor.toLowerCase()] ? "Tap to inspect fabric texture up-close" : selectedColor}
+                                title={colorImageMap[selectedColor.toLowerCase()] ? t("pdp.tapToSeeFabric", "Tap to see fabric ↗") : selectedColor}
                             >
                                 {colorImageMap[selectedColor.toLowerCase()] ? (
                                     <img 
@@ -581,7 +588,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                     <span className={styles.fabricInspectionTitle}>{selectedColor}</span>
                                     {colorImageMap[selectedColor.toLowerCase()] && (
                                         <span className={styles.fabricInspectionAction}>
-                                            Tap to see fabric ↗
+                                            {t("pdp.tapToSeeFabric", "Tap to see fabric ↗")}
                                         </span>
                                     )}
                                 </div>
@@ -592,7 +599,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
                     {/* ── 2. FIT SELECTION (REGULAR, TALL, PETITE) ──────────────── */}
                     <div className={styles.optionGroup}>
-                        <label className={styles.label}>Fit</label>
+                        <label className={styles.label}>{t("pdp.fit", "Fit")}</label>
                         <div className={styles.fitRow}>
                             {fitOptions.map((fit) => {
                                 const isAvailable = isFitAvailable(fit);
@@ -615,7 +622,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                     {/* ── 3. SIZE SELECTION & SIZE GUIDE LINKS ───────────────────── */}
                     <div className={styles.optionGroup}>
                         <div className={styles.sizeHeaderContainer}>
-                            <label className={styles.label} style={{ marginBottom: 0 }}>Size</label>
+                            <label className={styles.label} style={{ marginBottom: 0 }}>{t("pdp.size", "Size")}</label>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                                 <button 
                                     className={styles.sizeGuideLink}
@@ -625,7 +632,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                     }}
                                     title="Quick size chart from official PDF"
                                 >
-                                    <Ruler size={14} /> Quick Guide
+                                    <Ruler size={14} /> {t("pdp.quickGuide", "Quick Guide")}
                                 </button>
                                 <Link
                                     href="/size-guide"
@@ -635,7 +642,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                     style={{ color: "var(--gold, #D4AF37)", textDecoration: "underline" }}
                                     title="Open full size guide page in new tab"
                                 >
-                                    Full Size Guide ↗
+                                    {t("pdp.fullSizeGuide", "Full Size Guide ↗")}
                                 </Link>
                             </div>
                         </div>
@@ -661,7 +668,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
                         {sizeError && (
                             <div className={styles.sizeErrorNotice}>
-                                <XCircle size={15} /> Select a color/fabric and size before adding to bag
+                                <XCircle size={15} /> {t("pdp.selectColorSize", "Select a color/fabric and size before adding to bag")}
                             </div>
                         )}
                     </div>
@@ -669,7 +676,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
                     {/* ── 4. Quantity Selector ──────────────────────────────────── */}
                     <div className={styles.optionGroup}>
-                        <label className={styles.label}>Quantity</label>
+                        <label className={styles.label}>{t("pdp.quantity", "Quantity")}</label>
                         <div className={styles.quantityControl}>
                             <button className={styles.qtyBtn} onClick={() => setQuantity(Math.max(1, quantity - 1))}><Minus size={16} /></button>
                             <span className={styles.qtyValue}>{quantity}</span>
@@ -684,12 +691,12 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         onClick={handleAddToCart}
                     >
                         {addedStatus ? (
-                            <><CheckCircle2 size={20} color="#FAF9F6" /> Added to Shopping Bag!</>
+                            <><CheckCircle2 size={20} color="#FAF9F6" /> {t("pdp.addedToCart", "Added to Shopping Bag!")}</>
                         ) : (
                             <><ShoppingBag size={20} />
                             {product.stock_status === 'outofstock'
-                                ? 'Out of Stock'
-                                : `Add to Cart - $${((displayPrice || 0) * quantity).toFixed(2)} CAD`}</>
+                                ? t("pdp.outOfStock", "Out of Stock")
+                                : `${t("pdp.addToCart", "Add to Cart")} - $${((displayPrice || 0) * quantity).toFixed(2)} CAD`}</>
                         )}
                     </button>
 
@@ -697,14 +704,14 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                     {showCartDrawer && (
                         <div className={styles.cartActionDrawer}>
                             <div className={styles.drawerTitle}>
-                                <CheckCircle2 size={18} /> Item added to your shopping bag
+                                <CheckCircle2 size={18} /> {t("pdp.itemAdded", "Item added to your shopping bag")}
                             </div>
                             <div className={styles.drawerButtons}>
                                 <Link href="/checkout" className={styles.checkoutDrawerBtn}>
-                                    Proceed to Checkout <ArrowRight size={14} />
+                                    {t("pdp.proceedToCheckout", "Proceed to Checkout")} <ArrowRight size={14} />
                                 </Link>
                                 <button className={styles.continueDrawerBtn} onClick={() => setShowCartDrawer(false)}>
-                                    Continue Shopping
+                                    {t("pdp.continueShopping", "Continue Shopping")}
                                 </button>
                             </div>
                         </div>
@@ -723,7 +730,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         {/* 1. Story Behind the Style */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('story')}>
-                                <span>Story Behind the Style</span>
+                                <span>{t("pdp.storyBehindStyle", "Story Behind the Style")}</span>
                                 <span>{openSection === 'story' ? '−' : '+'}</span>
                             </button>
                             {openSection === 'story' && (
@@ -740,7 +747,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         {/* 2. Fabric & Design */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('fabric')}>
-                                <span>Fabric &amp; Design</span>
+                                <span>{t("pdp.fabricDesign", "Fabric & Design")}</span>
                                 <span>{openSection === 'fabric' ? '−' : '+'}</span>
                             </button>
                             {openSection === 'fabric' && (
@@ -767,7 +774,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         {/* 3. Care Details */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('care')}>
-                                <span>Care Details</span>
+                                <span>{t("pdp.careDetails", "Care Details")}</span>
                                 <span>{openSection === 'care' ? '−' : '+'}</span>
                             </button>
                             {openSection === 'care' && (
@@ -791,7 +798,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         {/* 4. Styling Options */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('styling')}>
-                                <span>Styling Options</span>
+                                <span>{t("pdp.stylingOptions", "Styling Options")}</span>
                                 <span>{openSection === 'styling' ? '−' : '+'}</span>
                             </button>
                             {openSection === 'styling' && (
@@ -812,7 +819,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         {/* 5. Lookbook & VR Experience / Passport */}
                         <div className={styles.accordion}>
                             <button className={styles.accordionHeader} onClick={() => toggleSection('lookbook')}>
-                                <span>Lookbook &amp; VR Experience</span>
+                                <span>{t("pdp.lookbookVr", "Lookbook & VR Experience")}</span>
                                 <span>{openSection === 'lookbook' ? '−' : '+'}</span>
                             </button>
                             {openSection === 'lookbook' && (
@@ -852,7 +859,8 @@ export default function ProductDetailClient({ product, variations = [], relatedP
             {/* ── YOU MAY ALSO LIKE — Related Products ─────────────────────── */}
             {relatedProducts.length > 0 && (
                 <section className={styles.relatedSection}>
-                    <h2 className={styles.relatedTitle}>You May Also Like</h2>
+                    <h2 className={styles.relatedTitle}>{t("pdp.youMayAlsoLike", "You May Also Like")}</h2>
+
                     <div className={styles.relatedGrid}>
                         {relatedProducts.slice(0, 5).map((rp) => (
                             <Link key={rp.id} href={`/shop/${rp.slug}`} className={styles.relatedCard}>

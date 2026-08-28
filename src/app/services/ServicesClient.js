@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import styles from "./page.module.css";
 import { SITE_MEDIA } from "@/config/media";
+import { useLanguage } from "@/context/LanguageContext";
 
 const GENERAL_PRICING = [
     { title: "Hair Artistry", price: "from $40" },
@@ -13,10 +14,12 @@ const GENERAL_PRICING = [
 ];
 
 export default function ServicesClient({ page, portfolio, testimonials }) {
+    const { t } = useLanguage();
+
     // Fallback data
     const data = {
-        title: page?.acf?.hero_title || "Artistry Services",
-        subtitle: page?.acf?.hero_subtitle || "Bridal, Editorial, and Bespoke Beauty",
+        title: page?.acf?.hero_title || t("services.heroTitle", "Artistry Services"),
+        subtitle: page?.acf?.hero_subtitle || t("services.heroSubtitle", "Bridal, Editorial, and Bespoke Beauty"),
         heroImage: page?.acf?.hero_image || SITE_MEDIA.services.hero,
         mobileHeroImage: SITE_MEDIA.services.hero_mobile,
         introTitle: page?.acf?.intro_title || "The Ewa Experience",
@@ -62,14 +65,14 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                     </motion.h2>
                     <p className={styles.text} dangerouslySetInnerHTML={{ __html: data.introText }} />
                     <Link href="/services/book" className="btn-primary">
-                        Inquire for Availability
+                        {t("services.inquireAvailability", "Inquire for Availability")}
                     </Link>
                 </div>
 
                 {/* Portfolio Grid */}
                 <section className={styles.portfolioSection}>
                     <div className={styles.sectionHeader}>
-                        <h2>Selected Works</h2>
+                        <h2>{t("services.selectedWorks", "Selected Works")}</h2>
                     </div>
                     <div className={styles.grid}>
                         {data.portfolio.map((item, index) => (
@@ -90,7 +93,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
 
             {/* Love Notes (Testimonials) */}
             <section className={styles.loveNotesSection}>
-                <h2 className={styles.title} style={{ color: 'var(--off-white)' }}>Love Notes</h2>
+                <h2 className={styles.title} style={{ color: 'var(--off-white)' }}>{t("services.loveNotes", "Love Notes")}</h2>
                 <div className={styles.notesGrid}>
                     {data.testimonials.map((note) => (
                         <div key={note.id} className={styles.noteCard}>
@@ -105,7 +108,7 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
                 {/* Simplified Service Menu */}
                 <section className={styles.menuSection}>
                     <div className={styles.sectionHeader}>
-                        <h2>Service Menu</h2>
+                        <h2>{t("services.serviceMenu", "Service Menu")}</h2>
                     </div>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto' }}>
@@ -119,19 +122,19 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
 
                     <div style={{ marginTop: '2rem', textAlign: 'center' }}>
                         <Link href="/services/details" className={styles.detailsBtn}>
-                            View Detailed Pricing
+                            {t("services.viewPricing", "View Detailed Pricing")}
                         </Link>
                     </div>
 
                     <div style={{ marginTop: '4rem', padding: '2rem', background: 'var(--gold)', color: 'var(--obsidian)', borderRadius: '8px', textAlign: 'center' }}>
-                        <p style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Additional Information</p>
-                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>* Home service charge applies on all services depending on location.</p>
-                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', marginTop: '0.2rem' }}>* Available to travel.</p>
+                        <p style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{t("services.additionalInfo", "Additional Information")}</p>
+                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>* {t("services.homeServiceNote", "Home service charge applies on all services depending on location.")}</p>
+                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', marginTop: '0.2rem' }}>* {t("services.travelNote", "Available to travel.")}</p>
                     </div>
 
                     <div style={{ marginTop: '3rem', textAlign: 'center' }}>
                         <Link href="/services/book" className="btn-primary">
-                            Book Now
+                            {t("services.bookNow", "Book Now")}
                         </Link>
                     </div>
                 </section>
@@ -139,3 +142,4 @@ export default function ServicesClient({ page, portfolio, testimonials }) {
         </main>
     );
 }
+

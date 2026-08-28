@@ -4,10 +4,16 @@
     "toggleTo": "Français",
     "currentLang": "EN",
     "back": "Back",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "save": "Save",
+    "cad": "CAD",
+    "close": "Close"
   },
   "announcement": {
-    "text": "FREE SHIPPING over $150 | Proudly Made in Canada"
+    "text": "FREE SHIPPING over $150 | Proudly Made in Canada",
+    "freeShipping": "🚚 FREE SHIPPING on orders over $150 (Canada-wide)",
+    "launchSale": "✨ SITE-WIDE WEBSITE LAUNCH SALE LIVE NOW — LIMITED TIME ONLY",
+    "madeInCanada": "🇨🇦 PROUDLY DESIGNED & HANDCRAFTED IN CANADA"
   },
   "hero": {
     "wura_subtitle": "Modern Indigenous Fashion. <br /> Unisex & Female Collections.",
@@ -50,6 +56,16 @@
     "ourHeritage": "Our Heritage",
     "stylistAi": "Stylist AI ✨"
   },
+  "shop": {
+    "heroTitle": "The Collection",
+    "heroSubtitle": "Heritage Woven Into Modern Silhouettes",
+    "category": "Category",
+    "all": "All",
+    "sale": "SALE",
+    "quickAdd": "Quick Add",
+    "noProducts": "No products found",
+    "unableToLoad": "Unable to load products"
+  },
   "pdp": {
     "backToShop": "Back to Shop",
     "colorFabric": "Color / Fabric",
@@ -62,6 +78,8 @@
     "soldOut": "Sold Out",
     "quickGuide": "Quick Guide",
     "fullSizeGuide": "Full Size Guide ↗",
+    "tapToSeeFabric": "Tap to see fabric ↗",
+    "save": "Save",
     "selectColorSize": "Select a color/fabric and size before adding to bag",
     "proceedToCheckout": "Proceed to Checkout",
     "continueShopping": "Continue Shopping",
@@ -72,6 +90,73 @@
     "careDetails": "Care Details",
     "stylingOptions": "Styling Options",
     "lookbookVr": "Lookbook & VR Experience"
+  },
+  "cart": {
+    "title": "Your Shopping Bag",
+    "empty": "Your bag is currently empty.",
+    "continueShopping": "Continue Shopping",
+    "product": "Product",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "shippingNote": "Free Canada-wide shipping on orders over $150. Taxes & exact delivery calculated at checkout.",
+    "proceedToCheckout": "Proceed to Checkout",
+    "couponCode": "Coupon Code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "bagSummary": "Bag Summary"
+  },
+  "checkout": {
+    "title": "Secure Checkout",
+    "contactInfo": "Contact Information",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "shippingAddress": "Shipping Address",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "address": "Street Address",
+    "apartment": "Apartment, suite, unit (optional)",
+    "city": "City",
+    "province": "Province / State",
+    "postalCode": "Postal / ZIP Code",
+    "country": "Country",
+    "shippingMethod": "Shipping Method",
+    "freeCanadaShipping": "Free Canada-Wide Shipping (Orders $150+)",
+    "standardShipping": "Standard Tracked Delivery ($15.00 CAD)",
+    "expressShipping": "Priority Express Delivery ($25.00 CAD)",
+    "payment": "Payment Method",
+    "paymentDesc": "All transactions are encrypted and processed securely via Square.",
+    "creditCard": "Credit or Debit Card",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Complete Order",
+    "processing": "Processing Order...",
+    "discount": "Discount Applied",
+    "tax": "Estimated Tax",
+    "shipping": "Shipping",
+    "free": "Free",
+    "secureCheckout": "🔒 256-Bit Encrypted Secure Checkout",
+    "successTitle": "Thank You For Your Order!",
+    "successMessage": "We have received your order and sent a confirmation email with tracking details.",
+    "orderNumber": "Order Reference"
+  },
+  "services": {
+    "title": "Luxury Beauty & Artistry Services",
+    "subtitle": "Bridal, Editorial, Hair & Traditional Gele Artistry",
+    "bookService": "Book Service",
+    "bookAppointment": "Book Appointment",
+    "selectService": "Select a Service",
+    "selectDateTime": "Select Date & Time",
+    "clientDetails": "Your Information",
+    "specialRequests": "Special Requests / Notes",
+    "confirmBooking": "Confirm Appointment",
+    "bookingSuccess": "Appointment Confirmed!",
+    "duration": "Duration",
+    "startingAt": "Starting at",
+    "makeup": "Makeup Artistry",
+    "hair": "Luxury Hair Styling",
+    "bridal": "Bridal & Haute Artistry",
+    "gele": "Gele Headwrap Artistry"
   },
   "sizeGuide": {
     "title": "Size Guide",
@@ -84,5 +169,17 @@
     "units": "Units",
     "bodyPart": "Body part / Size",
     "fitType": "Fit Type"
+  },
+  "footer": {
+    "newsletterTitle": "Join The Haven",
+    "newsletterDesc": "Receive private access to new collection releases, heritage stories, and exclusive couture events.",
+    "subscribe": "Subscribe",
+    "emailPlaceholder": "Enter your email address",
+    "allRightsReserved": "All Rights Reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "shipping": "Shipping & Delivery",
+    "accessibility": "Accessibility"
   }
 }
+

@@ -1,29 +1,30 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 import Hero from "@/components/Hero";
 import Link from "next/link";
 import { Trash2, Minus, Plus, ArrowRight } from "lucide-react";
 import styles from "./page.module.css";
 import { SITE_MEDIA } from "@/config/media";
-
 import GiftCardInput from "@/components/GiftCardInput";
 
 export default function CartPage() {
+    const { t } = useLanguage();
     const { cart, removeFromCart, updateQuantity, cartTotal, giftCardDiscount, finalTotal } = useCart();
 
     if (cart.length === 0) {
         return (
             <main>
                 <Hero 
-                    title="Your Bag" 
-                    subtitle="Is currently empty." 
+                    title={t("cart.title", "Your Shopping Bag")} 
+                    subtitle={t("cart.empty", "Your bag is currently empty.")} 
                     imagePath={SITE_MEDIA.cart.hero}
                 />
                 <div className={styles.emptyState}>
-                    <p>Looks like you haven&apos;t discovered our treasures yet.</p>
+                    <p>{t("cart.empty", "Your bag is currently empty.")}</p>
                     <Link href="/shop" className="btn-primary">
-                        Return to Shop
+                        {t("cart.continueShopping", "Continue Shopping")}
                     </Link>
                 </div>
             </main>
@@ -33,8 +34,8 @@ export default function CartPage() {
     return (
         <main>
             <Hero 
-                title="Shopping Bag" 
-                subtitle="Review your selection" 
+                title={t("cart.title", "Shopping Bag")} 
+                subtitle={t("cart.bagSummary", "Review your selection")} 
                 imagePath={SITE_MEDIA.cart.hero}
             />
 
@@ -43,26 +44,26 @@ export default function CartPage() {
                     {/* Cart Items List */}
                     <div className={styles.itemsList}>
                         <div className={styles.headerRow}>
-                            <span>Product</span>
-                            <span>Quantity</span>
-                            <span>Total</span>
+                            <span>{t("cart.product", "Product")}</span>
+                            <span>{t("cart.quantity", "Quantity")}</span>
+                            <span>{t("cart.total", "Total")}</span>
                         </div>
 
                         {cart.map((item) => (
                             <div key={`${item.id}-${item.size}`} className={styles.itemCard}>
                                 <div className={styles.productInfo}>
                                     <div className={styles.imageWrapper}>
-                                        <img src={item.images[0]} alt={item.name} className={styles.image} />
+                                        <img src={item.images?.[0] || '/images/placeholder.jpg'} alt={item.name} className={styles.image} />
                                     </div>
                                     <div className={styles.details}>
                                         <h3>{item.name}</h3>
-                                        <p className={styles.meta}>Size: {item.size}</p>
-                                        <p className={styles.meta}>${item.price}</p>
+                                        <p className={styles.meta}>{t("pdp.size", "Size")}: {item.size}</p>
+                                        <p className={styles.meta}>${Number(item.price).toFixed(2)} CAD</p>
                                         <button
                                             onClick={() => removeFromCart(item.id, item.size)}
                                             className={styles.removeBtn}
                                         >
-                                            <Trash2 size={16} /> Remove
+                                            <Trash2 size={16} /> {t("cart.remove", "Remove")}
                                         </button>
                                     </div>
                                 </div>
@@ -80,7 +81,7 @@ export default function CartPage() {
                                 </div>
 
                                 <div className={styles.totalCol}>
-                                    ${item.price * item.quantity}
+                                    ${(item.price * item.quantity).toFixed(2)} CAD
                                 </div>
                             </div>
                         ))}
@@ -88,24 +89,24 @@ export default function CartPage() {
 
                     {/* Summary / Checkout */}
                     <div className={styles.summary}>
-                        <h2 className={styles.summaryTitle}>Order Summary</h2>
+                        <h2 className={styles.summaryTitle}>{t("checkout.orderSummary", "Order Summary")}</h2>
                         <div className={styles.row}>
-                            <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>{t("cart.subtotal", "Subtotal")}</span>
+                            <span>${cartTotal.toFixed(2)} CAD</span>
                         </div>
                         {giftCardDiscount > 0 && (
                             <div className={styles.row} style={{ color: 'var(--gold, #D4AF37)' }}>
-                                <span>Gift Card Balance</span>
-                                <span>-${giftCardDiscount.toFixed(2)}</span>
+                                <span>{t("checkout.discount", "Gift Card Discount")}</span>
+                                <span>-${giftCardDiscount.toFixed(2)} CAD</span>
                             </div>
                         )}
                         <div className={styles.row}>
-                            <span>Shipping</span>
-                            <span>Calculated at checkout</span>
+                            <span>{t("checkout.shipping", "Shipping")}</span>
+                            <span>{t("cart.shippingNote", "Calculated at checkout")}</span>
                         </div>
                         <div className={`${styles.row} ${styles.totalRow}`}>
-                            <span>Total Due</span>
-                            <span>${finalTotal.toFixed(2)}</span>
+                            <span>{t("cart.total", "Total")}</span>
+                            <span>${finalTotal.toFixed(2)} CAD</span>
                         </div>
 
                         {/* Custom Gift Card Input Component */}
@@ -113,12 +114,12 @@ export default function CartPage() {
 
                         <Link href="/checkout">
                             <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                                Proceed to Checkout <ArrowRight size={16} style={{ display: 'inline', marginLeft: '5px' }} />
+                                {t("cart.proceedToCheckout", "Proceed to Checkout")} <ArrowRight size={16} style={{ display: 'inline', marginLeft: '5px' }} />
                             </button>
                         </Link>
 
                         <p className={styles.note}>
-                            Tax included and shipping calculated at checkout.
+                            {t("cart.shippingNote", "Free Canada-wide shipping on orders over $150. Taxes & exact delivery calculated at checkout.")}
                         </p>
                     </div>
                 </div>
@@ -126,3 +127,4 @@ export default function CartPage() {
         </main>
     );
 }
+

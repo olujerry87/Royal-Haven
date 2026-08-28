@@ -4,10 +4,16 @@
     "toggleTo": "English",
     "currentLang": "FR",
     "back": "Retour",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "save": "Économisez",
+    "cad": "CAD",
+    "close": "Fermer"
   },
   "announcement": {
-    "text": "LIVRAISON GRATUITE dès 150 $ | Fièrement fabriqué au Canada"
+    "text": "LIVRAISON GRATUITE dès 150 $ | Fièrement fabriqué au Canada",
+    "freeShipping": "🚚 LIVRAISON GRATUITE dès 150 $ (Partout au Canada)",
+    "launchSale": "✨ VENTE DE LANCEMENT SUR TOUT LE SITE EN COURS — TEMPS LIMITÉ",
+    "madeInCanada": "🇨🇦 FIÈREMENT CONÇU ET FABRIQUÉ AU CANADA"
   },
   "hero": {
     "wura_subtitle": "Mode Autochtone Contemporaine. <br /> Collections Mixtes et Féminines.",
@@ -50,6 +56,16 @@
     "ourHeritage": "Notre Héritage",
     "stylistAi": "Styliste IA ✨"
   },
+  "shop": {
+    "heroTitle": "La Collection",
+    "heroSubtitle": "L'Héritage Tissé Dans des Silhouettes Modernes",
+    "category": "Catégorie",
+    "all": "Tous",
+    "sale": "SOLDE",
+    "quickAdd": "Ajout Rapide",
+    "noProducts": "Aucun produit trouvé",
+    "unableToLoad": "Impossible de charger les produits"
+  },
   "pdp": {
     "backToShop": "Retour à la boutique",
     "colorFabric": "Couleur / Tissu",
@@ -62,6 +78,8 @@
     "soldOut": "Épuisé",
     "quickGuide": "Guide rapide",
     "fullSizeGuide": "Guide des tailles complet ↗",
+    "tapToSeeFabric": "Appuyez pour voir le tissu ↗",
+    "save": "Économisez",
     "selectColorSize": "Veuillez sélectionner une couleur/tissu et une taille",
     "proceedToCheckout": "Passer à la caisse",
     "continueShopping": "Continuer vos achats",
@@ -72,6 +90,73 @@
     "careDetails": "Conseils d'Entretien",
     "stylingOptions": "Idées de Style",
     "lookbookVr": "Lookbook & Expérience RV"
+  },
+  "cart": {
+    "title": "Votre Sac de Shopping",
+    "empty": "Votre panier est actuellement vide.",
+    "continueShopping": "Continuer vos achats",
+    "product": "Produit",
+    "price": "Prix",
+    "quantity": "Quantité",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "shippingNote": "Livraison gratuite partout au Canada dès 150 $. Taxes et livraison exacte calculées au paiement.",
+    "proceedToCheckout": "Passer la commande",
+    "couponCode": "Code Promo",
+    "apply": "Appliquer",
+    "remove": "Supprimer",
+    "bagSummary": "Récapitulatif du Panier"
+  },
+  "checkout": {
+    "title": "Paiement Sécurisé",
+    "contactInfo": "Informations de Contact",
+    "email": "Adresse Courriel",
+    "phone": "Numéro de Téléphone",
+    "shippingAddress": "Adresse de Livraison",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "address": "Adresse",
+    "apartment": "Appartement, suite, unité (optionnel)",
+    "city": "Ville",
+    "province": "Province / État",
+    "postalCode": "Code Postal",
+    "country": "Pays",
+    "shippingMethod": "Mode de Livraison",
+    "freeCanadaShipping": "Livraison Gratuite au Canada (Commandes 150 $+)",
+    "standardShipping": "Livraison Suivie Standard (15,00 $ CAD)",
+    "expressShipping": "Livraison Express Prioritaire (25,00 $ CAD)",
+    "payment": "Mode de Paiement",
+    "paymentDesc": "Toutes les transactions sont chiffrées et sécurisées via Square.",
+    "creditCard": "Carte de Crédit ou Débit",
+    "orderSummary": "Récapitulatif de Commande",
+    "placeOrder": "Confirmer la Commande",
+    "processing": "Traitement de la commande...",
+    "discount": "Remise Appliquée",
+    "tax": "Taxes Estimées",
+    "shipping": "Livraison",
+    "free": "Gratuit",
+    "secureCheckout": "🔒 Paiement Sécurisé avec Chiffrement SSL 256 bits",
+    "successTitle": "Merci Pour Votre Commande !",
+    "successMessage": "Nous avons bien reçu votre commande et vous avons envoyé un courriel de confirmation avec les détails de suivi.",
+    "orderNumber": "Référence de Commande"
+  },
+  "services": {
+    "title": "Prestations de Beauté et d'Art de Prestige",
+    "subtitle": "Artistry Mariée, Éditorial, Coiffure et Gele Traditionnel",
+    "bookService": "Réserver la Prestation",
+    "bookAppointment": "Prendre Rendez-vous",
+    "selectService": "Choisir une Prestation",
+    "selectDateTime": "Choisir la Date et l'Heure",
+    "clientDetails": "Vos Coordonnées",
+    "specialRequests": "Demandes Particulières / Notes",
+    "confirmBooking": "Confirmer le Rendez-vous",
+    "bookingSuccess": "Rendez-vous Confirmé !",
+    "duration": "Durée",
+    "startingAt": "À partir de",
+    "makeup": "Art du Maquillage",
+    "hair": "Coiffure de Prestige",
+    "bridal": "Mariée & Haute Beauté",
+    "gele": "Art du Gele & Foulard Traditionnel"
   },
   "sizeGuide": {
     "title": "Guide des Tailles",
@@ -84,5 +169,17 @@
     "units": "Unités",
     "bodyPart": "Partie du corps / Taille",
     "fitType": "Type de coupe"
+  },
+  "footer": {
+    "newsletterTitle": "Rejoignez Le Sanctuaire",
+    "newsletterDesc": "Recevez un accès privilégié aux nouvelles collections, aux récits d'héritage et aux événements exclusifs de haute couture.",
+    "subscribe": "S'abonner",
+    "emailPlaceholder": "Entrez votre adresse courriel",
+    "allRightsReserved": "Tous Droits Réservés.",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions Générales",
+    "shipping": "Livraison & Expédition",
+    "accessibility": "Accessibilité"
   }
 }
+
