@@ -167,6 +167,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
     // Gallery & Lightbox states
     const [isZoomOpen, setIsZoomOpen] = useState(false);
+    const [zoomImageSrc, setZoomImageSrc] = useState(null);
 
     // Size Guide Modal States
     const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
@@ -307,6 +308,10 @@ export default function ProductDetailClient({ product, variations = [], relatedP
     }, [variations, selectedSize, selectedColor, selectedFit]);
 
     const displayPrice = activeVariation?.price ?? product.price;
+    const displayRegularPrice = activeVariation?.regular_price ?? product.regular_price;
+    const isOnSale = displayRegularPrice && Number(displayRegularPrice) > Number(displayPrice);
+    const savingsAmount = isOnSale ? (Number(displayRegularPrice) - Number(displayPrice)).toFixed(2) : null;
+
 
     // Changing fit resets size
     const handleFitSelect = (fit) => {
@@ -424,7 +429,10 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                             sizes="(max-width: 899px) 100vw, 55vw"
                             className={styles.mainImage}
                             priority
-                            onClick={() => setIsZoomOpen(true)}
+                            onClick={() => {
+                                setZoomImageSrc(images[activeImage]);
+                                setIsZoomOpen(true);
+                            }}
                         />
                         {images.length > 1 && (
                             <>
@@ -437,9 +445,16 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                 <span className={styles.imageCounter}>{activeImage + 1} / {images.length}</span>
                             </>
                         )}
-                        <button className={styles.zoomBadge} onClick={() => setIsZoomOpen(true)}>
+                        <button 
+                            className={styles.zoomBadge} 
+                            onClick={() => {
+                                setZoomImageSrc(images[activeImage]);
+                                setIsZoomOpen(true);
+                            }}
+                        >
                             <Maximize2 size={13} /> Zoom
                         </button>
+
                     </div>
 
                     {images.length > 1 && (
@@ -462,7 +477,17 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                 {/* ── Right Column: Configuration & Details ──────────────────── */}
                 <div className={styles.details}>
                     <h1 className={styles.title}>{product.name}</h1>
-                    <p className={styles.price}>${displayPrice ? displayPrice.toFixed(2) : '0.00'} CAD</p>
+                    
+                    {/* Price with Sale Strikethrough & Savings Badge */}
+                    {isOnSale ? (
+                        <div className={styles.priceRow}>
+                            <span className={styles.salePrice}>${displayPrice ? displayPrice.toFixed(2) : '0.00'} CAD</span>
+                            <span className={styles.regularPriceStrikethrough}>${displayRegularPrice ? Number(displayRegularPrice).toFixed(2) : '0.00'} CAD</span>
+                            <span className={styles.saleBadge}>Save ${savingsAmount} CAD</span>
+                        </div>
+                    ) : (
+                        <p className={styles.price}>${displayPrice ? displayPrice.toFixed(2) : '0.00'} CAD</p>
+                    )}
 
                     {product.short_description && (
                         <div style={{ width: '100%', overflowX: 'hidden' }}>
@@ -505,7 +530,44 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                 );
                             })}
                         </div>
+
+                        {/* Fabric Inspection Card for Touch / Mobile and Desktop */}
+                        {selectedColor && (
+                            <div 
+                                className={styles.fabricInspectionCard}
+                                onClick={() => {
+                                    const swatchImg = colorImageMap[selectedColor.toLowerCase()];
+                                    if (swatchImg) {
+                                        setZoomImageSrc(swatchImg);
+                                        setIsZoomOpen(true);
+                                    }
+                                }}
+                                title={colorImageMap[selectedColor.toLowerCase()] ? "Tap to inspect fabric texture up-close" : selectedColor}
+                            >
+                                {colorImageMap[selectedColor.toLowerCase()] ? (
+                                    <img 
+                                        src={colorImageMap[selectedColor.toLowerCase()]} 
+                                        alt={selectedColor} 
+                                        className={styles.fabricInspectionThumb} 
+                                    />
+                                ) : (
+                                    <span 
+                                        className={styles.fabricInspectionThumb} 
+                                        style={{ background: getSwatchColor(selectedColor) }} 
+                                    />
+                                )}
+                                <div className={styles.fabricInspectionInfo}>
+                                    <span className={styles.fabricInspectionTitle}>{selectedColor}</span>
+                                    {colorImageMap[selectedColor.toLowerCase()] && (
+                                        <span className={styles.fabricInspectionAction}>
+                                            🔍 Tap to inspect fabric texture
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
+
 
                     {/* ── 2. FIT SELECTION (REGULAR, TALL, PETITE) ──────────────── */}
                     <div className={styles.optionGroup}>
@@ -813,8 +875,9 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         <X size={24} />
                     </button>
                     <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
-                        <img src={images[activeImage]} alt={product.name} className={styles.lightboxImage} />
+                        <img src={zoomImageSrc || images[activeImage]} alt={product.name} className={styles.lightboxImage} />
                     </div>
+
                 </div>
             )}
 
