@@ -18,9 +18,17 @@ export default function ProductCard({ product, productId }) {
 
     const img0 = getImageSrc(product.images?.[0]);
     const img1 = getImageSrc(product.images?.[1]);
-    const price = typeof product.price === "number" ? `$${product.price}` : `$${product.price}`;
+
+    const isSale = Boolean(
+        product.on_sale ||
+        (product.regular_price && Number(product.regular_price) > Number(product.price)) ||
+        (product.sale_price && product.regular_price && Number(product.regular_price) > Number(product.sale_price))
+    );
+    const regularPrice = product.regular_price ? Number(product.regular_price).toFixed(2) : null;
+    const currentPrice = typeof product.price === "number" ? product.price.toFixed(2) : product.price;
 
     return (
+
         <div
             className={styles.card}
             onMouseEnter={() => setIsHovered(true)}
@@ -28,6 +36,9 @@ export default function ProductCard({ product, productId }) {
         >
             <Link href={`/shop/${product.slug}`}>
                 <div className={styles.imageContainer}>
+                    {/* Sale Badge */}
+                    {isSale && <span className={styles.saleBadge}>SALE</span>}
+
                     {/* Primary Image */}
                     <div className={styles.imgWrapper}>
                         <Image
@@ -60,9 +71,17 @@ export default function ProductCard({ product, productId }) {
 
                 <div className={styles.details}>
                     <h3 className={styles.name}>{product.name}</h3>
-                    <p className={styles.price}>{price}</p>
+                    {isSale && regularPrice ? (
+                        <p className={styles.priceRow}>
+                            <span className={styles.salePrice}>${currentPrice} CAD</span>
+                            <span className={styles.regularPrice}>${regularPrice} CAD</span>
+                        </p>
+                    ) : (
+                        <p className={styles.price}>${currentPrice} CAD</p>
+                    )}
                 </div>
             </Link>
         </div>
     );
+
 }

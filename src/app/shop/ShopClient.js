@@ -49,6 +49,13 @@ export default function ShopClient({ products, initialCategory = "All" }) {
                         price: product.price && !isNaN(parseFloat(product.price))
                             ? parseFloat(product.price)
                             : 0,
+                        regular_price: product.regular_price && !isNaN(parseFloat(product.regular_price))
+                            ? parseFloat(product.regular_price)
+                            : null,
+                        sale_price: product.sale_price && !isNaN(parseFloat(product.sale_price))
+                            ? parseFloat(product.sale_price)
+                            : null,
+                        on_sale: Boolean(product.on_sale),
                         images: product.images?.map(img => img.src) || [],
                         slug: product.slug,
                         category: product.categories?.[0]?.name || 'Uncategorized'
@@ -57,6 +64,7 @@ export default function ShopClient({ products, initialCategory = "All" }) {
                     return (
                         <ProductCard key={product.id} product={transformedProduct} />
                     );
+
                 })}
             </section>
         </div>

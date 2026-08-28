@@ -307,10 +307,27 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         });
     }, [variations, selectedSize, selectedColor, selectedFit]);
 
+    // Determine regular price and sale status across variations
+    const currentVariationRegularPrice = useMemo(() => {
+        if (variations.length === 0) return product.regular_price;
+        const color = decodeHtml(selectedColor || '').toLowerCase();
+        const matchingVars = variations.filter(v => {
+            const vColor = decodeHtml(v.attributes.find(a =>
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
+            )?.option || '').toLowerCase();
+            return !color || !vColor || vColor === color;
+        });
+        const targetVars = matchingVars.length > 0 ? matchingVars : variations;
+        const regPrices = targetVars.map(v => parseFloat(v.regular_price)).filter(p => !isNaN(p) && p > 0);
+        return regPrices.length > 0 ? Math.max(...regPrices) : (product.regular_price ? parseFloat(product.regular_price) : null);
+    }, [variations, selectedColor, product.regular_price]);
+
     const displayPrice = activeVariation?.price ?? product.price;
-    const displayRegularPrice = activeVariation?.regular_price ?? product.regular_price;
-    const isOnSale = displayRegularPrice && Number(displayRegularPrice) > Number(displayPrice);
+    const displayRegularPrice = activeVariation?.regular_price 
+        ?? (product.regular_price && Number(product.regular_price) > 0 ? Number(product.regular_price) : currentVariationRegularPrice);
+    const isOnSale = Boolean(displayRegularPrice && Number(displayRegularPrice) > Number(displayPrice));
     const savingsAmount = isOnSale ? (Number(displayRegularPrice) - Number(displayPrice)).toFixed(2) : null;
+
 
 
     // Changing fit resets size
@@ -560,7 +577,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                     <span className={styles.fabricInspectionTitle}>{selectedColor}</span>
                                     {colorImageMap[selectedColor.toLowerCase()] && (
                                         <span className={styles.fabricInspectionAction}>
-                                            🔍 Tap to inspect fabric texture
+                                            Tap to see fabric ↗
                                         </span>
                                     )}
                                 </div>
