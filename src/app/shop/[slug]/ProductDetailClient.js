@@ -27,12 +27,10 @@ function getMeta(meta_data = [], key) {
     return entry?.value || null;
 }
 
-// Fit-based Size Mappings (Standard scales)
-const FIT_SIZES_MAP = {
-    "Regular": ["S", "M", "L", "XL"],
-    "Tall": ["S", "M", "L", "XL"],
-    "Petite": ["S", "M", "L", "XL"]
-};
+// NOTE: Fit options and size lists are derived dynamically from the
+// product's variation records at runtime, NOT from static maps.
+// This ensures only actually-configured combinations are shown.
+
 
 // Default fabric/color options when product doesn't have explicit WooCommerce color attribute
 const DEFAULT_FABRIC_OPTIONS = ["Raw Indigo", "Fringe Denim", "Obsidian Black", "Gold Ochre"];
@@ -70,12 +68,32 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         return DEFAULT_FABRIC_OPTIONS;
     }, [product.attributes]);
 
-    // Selection States
+    // ── Derive Fit Options from actual variation records ────────────────────────
+    // Only shows fits that have at least one linked variation in WooCommerce.
+    const fitOptions = useMemo(() => {
+        if (variations.length === 0) return ["Regular"]; // simple product fallback
+        const fits = new Set();
+        variations.forEach(v => {
+            const fitAttr = v.attributes.find(a => a.name.toLowerCase().includes('fit'));
+            if (fitAttr?.option) fits.add(fitAttr.option);
+        });
+        // If no fit attribute on any variation, default to Regular only
+        return fits.size > 0 ? [...fits] : ["Regular"];
+    }, [variations]);
+
+    // Selection States — selectedFit initialises to the first real fit from variations
     const [selectedColor, setSelectedColor] = useState(colorOptions[0] || null);
-    const [selectedFit, setSelectedFit] = useState("Regular");
+    const [selectedFit, setSelectedFit] = useState(() => {
+        if (variations.length === 0) return "Regular";
+        const firstFit = variations.find(v =>
+            v.attributes.find(a => a.name.toLowerCase().includes('fit'))
+        )?.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option;
+        return firstFit || "Regular";
+    });
     const [selectedSize, setSelectedSize] = useState(null);
     const [sizeError, setSizeError] = useState(false);
     const [quantity, setQuantity] = useState(1);
+
     
     // Gallery & Lightbox states
     const [isZoomOpen, setIsZoomOpen] = useState(false);
@@ -125,55 +143,76 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         touchStartX.current = null;
     };
 
-    // Extract available sizes from design chart or WooCommerce
+    // ── Available Sizes: derived from variation records, filtered by selected color + fit ──
+    // This is the SOURCE OF TRUTH for which size buttons to render.
+    // The PDF size chart is display-only (used inside the modal) — never drives the selectors.
     const availableSizesForFit = useMemo(() => {
-        // First check matched design chart sizes
-        if (matchedDesign?.measurements?.IN?.sizes) {
-            const chartSizes = matchedDesign.measurements.IN.sizes.map(s => {
-                const match = s.match(/\((.*?)\)/);
-                return match ? match[1] : s;
-            });
-            if (chartSizes.length > 0) return chartSizes;
-        }
-
-        const wooSizes = getAttrOptions(product.attributes, 'size');
-        if (wooSizes.length > 0) return wooSizes;
-
-        return FIT_SIZES_MAP[selectedFit] || ["S", "M", "L", "XL"];
-    }, [matchedDesign, product.attributes, selectedFit]);
-
-    // Variation Stock Map
-    const stockMap = useMemo(() => {
         if (variations.length === 0) {
-            // Check if product has individual size attribute stock
+            // Simple product: use WooCommerce size attribute as fallback
             const wooSizes = getAttrOptions(product.attributes, 'size');
-            if (wooSizes.length > 0 && product.stock_status === 'instock') {
-                const map = {};
-                wooSizes.forEach(s => { map[`|${s.toLowerCase()}`] = 'instock'; });
-                return map;
-            }
-            return null;
+            return wooSizes.length > 0 ? wooSizes : ["S", "M", "L", "XL"];
         }
+
+        // Collect every size that appears in a variation matching the current fit & color
+        const sizes = new Set();
+        // Maintain insertion order for canonical size ordering
+        const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "2X", "3X", "One Size"];
+
+        variations.forEach(v => {
+            const vFit = v.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option || '';
+            const vColor = v.attributes.find(a =>
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
+            )?.option || '';
+            const vSize = v.attributes.find(a => a.name.toLowerCase().includes('size'))?.option;
+
+            if (!vSize) return;
+
+            // Fit must match current selection (or variation has no fit attribute)
+            const fitMatch = !vFit || vFit.toLowerCase() === selectedFit.toLowerCase();
+            // Color must match current selection (or no color selected yet, or variation has no color)
+            const colorMatch = !selectedColor || !vColor || vColor.toLowerCase() === selectedColor.toLowerCase();
+
+            if (fitMatch && colorMatch) sizes.add(vSize);
+        });
+
+        if (sizes.size === 0) return [];
+
+        // Sort by canonical size order, unknown sizes appended at end
+        return [...sizes].sort((a, b) => {
+            const ai = SIZE_ORDER.findIndex(s => s.toLowerCase() === a.toLowerCase());
+            const bi = SIZE_ORDER.findIndex(s => s.toLowerCase() === b.toLowerCase());
+            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+        });
+    }, [variations, selectedFit, selectedColor, product.attributes]);
+
+    // ── Variation Stock Map: key = "color|fit|size" ──────────────────────────────
+    // All three dimensions are indexed so isSizeInStock is always precise.
+    const stockMap = useMemo(() => {
+        if (variations.length === 0) return null;
 
         const map = {};
         for (const v of variations) {
-            const vColor = v.attributes.find(a => 
+            const vColor = v.attributes.find(a =>
                 a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
-            )?.option || '';
-            const vSize = v.attributes.find(a => 
+            )?.option?.toLowerCase() || '';
+            const vFit = v.attributes.find(a =>
+                a.name.toLowerCase().includes('fit')
+            )?.option?.toLowerCase() || '';
+            const vSize = v.attributes.find(a =>
                 a.name.toLowerCase().includes('size')
-            )?.option || '';
+            )?.option?.toLowerCase() || '';
 
-            const key = `${vColor.toLowerCase()}|${vSize.toLowerCase()}`;
+            // Store with all three dimensions
+            const key = `${vColor}|${vFit}|${vSize}`;
             map[key] = v.stock_status;
         }
         return map;
-    }, [variations, product.attributes, product.stock_status]);
+    }, [variations]);
 
-    // Check if size is in stock
+    // ── Check if a given size is in stock for the current color + fit selection ──
     const isSizeInStock = useCallback((size) => {
         if (!stockMap) {
-            // Check if product only specified one size in WooCommerce attribute
+            // Simple product fallback: check WooCommerce size attribute list
             const wooSizes = getAttrOptions(product.attributes, 'size');
             if (wooSizes.length > 0) {
                 return wooSizes.map(s => s.toLowerCase()).includes(size.toLowerCase());
@@ -181,47 +220,65 @@ export default function ProductDetailClient({ product, variations = [], relatedP
             return product.stock_status !== 'outofstock';
         }
 
-        const color = selectedColor || '';
-        const specificKey = `${color.toLowerCase()}|${size.toLowerCase()}`;
-        if (specificKey in stockMap) {
-            return stockMap[specificKey] === 'instock';
-        }
+        const color = (selectedColor || '').toLowerCase();
+        const fit   = (selectedFit || '').toLowerCase();
+        const sz    = size.toLowerCase();
 
-        const anyColorKey = `|${size.toLowerCase()}`;
-        if (anyColorKey in stockMap) {
-            return stockMap[anyColorKey] === 'instock';
-        }
+        // 1. Exact three-part match
+        const exactKey = `${color}|${fit}|${sz}`;
+        if (exactKey in stockMap) return stockMap[exactKey] === 'instock';
 
-        // Check across all color combinations
-        return Object.keys(stockMap).some(k => k.endsWith(`|${size.toLowerCase()}`) && stockMap[k] === 'instock');
-    }, [stockMap, selectedColor, product.attributes, product.stock_status]);
+        // 2. Fit + size match across any color (when color hasn't been selected yet)
+        const fitSizeMatch = Object.keys(stockMap).some(k => {
+            const parts = k.split('|');
+            return parts[1] === fit && parts[2] === sz && stockMap[k] === 'instock';
+        });
+        if (fitSizeMatch) return true;
 
-    // Active variation price calculation
+        // 3. Size match across any fit + color (absolute fallback)
+        return Object.keys(stockMap).some(k => {
+            const parts = k.split('|');
+            return parts[2] === sz && stockMap[k] === 'instock';
+        });
+    }, [stockMap, selectedColor, selectedFit, product.attributes, product.stock_status]);
+
+
+    // Active variation price calculation — matches on color + fit + size
     const activeVariation = useMemo(() => {
         if (variations.length === 0 || !selectedSize) return null;
-        const color = selectedColor || '';
+        const color = (selectedColor || '').toLowerCase();
+        const fit   = (selectedFit || '').toLowerCase();
+        const sz    = selectedSize.toLowerCase();
+
         return variations.find(v => {
-            const vColor = v.attributes.find(a => 
+            const vColor = v.attributes.find(a =>
                 a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
-            )?.option || '';
-            const vSize = v.attributes.find(a => 
+            )?.option?.toLowerCase() || '';
+            const vFit = v.attributes.find(a =>
+                a.name.toLowerCase().includes('fit')
+            )?.option?.toLowerCase() || '';
+            const vSize = v.attributes.find(a =>
                 a.name.toLowerCase().includes('size')
-            )?.option || '';
-            return vColor.toLowerCase() === color.toLowerCase() && vSize.toLowerCase() === selectedSize.toLowerCase();
+            )?.option?.toLowerCase() || '';
+
+            const colorOk = !vColor || vColor === color;
+            const fitOk   = !vFit   || vFit   === fit;
+            return colorOk && fitOk && vSize === sz;
         });
-    }, [variations, selectedSize, selectedColor]);
+    }, [variations, selectedSize, selectedColor, selectedFit]);
 
     const displayPrice = activeVariation?.price ?? product.price;
 
+    // Changing fit resets size (selected size may not exist in new fit)
     const handleFitSelect = (fit) => {
         setSelectedFit(fit);
+        setSelectedSize(null);
     };
 
+    // Changing color resets size (selected size may not be in stock for new color)
     const handleColorSelect = (color) => {
         setSelectedColor(color);
-        if (selectedSize && !isSizeInStock(selectedSize)) {
-            setSelectedSize(null);
-        }
+        setSelectedSize(null);
     };
 
     const handleSizeSelect = (size) => {
@@ -229,6 +286,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         setSelectedSize(size);
         setSizeError(false);
     };
+
 
     const handleAddToCart = () => {
         if (!selectedSize) {
@@ -378,17 +436,19 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>Fit</label>
                         <div className={styles.fitRow}>
-                            {["Regular", "Tall", "Petite"].map((fit) => (
+                            {fitOptions.map((fit) => (
                                 <button
                                     key={fit}
                                     className={`${styles.fitPill} ${selectedFit === fit ? styles.selectedFitPill : ''}`}
                                     onClick={() => handleFitSelect(fit)}
+                                    aria-label={`Fit: ${fit}`}
                                 >
                                     {fit}
                                 </button>
                             ))}
                         </div>
                     </div>
+
 
                     {/* ── 3. SIZE SELECTION & SIZE GUIDE LINKS ───────────────────── */}
                     <div className={styles.optionGroup}>
