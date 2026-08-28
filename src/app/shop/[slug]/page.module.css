@@ -372,7 +372,7 @@
     transition: all 0.2s ease;
 }
 
-.fitPill:hover {
+.fitPill:hover:not(:disabled) {
     border-color: var(--obsidian, #0B0B0B);
 }
 
@@ -382,6 +382,22 @@
     border-color: #1E293B;
     box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
 }
+
+.disabledFitPill {
+    position: relative;
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    text-decoration: line-through;
+}
+
+.disabledFitPill:hover {
+    border-color: #e5e7eb;
+    transform: none;
+}
+
 
 /* ── Size Header & Interactive Size Guide Link ───────────────────────────── */
 .sizeHeaderContainer {

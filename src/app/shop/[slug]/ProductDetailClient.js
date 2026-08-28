@@ -32,6 +32,19 @@ function getMeta(meta_data = [], key) {
 // This ensures only actually-configured combinations are shown.
 
 
+function decodeHtml(html) {
+    if (!html || typeof html !== 'string') return '';
+    return html
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&#038;/g, '&')
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+}
+
 // Default fabric/color options when product doesn't have explicit WooCommerce color attribute
 const DEFAULT_FABRIC_OPTIONS = ["Raw Indigo", "Fringe Denim", "Obsidian Black", "Gold Ochre"];
 
@@ -53,48 +66,105 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         return getDesignForProduct(product.name, product.slug);
     }, [product.name, product.slug]);
 
-    // ── Extract Color / Fabric Options ─────────────────────────────────────────
+    // ── Extract Color / Fabric Options (decoded) ──────────────────────────────
     const colorOptions = useMemo(() => {
+        let rawOptions = [];
         const fromColor = getAttrOptions(product.attributes, 'color');
-        if (fromColor.length > 0) return fromColor;
-        const fromFabric = getAttrOptions(product.attributes, 'fabric');
-        if (fromFabric.length > 0) return fromFabric;
-        const fromMaterial = getAttrOptions(product.attributes, 'material');
-        if (fromMaterial.length > 0) return fromMaterial;
-        const fromPattern = getAttrOptions(product.attributes, 'pattern');
-        if (fromPattern.length > 0) return fromPattern;
+        if (fromColor.length > 0) rawOptions = fromColor;
+        else {
+            const fromFabric = getAttrOptions(product.attributes, 'fabric');
+            if (fromFabric.length > 0) rawOptions = fromFabric;
+            else {
+                const fromMaterial = getAttrOptions(product.attributes, 'material');
+                if (fromMaterial.length > 0) rawOptions = fromMaterial;
+                else {
+                    const fromPattern = getAttrOptions(product.attributes, 'pattern');
+                    if (fromPattern.length > 0) rawOptions = fromPattern;
+                }
+            }
+        }
 
-        // Fallback default fabric swatches so Color/Fabric is ALWAYS available
-        return DEFAULT_FABRIC_OPTIONS;
-    }, [product.attributes]);
+        // Also check if any variation attributes contain colors/fabrics not in parent
+        if (variations.length > 0) {
+            variations.forEach(v => {
+                const opt = v.attributes.find(a => 
+                    a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
+                )?.option;
+                if (opt && !rawOptions.some(r => decodeHtml(r).toLowerCase() === decodeHtml(opt).toLowerCase())) {
+                    rawOptions.push(opt);
+                }
+            });
+        }
 
-    // ── Derive Fit Options from actual variation records ────────────────────────
-    // Only shows fits that have at least one linked variation in WooCommerce.
-    const fitOptions = useMemo(() => {
-        if (variations.length === 0) return ["Regular"]; // simple product fallback
-        const fits = new Set();
-        variations.forEach(v => {
-            const fitAttr = v.attributes.find(a => a.name.toLowerCase().includes('fit'));
-            if (fitAttr?.option) fits.add(fitAttr.option);
-        });
-        // If no fit attribute on any variation, default to Regular only
-        return fits.size > 0 ? [...fits] : ["Regular"];
+        if (rawOptions.length === 0) rawOptions = DEFAULT_FABRIC_OPTIONS;
+        return rawOptions.map(opt => decodeHtml(opt));
+    }, [product.attributes, variations]);
+
+    // Map each color/fabric to its variation thumbnail image from WordPress (if uploaded)
+    const colorImageMap = useMemo(() => {
+        const map = {};
+        for (const v of variations) {
+            const vColor = decodeHtml(v.attributes.find(a => 
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
+            )?.option || '').toLowerCase();
+            if (vColor && v.image && !map[vColor]) {
+                map[vColor] = v.image;
+            }
+        }
+        return map;
     }, [variations]);
 
-    // Selection States — selectedFit initialises to the first real fit from variations
+    // ── Fit Options: show all standard fits (Regular, Tall, Petite) or custom fits ──
+    const fitOptions = useMemo(() => {
+        const standardFits = ["Regular", "Tall", "Petite"];
+        const customFits = getAttrOptions(product.attributes, 'fit').map(f => decodeHtml(f));
+        if (customFits.length > 0) {
+            const merged = new Set([...standardFits, ...customFits]);
+            return [...merged];
+        }
+        return standardFits;
+    }, [product.attributes]);
+
+    // ── All Sizes defined on the product or variations in canonical order ───────
+    const allSizes = useMemo(() => {
+        const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "2X", "3X", "One Size"];
+        const sizesSet = new Set();
+
+        // 1. From WooCommerce size attribute
+        const wooSizes = getAttrOptions(product.attributes, 'size').map(s => decodeHtml(s));
+        wooSizes.forEach(s => sizesSet.add(s));
+
+        // 2. From all variation records
+        variations.forEach(v => {
+            const s = v.attributes.find(a => a.name.toLowerCase().includes('size'))?.option;
+            if (s) sizesSet.add(decodeHtml(s));
+        });
+
+        // 3. Fallback standard sizes if none found
+        if (sizesSet.size === 0) {
+            ["S", "M", "L", "XL"].forEach(s => sizesSet.add(s));
+        }
+
+        return [...sizesSet].sort((a, b) => {
+            const ai = SIZE_ORDER.findIndex(s => s.toLowerCase() === a.toLowerCase());
+            const bi = SIZE_ORDER.findIndex(s => s.toLowerCase() === b.toLowerCase());
+            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+        });
+    }, [product.attributes, variations]);
+
+    // Selection States — selectedFit initialises to first available fit for initial color
     const [selectedColor, setSelectedColor] = useState(colorOptions[0] || null);
     const [selectedFit, setSelectedFit] = useState(() => {
         if (variations.length === 0) return "Regular";
         const firstFit = variations.find(v =>
             v.attributes.find(a => a.name.toLowerCase().includes('fit'))
         )?.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option;
-        return firstFit || "Regular";
+        return decodeHtml(firstFit) || "Regular";
     });
     const [selectedSize, setSelectedSize] = useState(null);
     const [sizeError, setSizeError] = useState(false);
     const [quantity, setQuantity] = useState(1);
 
-    
     // Gallery & Lightbox states
     const [isZoomOpen, setIsZoomOpen] = useState(false);
 
@@ -143,123 +213,92 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         touchStartX.current = null;
     };
 
-    // ── Available Sizes: derived from variation records, filtered by selected color + fit ──
-    // This is the SOURCE OF TRUTH for which size buttons to render.
-    // The PDF size chart is display-only (used inside the modal) — never drives the selectors.
-    const availableSizesForFit = useMemo(() => {
-        if (variations.length === 0) {
-            // Simple product: use WooCommerce size attribute as fallback
-            const wooSizes = getAttrOptions(product.attributes, 'size');
-            return wooSizes.length > 0 ? wooSizes : ["S", "M", "L", "XL"];
-        }
-
-        // Collect every size that appears in a variation matching the current fit & color
-        const sizes = new Set();
-        // Maintain insertion order for canonical size ordering
-        const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "2X", "3X", "One Size"];
-
-        variations.forEach(v => {
-            const vFit = v.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option || '';
-            const vColor = v.attributes.find(a =>
-                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
-            )?.option || '';
-            const vSize = v.attributes.find(a => a.name.toLowerCase().includes('size'))?.option;
-
-            if (!vSize) return;
-
-            // Fit must match current selection (or variation has no fit attribute)
-            const fitMatch = !vFit || vFit.toLowerCase() === selectedFit.toLowerCase();
-            // Color must match current selection (or no color selected yet, or variation has no color)
-            const colorMatch = !selectedColor || !vColor || vColor.toLowerCase() === selectedColor.toLowerCase();
-
-            if (fitMatch && colorMatch) sizes.add(vSize);
-        });
-
-        if (sizes.size === 0) return [];
-
-        // Sort by canonical size order, unknown sizes appended at end
-        return [...sizes].sort((a, b) => {
-            const ai = SIZE_ORDER.findIndex(s => s.toLowerCase() === a.toLowerCase());
-            const bi = SIZE_ORDER.findIndex(s => s.toLowerCase() === b.toLowerCase());
-            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-        });
-    }, [variations, selectedFit, selectedColor, product.attributes]);
-
-    // ── Variation Stock Map: key = "color|fit|size" ──────────────────────────────
-    // All three dimensions are indexed so isSizeInStock is always precise.
-    const stockMap = useMemo(() => {
-        if (variations.length === 0) return null;
-
-        const map = {};
-        for (const v of variations) {
-            const vColor = v.attributes.find(a =>
+    // ── Check if a color has any in-stock variation ───────────────────────────
+    const isColorAvailable = useCallback((color) => {
+        if (variations.length === 0) return product.stock_status !== 'outofstock';
+        const c = decodeHtml(color).toLowerCase();
+        return variations.some(v => {
+            const vColor = decodeHtml(v.attributes.find(a =>
                 a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
-            )?.option?.toLowerCase() || '';
-            const vFit = v.attributes.find(a =>
-                a.name.toLowerCase().includes('fit')
-            )?.option?.toLowerCase() || '';
-            const vSize = v.attributes.find(a =>
-                a.name.toLowerCase().includes('size')
-            )?.option?.toLowerCase() || '';
+            )?.option || '').toLowerCase();
+            return (!vColor || vColor === c) && v.stock_status === 'instock';
+        });
+    }, [variations, product.stock_status]);
 
-            // Store with all three dimensions
-            const key = `${vColor}|${vFit}|${vSize}`;
-            map[key] = v.stock_status;
-        }
-        return map;
-    }, [variations]);
+    // ── Check if a fit has at least 1 in-stock variation for the selected color ──
+    const isFitAvailable = useCallback((fit) => {
+        if (variations.length === 0) return fit === "Regular"; // simple product
+        const selColor = decodeHtml(selectedColor || '').toLowerCase();
+        const f = decodeHtml(fit).toLowerCase();
+
+        return variations.some(v => {
+            const vColor = decodeHtml(v.attributes.find(a => 
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
+            )?.option || '').toLowerCase();
+            const vFit = decodeHtml(v.attributes.find(a => 
+                a.name.toLowerCase().includes('fit')
+            )?.option || '').toLowerCase();
+
+            const colorMatches = !selColor || !vColor || vColor === selColor;
+            const fitMatches = !vFit || vFit === f;
+            const inStock = v.stock_status === 'instock';
+
+            return colorMatches && fitMatches && inStock;
+        });
+    }, [variations, selectedColor]);
 
     // ── Check if a given size is in stock for the current color + fit selection ──
     const isSizeInStock = useCallback((size) => {
-        if (!stockMap) {
+        if (variations.length === 0) {
             // Simple product fallback: check WooCommerce size attribute list
-            const wooSizes = getAttrOptions(product.attributes, 'size');
+            const wooSizes = getAttrOptions(product.attributes, 'size').map(s => decodeHtml(s).toLowerCase());
             if (wooSizes.length > 0) {
-                return wooSizes.map(s => s.toLowerCase()).includes(size.toLowerCase());
+                return wooSizes.includes(decodeHtml(size).toLowerCase()) && product.stock_status !== 'outofstock';
             }
             return product.stock_status !== 'outofstock';
         }
 
-        const color = (selectedColor || '').toLowerCase();
-        const fit   = (selectedFit || '').toLowerCase();
-        const sz    = size.toLowerCase();
+        const color = decodeHtml(selectedColor || '').toLowerCase();
+        const fit   = decodeHtml(selectedFit || '').toLowerCase();
+        const sz    = decodeHtml(size).toLowerCase();
 
-        // 1. Exact three-part match
-        const exactKey = `${color}|${fit}|${sz}`;
-        if (exactKey in stockMap) return stockMap[exactKey] === 'instock';
+        return variations.some(v => {
+            const vColor = decodeHtml(v.attributes.find(a =>
+                a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric') || a.name.toLowerCase().includes('material')
+            )?.option || '').toLowerCase();
+            const vFit = decodeHtml(v.attributes.find(a =>
+                a.name.toLowerCase().includes('fit')
+            )?.option || '').toLowerCase();
+            const vSize = decodeHtml(v.attributes.find(a =>
+                a.name.toLowerCase().includes('size')
+            )?.option || '').toLowerCase();
 
-        // 2. Fit + size match across any color (when color hasn't been selected yet)
-        const fitSizeMatch = Object.keys(stockMap).some(k => {
-            const parts = k.split('|');
-            return parts[1] === fit && parts[2] === sz && stockMap[k] === 'instock';
+            const colorMatches = !vColor || !color || vColor === color;
+            const fitMatches = !vFit || !fit || vFit === fit;
+            const sizeMatches = vSize === sz;
+            const inStock = v.stock_status === 'instock';
+
+            return colorMatches && fitMatches && sizeMatches && inStock;
         });
-        if (fitSizeMatch) return true;
-
-        // 3. Size match across any fit + color (absolute fallback)
-        return Object.keys(stockMap).some(k => {
-            const parts = k.split('|');
-            return parts[2] === sz && stockMap[k] === 'instock';
-        });
-    }, [stockMap, selectedColor, selectedFit, product.attributes, product.stock_status]);
-
+    }, [variations, selectedColor, selectedFit, product.attributes, product.stock_status]);
 
     // Active variation price calculation — matches on color + fit + size
     const activeVariation = useMemo(() => {
         if (variations.length === 0 || !selectedSize) return null;
-        const color = (selectedColor || '').toLowerCase();
-        const fit   = (selectedFit || '').toLowerCase();
-        const sz    = selectedSize.toLowerCase();
+        const color = decodeHtml(selectedColor || '').toLowerCase();
+        const fit   = decodeHtml(selectedFit || '').toLowerCase();
+        const sz    = decodeHtml(selectedSize).toLowerCase();
 
         return variations.find(v => {
-            const vColor = v.attributes.find(a =>
+            const vColor = decodeHtml(v.attributes.find(a =>
                 a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric')
-            )?.option?.toLowerCase() || '';
-            const vFit = v.attributes.find(a =>
+            )?.option || '').toLowerCase();
+            const vFit = decodeHtml(v.attributes.find(a =>
                 a.name.toLowerCase().includes('fit')
-            )?.option?.toLowerCase() || '';
-            const vSize = v.attributes.find(a =>
+            )?.option || '').toLowerCase();
+            const vSize = decodeHtml(v.attributes.find(a =>
                 a.name.toLowerCase().includes('size')
-            )?.option?.toLowerCase() || '';
+            )?.option || '').toLowerCase();
 
             const colorOk = !vColor || vColor === color;
             const fitOk   = !vFit   || vFit   === fit;
@@ -269,16 +308,39 @@ export default function ProductDetailClient({ product, variations = [], relatedP
 
     const displayPrice = activeVariation?.price ?? product.price;
 
-    // Changing fit resets size (selected size may not exist in new fit)
+    // Changing fit resets size
     const handleFitSelect = (fit) => {
         setSelectedFit(fit);
         setSelectedSize(null);
     };
 
-    // Changing color resets size (selected size may not be in stock for new color)
+    // Changing color resets size, and auto-switches to an available fit if current fit is unavailable
     const handleColorSelect = (color) => {
-        setSelectedColor(color);
+        const decodedColor = decodeHtml(color);
+        setSelectedColor(decodedColor);
         setSelectedSize(null);
+
+        // Check if selected fit is available for this new color
+        const cLower = decodedColor.toLowerCase();
+        const fLower = decodeHtml(selectedFit).toLowerCase();
+        const currentFitStillValid = variations.length === 0 || variations.some(v => {
+            const vColor = decodeHtml(v.attributes.find(a => a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric'))?.option || '').toLowerCase();
+            const vFit = decodeHtml(v.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option || '').toLowerCase();
+            return (!vColor || vColor === cLower) && (!vFit || vFit === fLower) && v.stock_status === 'instock';
+        });
+
+        if (!currentFitStillValid) {
+            // Pick first fit that has stock for this color
+            const firstValidFit = fitOptions.find(fit => {
+                const fitLower = decodeHtml(fit).toLowerCase();
+                return variations.some(v => {
+                    const vColor = decodeHtml(v.attributes.find(a => a.name.toLowerCase().includes('color') || a.name.toLowerCase().includes('fabric'))?.option || '').toLowerCase();
+                    const vFit = decodeHtml(v.attributes.find(a => a.name.toLowerCase().includes('fit'))?.option || '').toLowerCase();
+                    return (!vColor || vColor === cLower) && (!vFit || vFit === fitLower) && v.stock_status === 'instock';
+                });
+            });
+            if (firstValidFit) setSelectedFit(firstValidFit);
+        }
     };
 
     const handleSizeSelect = (size) => {
@@ -286,6 +348,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         setSelectedSize(size);
         setSizeError(false);
     };
+
 
 
     const handleAddToCart = () => {
@@ -417,15 +480,27 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         <div className={styles.colorSwatchRow}>
                             {colorOptions.map((color) => {
                                 const isSelected = selectedColor === color;
+                                const isAvailable = isColorAvailable(color);
+                                const swatchImg = colorImageMap[color.toLowerCase()];
                                 return (
                                     <button
                                         key={color}
-                                        className={`${styles.colorSwatch} ${isSelected ? styles.selectedColorSwatch : ''}`}
+                                        className={`${styles.colorSwatch} ${isSelected ? styles.selectedColorSwatch : ''} ${!isAvailable ? styles.outOfStockSwatch : ''}`}
                                         onClick={() => handleColorSelect(color)}
                                         title={color}
-                                        aria-label={color}
+                                        aria-label={`${color}${!isAvailable ? ' (Out of Stock)' : ''}`}
                                     >
-                                        <span className={styles.swatchInner} style={{ background: getSwatchColor(color) }} />
+                                        <span 
+                                            className={styles.swatchInner} 
+                                            style={swatchImg ? {
+                                                backgroundImage: `url(${swatchImg})`,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            } : {
+                                                background: getSwatchColor(color),
+                                            }} 
+                                        />
+                                        {!isAvailable && <span className={styles.swatchStrikethrough} />}
                                     </button>
                                 );
                             })}
@@ -436,19 +511,23 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                     <div className={styles.optionGroup}>
                         <label className={styles.label}>Fit</label>
                         <div className={styles.fitRow}>
-                            {fitOptions.map((fit) => (
-                                <button
-                                    key={fit}
-                                    className={`${styles.fitPill} ${selectedFit === fit ? styles.selectedFitPill : ''}`}
-                                    onClick={() => handleFitSelect(fit)}
-                                    aria-label={`Fit: ${fit}`}
-                                >
-                                    {fit}
-                                </button>
-                            ))}
+                            {fitOptions.map((fit) => {
+                                const isAvailable = isFitAvailable(fit);
+                                const isSelected = selectedFit === fit;
+                                return (
+                                    <button
+                                        key={fit}
+                                        className={`${styles.fitPill} ${isSelected ? styles.selectedFitPill : ''} ${!isAvailable ? styles.disabledFitPill : ''}`}
+                                        onClick={() => isAvailable && handleFitSelect(fit)}
+                                        disabled={!isAvailable}
+                                        aria-label={`Fit: ${fit}${!isAvailable ? ' (Unavailable for selected color)' : ''}`}
+                                    >
+                                        {fit}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
-
 
                     {/* ── 3. SIZE SELECTION & SIZE GUIDE LINKS ───────────────────── */}
                     <div className={styles.optionGroup}>
@@ -479,16 +558,16 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                         </div>
 
                         <div className={styles.sizes}>
-                            {availableSizesForFit.map((size) => {
+                            {allSizes.map((size) => {
                                 const inStock = isSizeInStock(size);
                                 const isSelected = selectedSize === size;
                                 return (
                                     <button
                                         key={size}
                                         className={`${styles.sizeCircle} ${isSelected ? styles.selectedSizeCircle : ''} ${!inStock ? styles.outOfStockSize : ''}`}
-                                        onClick={() => handleSizeSelect(size)}
+                                        onClick={() => inStock && handleSizeSelect(size)}
                                         disabled={!inStock}
-                                        aria-label={`${size}${!inStock ? ' (Out of Stock)' : ''}`}
+                                        aria-label={`${size}${!inStock ? ' (Unavailable for selected color/fit)' : ''}`}
                                     >
                                         {size}
                                         {!inStock && <span className={styles.sizeStrikethrough} />}
@@ -503,6 +582,7 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                             </div>
                         )}
                     </div>
+
 
                     {/* ── 4. Quantity Selector ──────────────────────────────────── */}
                     <div className={styles.optionGroup}>
@@ -908,10 +988,29 @@ export default function ProductDetailClient({ product, variations = [], relatedP
     );
 }
 
-// ── Helper: Convert color name to CSS color for swatch display ─────────────
+// ── Helper: Convert color / fabric name to CSS color or pattern for swatch display ──
 function getSwatchColor(name) {
-    const n = name.toLowerCase().trim();
+    if (!name) return '#0B0B0B';
+    const n = decodeHtml(name).toLowerCase().trim();
+    
+    // Explicit Fabric and Color Mapping
     const colorMap = {
+        // Royal Haven Signature African Fabrics & Collections
+        'olive & gold abstract adire': 'linear-gradient(135deg, #6b7a2c 0%, #D4AF37 100%)',
+        'carnival fiesta patchwork ankara': 'conic-gradient(from 45deg, #7c3aed, #ec4899, #f97316, #eab308, #7c3aed)',
+        'autumn earth branch ankara': 'linear-gradient(135deg, #8B4513 0%, #d2b48c 50%, #C5A059 100%)',
+        'chocolate blossom': 'linear-gradient(135deg, #3E2723 0%, #D7CCC8 50%, #8D6E63 100%)',
+        'tangerine mod circles': 'radial-gradient(circle, #f97316 40%, #ffffff 45%, #f97316 55%, #1e3a5f 70%)',
+        'regal mosaic artistry': 'conic-gradient(#D4AF37, #1e3a5f, #7c3aed, #800020, #D4AF37)',
+        'tropical noir leaves': 'linear-gradient(135deg, #0B0B0B 0%, #16a34a 50%, #0B0B0B 100%)',
+        'heritage crimson': '#800020',
+        'adire': 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #ffffff 100%)',
+        'ankara': 'conic-gradient(from 0deg, #f97316, #eab308, #16a34a, #dc2626, #f97316)',
+        'aso oke': 'linear-gradient(90deg, #D4AF37 0%, #800020 30%, #1e3a5f 70%, #D4AF37 100%)',
+        'kente': 'linear-gradient(45deg, #eab308 25%, #16a34a 25%, #16a34a 50%, #dc2626 50%, #dc2626 75%, #0B0B0B 75%)',
+        'batik': 'radial-gradient(ellipse at center, #1e3a5f 0%, #6b7280 60%, #0B0B0B 100%)',
+
+        // Solids and Tones
         'black': '#0B0B0B', 'obsidian black': '#0B0B0B', 'white': '#ffffff', 'red': '#DC2626',
         'burgundy': '#800020', 'navy': '#1e3a5f', 'blue': '#2563eb', 'green': '#16a34a',
         'olive': '#6b7a2c', 'brown': '#8B4513', 'tan': '#d2b48c', 'beige': '#f5f5dc',
@@ -923,5 +1022,15 @@ function getSwatchColor(name) {
         'woven denim': '#34495E', 'plaid': 'repeating-conic-gradient(#8B4513 0% 25%, #d2b48c 0% 50%) 50% / 12px 12px',
         'leopard': '#c4a35a', 'floral': '#ec4899', 'stripe': 'repeating-linear-gradient(90deg, #0B0B0B 0px, #0B0B0B 3px, #fff 3px, #fff 6px)',
     };
-    return colorMap[n] || `hsl(${n.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 50%, 40%)`;
+
+    if (colorMap[n]) return colorMap[n];
+
+    // Substring matcher for compound names (e.g., "Tangerine Silk", "Dark Indigo Denim", "Olive Ankara")
+    for (const [key, value] of Object.entries(colorMap)) {
+        if (n.includes(key)) return value;
+    }
+
+    // Deterministic Fallback Hash
+    return `hsl(${n.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 50%, 40%)`;
 }
+
