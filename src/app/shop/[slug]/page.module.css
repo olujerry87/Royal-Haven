@@ -611,6 +611,28 @@
     75% { transform: translateX(4px); }
 }
 
+.customTailoringCta {
+    margin-top: 0.9rem;
+}
+
+.customTailoringLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--gold, #D4AF37);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    letter-spacing: 0.2px;
+}
+
+.customTailoringLink:hover {
+    opacity: 0.75;
+}
+
 .quantityControl {
     display: flex;
     align-items: center;

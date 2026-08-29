@@ -271,7 +271,9 @@ export default function Checkout() {
                     email: formData.email.trim(),
                     phone: formData.phone.trim()
                 },
-                couponCode: appliedCoupon ? appliedCoupon.code : formData.couponCode,
+                // NOTE: Discount is already factored into finalTotal (client-side CartContext).
+                // Do NOT send coupon_lines to WooCommerce — the coupon code doesn't exist there.
+                couponCode: null,
                 appliedGiftCard: appliedGiftCard,
                 shipping: {
                     first_name: formData.firstName.trim(),

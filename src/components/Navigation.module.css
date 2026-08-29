@@ -94,7 +94,24 @@
     border: none;
     color: inherit;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
 }
+
+/* Mobile: hide calendar icon to save space, keep cart + hamburger */
+@media (max-width: 767px) {
+    .actions {
+        gap: 0.5rem;
+    }
+
+    .mobileHiddenIcon {
+        display: none;
+    }
+}
+
 
 .mobileMenu {
     position: fixed;

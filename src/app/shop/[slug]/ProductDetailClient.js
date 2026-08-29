@@ -671,7 +671,20 @@ export default function ProductDetailClient({ product, variations = [], relatedP
                                 <XCircle size={15} /> {t("pdp.selectColorSize", "Select a color/fabric and size before adding to bag")}
                             </div>
                         )}
-                    </div>
+
+                        {/* ── Custom Tailoring CTA ──────────────────────────────── */}
+                        <div className={styles.customTailoringCta}>
+                            <a
+                                href="https://royalhaven.bezaleelgroup.ca/services/book"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.customTailoringLink}
+                                aria-label="Contact us for custom tailoring"
+                            >
+                                ✂️ {t("pdp.customTailoring", "Can't find your desired size? Contact us for custom tailoring")}
+                            </a>
+                        </div>
+                        </div>
 
 
                     {/* ── 4. Quantity Selector ──────────────────────────────────── */}

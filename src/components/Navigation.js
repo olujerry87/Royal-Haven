@@ -120,7 +120,7 @@ export default function Navigation({ wuraCategories = [] }) {
                         <LanguageToggle variant="mobile-header" />
                     </div>
 
-                    <Link href="/services/book" className={styles.iconBtn} aria-label={t("nav.bookAppointment", "Book Appointment")}>
+                    <Link href="/services/book" className={`${styles.iconBtn} ${styles.mobileHiddenIcon}`} aria-label={t("nav.bookAppointment", "Book Appointment")}>
                         <Calendar size={20} />
                     </Link>
                     <Link href="/cart" className={styles.iconBtn} aria-label={`View Cart, ${cartCount} items`} style={{ position: 'relative' }}>
