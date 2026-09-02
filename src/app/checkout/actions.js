@@ -45,10 +45,85 @@ export async function verifyFirstOrderEligibility(email) {
 }
 
 /**
+ * Server-side Square Payment Capture
+ *
+ * Calls Square Payments REST API /v2/payments with autocomplete: true.
+ * This is the ACTUAL charge/capture step. The nonce from cardInstance.tokenize()
+ * on the frontend is only a single-use authorization token — without this call,
+ * the payment sits as an uncaptured hold in the Square Dashboard.
+ *
+ * @param {string} sourceId       - The payment nonce from Square Web Payments SDK
+ * @param {number} amountCents    - Total charge amount in cents (e.g. 9999 = $99.99 CAD)
+ * @param {string} currency       - ISO currency code, default "CAD"
+ * @param {string} buyerEmail     - Buyer email for Square receipt
+ * @returns {object}              - Square Payment object { id, status, ... }
+ */
+async function chargeSquare(sourceId, amountCents, currency = "CAD", buyerEmail = null) {
+    const accessToken = process.env.SQUARE_ACCESS_TOKEN;
+    const squareEnv   = (process.env.SQUARE_ENVIRONMENT || "production").trim().toLowerCase();
+
+    if (!accessToken) {
+        throw new Error(
+            "SQUARE_ACCESS_TOKEN is not set in environment variables. " +
+            "Add it in Vercel → Project → Settings → Environment Variables."
+        );
+    }
+
+    const baseUrl = squareEnv === "sandbox"
+        ? "https://connect.squareupsandbox.com"
+        : "https://connect.squareup.com";
+
+    // Idempotency key: unique per request to prevent duplicate charges on retry
+    const idempotencyKey = `royal-haven-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    const body = {
+        source_id: sourceId,
+        idempotency_key: idempotencyKey,
+        amount_money: {
+            amount: Math.round(amountCents), // must be integer cents
+            currency: currency.toUpperCase(),
+        },
+        autocomplete: true, // true = immediate capture; false = authorize-only hold
+        note: "Royal Haven — Online Store Order",
+    };
+
+    if (buyerEmail) {
+        body.buyer_email_address = buyerEmail;
+    }
+
+    const response = await fetch(`${baseUrl}/v2/payments`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Square-Version": "2024-02-22",
+            "Authorization": `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || (data.errors && data.errors.length > 0)) {
+        const squareError = data.errors?.[0];
+        const detail = squareError?.detail || squareError?.code || "Square payment charge failed";
+        console.error("[chargeSquare] Square API error:", data.errors);
+        throw new Error(detail);
+    }
+
+    if (!data.payment || data.payment.status !== "COMPLETED") {
+        throw new Error(
+            `Square payment did not complete. Status: ${data.payment?.status || "unknown"}`
+        );
+    }
+
+    return data.payment; // { id, status: "COMPLETED", receipt_url, ... }
+}
+
+/**
  * Server Action to place an order securely.
  * STRICT: Requires a valid Square credit card paymentToken (sourceId).
  */
-export async function placeOrder(cart, customerData, paymentToken = null) {
+export async function placeOrder(cart, customerData, paymentToken = null, chargeAmountCents = 0) {
     try {
         // ── Guard: validate env vars first ────────────────────────────────
         const WP_URL    = process.env.NEXT_PUBLIC_WORDPRESS_URL;
@@ -83,29 +158,44 @@ export async function placeOrder(cart, customerData, paymentToken = null) {
         // ── Format data for WooCommerce ───────────────────────────────────
         const orderData = formatOrderData(cart, customerData);
 
-        // Attach Square Payment Token & Force Status to 'processing'
-        // Setting status: "processing" + set_paid: true triggers automated WooCommerce customer receipt emails!
+        // ── STEP 1: Charge the card via Square Payments REST API ─────────
+        // cardInstance.tokenize() on the frontend returns a ONE-TIME nonce (pre-auth only).
+        // We MUST call /v2/payments server-side with autocomplete: true to actually
+        // capture/charge the card. Without this, Square shows an uncaptured hold.
+        let squarePayment;
+        try {
+            squarePayment = await chargeSquare(
+                paymentToken,
+                chargeAmountCents,
+                "CAD",
+                customerData.billing?.email || null
+            );
+            console.log("[placeOrder] Square charge COMPLETED:", squarePayment.id, squarePayment.status);
+        } catch (squareErr) {
+            console.error("[placeOrder] Square charge failed:", squareErr.message);
+            return {
+                success: false,
+                error: `Payment declined: ${squareErr.message}. Your card was not charged.`,
+            };
+        }
+
+        // ── STEP 2: Create WooCommerce order with real Square payment ID ──
+        // Setting status: "processing" + set_paid: true triggers WC receipt emails.
         orderData.payment_method = "square";
-        orderData.payment_method_title = "Credit Card (Square Web Payments SDK)";
-        orderData.transaction_id = paymentToken;
+        orderData.payment_method_title = "Credit Card (Square)";
+        orderData.transaction_id = squarePayment.id; // Real Square Payment ID, not the nonce
         orderData.set_paid = true;
         orderData.status = "processing";
 
         if (!orderData.meta_data) orderData.meta_data = [];
-        orderData.meta_data.push({
-            key: "_square_payment_token",
-            value: paymentToken
-        });
-        orderData.meta_data.push({
-            key: "Square Payment Token",
-            value: paymentToken
-        });
-        orderData.meta_data.push({
-            key: "Square Authorization Status",
-            value: "Authorized & Tokenized via Square Web Payments SDK"
-        });
+        orderData.meta_data.push({ key: "_square_payment_id",     value: squarePayment.id });
+        orderData.meta_data.push({ key: "_square_payment_status", value: squarePayment.status });
+        orderData.meta_data.push({ key: "Square Payment Status",  value: "COMPLETED — Captured via Square REST API" });
+        if (squarePayment.receipt_url) {
+            orderData.meta_data.push({ key: "Square Receipt URL", value: squarePayment.receipt_url });
+        }
 
-        // ── Create order via WooCommerce REST API ─────────────────────────
+        // ── STEP 3: Create order via WooCommerce REST API ─────────────────
         const order = await createOrder(orderData);
 
         if (!order || !order.id) {

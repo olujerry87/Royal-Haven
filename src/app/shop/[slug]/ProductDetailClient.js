@@ -395,8 +395,20 @@ export default function ProductDetailClient({ product, variations = [], relatedP
         }
 
         const sizeFormatted = `${selectedSize} (${selectedFit})`;
+
+        // Pass variation_id so WooCommerce can decrement the specific variation's stock.
+        // activeVariation is null for simple products — variation_id defaults to 0 in that case,
+        // which is the correct WC behaviour for non-variable products.
+        const variationId = activeVariation?.id ?? 0;
+        const variationAttributes = activeVariation?.attributes ?? [];
+
         addToCart(
-            { ...product, price: displayPrice },
+            {
+                ...product,
+                price: displayPrice,
+                variation_id: variationId,
+                variation_attributes: variationAttributes,
+            },
             sizeFormatted,
             quantity,
             selectedColor,

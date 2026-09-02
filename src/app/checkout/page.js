@@ -294,10 +294,17 @@ export default function Checkout() {
                 },
             };
 
-            const result = await placeOrder(cart, customerData, paymentToken);
+            const result = await placeOrder(
+                cart,
+                customerData,
+                paymentToken,
+                // chargeAmountCents: total the customer pays in cents (integer).
+                // finalTotal already has first-order discount applied; add shipping.
+                Math.round((finalTotal + shippingCost) * 100)
+            );
 
             if (result.success) {
-                console.log("Order created & authorized successfully:", result.orderId);
+                console.log("Square charge + WC order completed. Order ID:", result.orderId);
                 clearCart();
                 router.push(`/checkout/success?orderId=${result.orderId}`);
             } else {

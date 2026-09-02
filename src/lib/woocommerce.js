@@ -254,6 +254,12 @@ export function formatOrderData(cartItems, customerData) {
 
         return {
             product_id: item.id || 110,
+            // variation_id > 0 tells WooCommerce which specific variation was ordered.
+            // Without this, WC records variation_id: 0 (parent fallback) and never
+            // decrements the variation's stock, causing overselling.
+            ...(item.variation_id && item.variation_id > 0
+                ? { variation_id: item.variation_id }
+                : {}),
             quantity: item.quantity,
             meta_data: meta,
         };

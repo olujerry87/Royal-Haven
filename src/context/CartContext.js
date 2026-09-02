@@ -55,6 +55,8 @@ export function CartProvider({ children }) {
         const selectedSize = size || product.size || "Default";
         const selectedColor = color || product.color || null;
         const selectedFit = fit || product.fit || null;
+        // Preserve variation_id if present (passed from ProductDetailClient)
+        const variationId = product.variation_id ?? 0;
         
         setCart((prevCart) => {
             if (!size && product.recipient_email) {
@@ -62,7 +64,9 @@ export function CartProvider({ children }) {
             }
 
             const existingItemIndex = prevCart.findIndex(
-                (item) => item.id === product.id && 
+                (item) => item.id === product.id &&
+                          // Distinct variations of the same parent are separate cart lines
+                          (item.variation_id ?? 0) === variationId &&
                           item.size === selectedSize &&
                           (selectedColor ? item.color === selectedColor : true) &&
                           (selectedFit ? item.fit === selectedFit : true)
@@ -78,6 +82,7 @@ export function CartProvider({ children }) {
                     size: selectedSize, 
                     color: selectedColor,
                     fit: selectedFit,
+                    variation_id: variationId,
                     quantity: addedQty 
                 }];
             }
