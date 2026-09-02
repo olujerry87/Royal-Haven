@@ -271,9 +271,11 @@ export default function Checkout() {
                     email: formData.email.trim(),
                     phone: formData.phone.trim()
                 },
-                // NOTE: Discount is already factored into finalTotal (client-side CartContext).
-                // Do NOT send coupon_lines to WooCommerce — the coupon code doesn't exist there.
-                couponCode: null,
+                // NOTE: Discount is applied client-side in CartContext (10% of subtotal).
+                // The discounted finalTotal is what Square charges the customer.
+                // We pass discountAmount so WooCommerce records it as a negative fee_line in admin.
+                discountAmount: firstOrderDiscount > 0 ? firstOrderDiscount : 0,
+                discountLabel: appliedCoupon ? `First Order Discount (${appliedCoupon.discountPercent}% Off)` : null,
                 appliedGiftCard: appliedGiftCard,
                 shipping: {
                     first_name: formData.firstName.trim(),

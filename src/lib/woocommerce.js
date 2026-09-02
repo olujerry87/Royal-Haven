@@ -284,18 +284,29 @@ export function formatOrderData(cartItems, customerData) {
     };
 
     const coupons = [];
-    if (customerData.couponCode) {
-        coupons.push({ code: customerData.couponCode });
+    const feeLines = [];
+
+    // First-order 10% discount — recorded as a negative fee so WC admin shows the correct total.
+    // No real coupon code is needed in WooCommerce; the discount is validated server-side via
+    // verifyFirstOrderEligibility() before payment and applied client-side for Square charge.
+    if (customerData.discountAmount && customerData.discountAmount > 0) {
+        feeLines.push({
+            name: customerData.discountLabel || "First Order Discount (10%)",
+            total: `-${parseFloat(customerData.discountAmount).toFixed(2)}`,
+            tax_status: "none",
+        });
     }
+
     if (customerData.appliedGiftCard) {
-        coupons.push({ code: customerData.appliedGiftCard.code });
-        order.fee_lines = [
-            {
-                name: `Gift Card Discount (${customerData.appliedGiftCard.code})`,
-                total: `-${customerData.appliedGiftCard.balance.toFixed(2)}`,
-                tax_status: "none"
-            }
-        ];
+        feeLines.push({
+            name: `Gift Card Discount (${customerData.appliedGiftCard.code})`,
+            total: `-${customerData.appliedGiftCard.balance.toFixed(2)}`,
+            tax_status: "none",
+        });
+    }
+
+    if (feeLines.length > 0) {
+        order.fee_lines = feeLines;
     }
 
     if (coupons.length > 0) {
