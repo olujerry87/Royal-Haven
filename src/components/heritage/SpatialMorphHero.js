@@ -1,231 +1,227 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef, useCallback } from "react";
-import Link from "next/link";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import styles from "./SpatialMorphHero.module.css";
-import { getHeritageMorphData, DEFAULT_HERITAGE_MICRO_CARDS } from "@/lib/heritageSupabase";
+import { useEffect, useRef, useState } from 'react';
 
-export default function SpatialMorphHero({ initialConfig, initialCards }) {
-    const trackRef = useRef(null);
-    const stickyBoxRef = useRef(null);
-    const middleDividerRef = useRef(null);
-    const leftColumnRef = useRef(null);
-    const rightColumnRef = useRef(null);
-    const slotTargetRef = useRef(null);
-    const heroVideoCardRef = useRef(null);
-    const videoHeroOverlayRef = useRef(null);
-    const videoRef = useRef(null);
-    const scrollIndicatorRef = useRef(null);
+export default function SpatialMorphHero({
+  heading = "Two Worlds. One Vision.",
+  subheading = "Where indigenous luxury fashion converges with modern bridal and couture artistry.",
+  videoSrc = "https://bezaleelgroup.ca/wp-content/uploads/2026/02/wura-ewa-hero-loop.mp4",
+  cards = [
+    { title: "Wura Fashion" },
+    { title: "Ewa Artistry" },
+    { title: "Heritage Studio" },
+    { title: "Bespoke Tailoring" }
+  ]
+}) {
+  const containerRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-    const [config, setConfig] = useState(initialConfig || null);
-    const [cards, setCards] = useState(initialCards || DEFAULT_HERITAGE_MICRO_CARDS);
-
-    // Load Supabase configuration & rich cards
-    useEffect(() => {
-        let isMounted = true;
-        async function loadData() {
-            if (!config || cards.length < 8) {
-                const { config: remoteConfig, cards: remoteCards } = await getHeritageMorphData();
-                if (isMounted) {
-                    setConfig(remoteConfig);
-                    if (remoteCards && remoteCards.length >= 8) {
-                        setCards(remoteCards);
-                    }
-                }
-            }
-        }
-        loadData();
-        return () => { isMounted = false; };
-    }, [config, cards]);
-
-    // ── ISOLATED SCROLL SCALE SPATIAL MORPH ENGINE (ZERO LOOSE JS TOP CALCULATIONS) ──
-    const updateScrollState = useCallback(() => {
-        if (!trackRef.current || !stickyBoxRef.current || !heroVideoCardRef.current) return;
-
-        const trackRect = trackRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
-        const totalScrollableDistance = trackRect.height - windowHeight;
-
-        if (totalScrollableDistance <= 0) return;
-
-        // Normalized scroll progress float clamped strictly between 0.0 and 1.0
-        const currentScroll = -trackRect.top;
-        const P = Math.max(0, Math.min(1, currentScroll / totalScrollableDistance));
-
-        // ── Phase 1: Fullscreen Hero Overlay Title & CTA Fade Out (P: 0.0 -> 0.18) 
-        if (videoHeroOverlayRef.current) {
-            const overlayOpacity = Math.max(0, 1 - (P / 0.18));
-            videoHeroOverlayRef.current.style.opacity = overlayOpacity.toString();
-            videoHeroOverlayRef.current.style.transform = `translateY(${P * -50}px)`;
-            videoHeroOverlayRef.current.style.pointerEvents = overlayOpacity > 0.3 ? "auto" : "none";
-        }
-
-        // ── Phase 2: ISOLATED BOUNDING DIMENSIONS MORPH (P: 0.0 -> 0.65) ───────────
-        const morphT = Math.max(0, Math.min(1, P / 0.65));
-
-        if (slotTargetRef.current && heroVideoCardRef.current && stickyBoxRef.current) {
-            const slotRect = slotTargetRef.current.getBoundingClientRect();
-            const stickyRect = stickyBoxRef.current.getBoundingClientRect();
-
-            // Target dimensions & relative coordinates inside stickyBox
-            const targetLeft = slotRect.left - stickyRect.left;
-            const targetTop = slotRect.top - stickyRect.top;
-            const targetWidth = slotRect.width;
-            const targetHeight = slotRect.height;
-
-            // Start dimensions at P=0 (Fullscreen)
-            const startLeft = 0;
-            const startTop = 0;
-            const startWidth = windowWidth;
-            const startHeight = windowHeight;
-
-            // Drive shrinking transition solely by updating wrapper container's absolute bounding dimensions
-            const currentWidth = startWidth + (targetWidth - startWidth) * morphT;
-            const currentHeight = startHeight + (targetHeight - startHeight) * morphT;
-            const currentLeft = startLeft + (targetLeft - startLeft) * morphT;
-            const currentTop = startTop + (targetTop - startTop) * morphT;
-
-            const currentRadius = morphT * 24; // 0px -> 24px
-            const shadowAlpha = morphT * 0.18;
-
-            heroVideoCardRef.current.style.width = `${currentWidth}px`;
-            heroVideoCardRef.current.style.height = `${currentHeight}px`;
-            heroVideoCardRef.current.style.left = `${currentLeft}px`;
-            heroVideoCardRef.current.style.top = `${currentTop}px`;
-            heroVideoCardRef.current.style.borderRadius = `${currentRadius}px`;
-            heroVideoCardRef.current.style.boxShadow = morphT > 0.1
-                ? `0 ${morphT * 16}px ${morphT * 32}px rgba(0, 0, 0, ${shadowAlpha}), 0 0 0 1px rgba(0, 0, 0, 0.08)`
-                : "none";
-        }
-
-        // ── Scroll Indicator Fade Out ─────────────────────────────────────────────
-        if (scrollIndicatorRef.current) {
-            const indicatorOpacity = Math.max(0, 1 - (P / 0.18));
-            scrollIndicatorRef.current.style.opacity = indicatorOpacity.toString();
-        }
-    }, []);
-
-    useEffect(() => {
-        let animationFrameId;
-
-        function handleScroll() {
-            animationFrameId = requestAnimationFrame(updateScrollState);
-        }
-
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("resize", handleScroll, { passive: true });
-        updateScrollState();
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleScroll);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        };
-    }, [updateScrollState]);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.play().catch(() => {});
-        }
-    }, [config?.video_url]);
-
-    const currentConfig = config || {
-        hero_title: "Our Heritage",
-        hero_subtitle: "The Convergence of Indigenous Fashion & Modern Artistry",
-        badge_text: "ROYAL HAVEN — EST. 2017",
-        video_url: "https://bezaleelgroup.ca/wp-content/uploads/2026/02/wura-ewa-hero-loop.mp4",
-        cta_text: "Explore Living Heritage",
-        cta_link: "#duality"
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const totalScrollableDistance = rect.height - window.innerHeight;
+      
+      // Compute normalized progress factor strictly clamped between 0.0 and 1.0
+      const progress = Math.max(0, Math.min(1, -rect.top / totalScrollableDistance));
+      setScrollProgress(progress);
     };
 
-    const activeCards = (cards && cards.length >= 6) ? cards : DEFAULT_HERITAGE_MICRO_CARDS;
-    const leftCards = activeCards.slice(0, 3);
-    const rightCards = activeCards.slice(3, 6);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    return (
-        <div ref={trackRef} className={styles.trackContainer}>
-            <div ref={stickyBoxRef} className={styles.stickyBox}>
-                
-                {/* ── ISOLATED CONTENT FRAMING MATRIX (grid grid-cols-1 md:grid-cols-3 max-w-6xl) ── */}
-                <div className={styles.matrixContainer}>
+  // MATRICES MAP (All animations derive directly from a single math model)
+  // Phase 1: Video drops from full screen to layout card (Progress 0.0 -> 0.5)
+  const isPastShrinkStart = scrollProgress > 0.45;
+  const currentVideoScale = Math.max(1, 1.5 - (scrollProgress * 2 * 0.5));
+  const currentVideoWidth = isPastShrinkStart ? '100%' : `${100 - (scrollProgress * 2 * 30)}vw`;
+  const currentVideoHeight = isPastShrinkStart ? '100%' : `${100 - (scrollProgress * 2 * 40)}vh`;
+  const currentBorderRadius = `${Math.min(16, scrollProgress * 36)}px`;
 
-                    {/* Column 1: Left Micro Photo Cards & Details */}
-                    <div ref={leftColumnRef} className={styles.leftColumn}>
-                        {leftCards.map((card, i) => (
-                            <div key={card.id || `left-${i}`} className={styles.photoTile}>
-                                <img src={card.image_url} alt="" className={styles.tileImg} />
-                            </div>
-                        ))}
-                    </div>
+  // Phase 2: Surrounding assets fade and glide upward smoothly (Progress 0.3 -> 0.7)
+  const subElementsOpacity = Math.max(0, Math.min(1, (scrollProgress - 0.3) * 2.5));
+  const subElementsTranslateY = Math.max(0, 40 - (scrollProgress - 0.3) * 100);
 
-                    {/* Column 2: Center Hero Target Container (Locked to h-[50vh] max-h-[50vh]) */}
-                    <div className={styles.centerColumn}>
-                        {/* Middle Narrative Copy */}
-                        <div ref={middleDividerRef} className={styles.middleDivider}>
-                            <span className={styles.badge}>{currentConfig.badge_text || "ROYAL HAVEN ARCHIVES — EST. 2017"}</span>
-                            <h1 className={styles.heading}>Two Worlds. One Vision.</h1>
-                            <p className={styles.subheading}>
-                                Merging the tactile elegance of indigenous fashion with the ethereal beauty of modern artistry.
-                            </p>
-                        </div>
+  return (
+    <div 
+      ref={containerRef} 
+      className="relative h-[300vh] bg-black select-none"
+      style={{
+        position: 'relative',
+        height: '300vh',
+        backgroundColor: '#000000',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+      }}
+    >
+      {/* Sticky box prevents layout jumping while internal pieces morph */}
+      <div 
+        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-[85px]"
+        style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          width: '100%',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: '85px',
+          boxSizing: 'border-box',
+        }}
+      >
+        
+        {/* Core Layout Framework */}
+        <div 
+          className="relative w-full max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 items-center z-10"
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: '72rem',
+            margin: '0 auto',
+            paddingLeft: '1.5rem',
+            paddingRight: '1.5rem',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '2rem',
+            alignItems: 'center',
+            zIndex: 10,
+            boxSizing: 'border-box',
+          }}
+        >
+          
+          {/* Left Narrative Frame */}
+          <div 
+            style={{ 
+              opacity: subElementsOpacity, 
+              transform: `translateY(${subElementsTranslateY}px)`,
+              transition: 'all 75ms ease-out',
+              willChange: 'transform, opacity',
+              color: '#ffffff',
+            }}
+            className="text-white hidden md:block transition-all duration-75 ease-out will-change-transform"
+          >
+            <h2 
+              className="text-4xl font-extrabold tracking-tight mb-4"
+              style={{
+                fontSize: 'clamp(1.75rem, 3vw, 2.25rem)',
+                fontWeight: 800,
+                letterSpacing: '-0.025em',
+                marginBottom: '1rem',
+                fontFamily: 'var(--font-heritage, serif)',
+                color: '#ffffff',
+                lineHeight: 1.2,
+              }}
+            >
+              {heading}
+            </h2>
+            <p 
+              className="text-zinc-400 text-lg leading-relaxed"
+              style={{
+                color: '#a1a1aa',
+                fontSize: '1.05rem',
+                lineHeight: 1.6,
+                fontFamily: 'var(--font-body, sans-serif)',
+              }}
+            >
+              {subheading}
+            </p>
+          </div>
 
-                        {/* HERO CENTER TARGET SLOT (Fullscale Video Morphs Down to Settle Cleanly Here!) */}
-                        <div ref={slotTargetRef} className={styles.heroSlotTarget} />
-                    </div>
-
-                    {/* Column 3: Right Micro Photo Cards */}
-                    <div ref={rightColumnRef} className={styles.rightColumn}>
-                        {rightCards.map((card, i) => (
-                            <div key={card.id || `right-${i}`} className={styles.photoTile}>
-                                <img src={card.image_url} alt="" className={styles.tileImg} />
-                            </div>
-                        ))}
-                    </div>
-
-                </div>
-
-                {/* ── GPU ISOLATED MORPHING HERO VIDEO MODULE (Rule 1: Absolute boundaries) ── */}
-                <div ref={heroVideoCardRef} className={styles.morphHeroVideoCard}>
-                    {/* Video target node reset: w-full h-full object-cover pointer-events-none */}
-                    <video
-                        ref={videoRef}
-                        className={styles.heroVideoMedia}
-                        src={currentConfig.video_url}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        poster={currentConfig.poster_image}
-                    />
-                    
-                    <div ref={videoHeroOverlayRef} className={styles.videoHeroOverlay}>
-                        <span className={styles.badge} style={{ color: "#FAF9F6", borderColor: "rgba(255,255,255,0.4)" }}>
-                            {currentConfig.badge_text || "ROYAL HAVEN — EST. 2017"}
-                        </span>
-                        <h1 className={styles.heroTitle}>{currentConfig.hero_title || "Our Heritage"}</h1>
-                        <p className={styles.heroSubtitle}>
-                            {currentConfig.hero_subtitle || "The Convergence of Fashion & Artistry"}
-                        </p>
-
-                        <a 
-                            href={currentConfig.cta_link || "#duality"} 
-                            className={styles.heroCtaBtn}
-                        >
-                            {currentConfig.cta_text || "Explore Living Heritage"} <ArrowDown size={14} />
-                        </a>
-                    </div>
-                </div>
-
-                {/* Scroll Indicator */}
-                <div ref={scrollIndicatorRef} className={styles.scrollIndicator}>
-                    <span>Scroll To Morph Canvas</span>
-                    <ChevronDown size={15} />
-                    <div className={styles.scrollLine} />
-                </div>
-
+          {/* Center Column: Target Shrinking Video Wrapper Container */}
+          <div 
+            className="relative h-[50vh] w-full flex items-center justify-center"
+            style={{
+              position: 'relative',
+              height: '50vh',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div 
+              style={{
+                transform: `scale(${currentVideoScale})`,
+                width: currentVideoWidth,
+                height: currentVideoHeight,
+                borderRadius: currentBorderRadius,
+                overflow: 'hidden',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+                transition: 'all 75ms ease-out',
+                willChange: 'transform, width, height, border-radius',
+                backgroundColor: '#09090b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              className="overflow-hidden shadow-2xl transition-all duration-75 ease-out will-change-[transform,width,height,border-radius] bg-zinc-950 flex items-center justify-center"
+            >
+              <video
+                src={videoSrc}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover pointer-events-none"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  pointerEvents: 'none',
+                }}
+              />
             </div>
+          </div>
+
+          {/* Right Column: Surrounding Grid Cards */}
+          <div 
+            style={{ 
+              opacity: subElementsOpacity, 
+              transform: `translateY(${subElementsTranslateY}px)`,
+              transition: 'all 75ms ease-out',
+              willChange: 'transform, opacity',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '1rem',
+              color: '#ffffff',
+            }}
+            className="grid grid-cols-2 gap-4 text-white transition-all duration-75 ease-out will-change-transform"
+          >
+            {cards.map((card, idx) => (
+              <div 
+                key={idx}
+                className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 aspect-square flex flex-col justify-end"
+                style={{
+                  backgroundColor: '#18181b',
+                  padding: '1rem',
+                  borderRadius: '0.75rem',
+                  border: '1px solid #27272a',
+                  aspectRatio: '1 / 1',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <span 
+                  className="font-semibold text-sm tracking-wide"
+                  style={{
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    letterSpacing: '0.025em',
+                    color: '#FAF9F6',
+                    fontFamily: 'var(--font-body, sans-serif)',
+                  }}
+                >
+                  {card.title}
+                </span>
+              </div>
+            ))}
+          </div>
+
         </div>
-    );
+      </div>
+    </div>
+  );
 }
