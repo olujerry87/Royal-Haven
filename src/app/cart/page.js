@@ -102,7 +102,7 @@ export default function CartPage() {
                         )}
                         <div className={styles.row}>
                             <span>{t("checkout.shipping", "Shipping")}</span>
-                            <span>{t("cart.shippingNote", "Calculated at checkout")}</span>
+                            <span>{t("cart.calculatedAtCheckout", "Calculated at checkout")}</span>
                         </div>
                         <div className={`${styles.row} ${styles.totalRow}`}>
                             <span>{t("cart.total", "Total")}</span>

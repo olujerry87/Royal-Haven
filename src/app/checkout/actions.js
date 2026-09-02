@@ -59,13 +59,16 @@ export async function verifyFirstOrderEligibility(email) {
  * @returns {object}              - Square Payment object { id, status, ... }
  */
 async function chargeSquare(sourceId, amountCents, currency = "CAD", buyerEmail = null) {
-    const accessToken = process.env.SQUARE_ACCESS_TOKEN;
-    const squareEnv   = (process.env.SQUARE_ENVIRONMENT || "production").trim().toLowerCase();
+    const accessToken = (process.env.SQUARE_ACCESS_TOKEN || process.env.SQUARE_TOKEN || process.env.SQUARE_API_KEY || "").trim();
+    const squareEnv   = (process.env.SQUARE_ENVIRONMENT || process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || "production").trim().toLowerCase();
 
     if (!accessToken) {
+        console.error(
+            "[placeOrder] SQUARE_ACCESS_TOKEN missing in Vercel environment variables. " +
+            "Please copy your Production Access Token from https://developer.squareup.com/apps and add it as SQUARE_ACCESS_TOKEN in Vercel Settings -> Environment Variables."
+        );
         throw new Error(
-            "SQUARE_ACCESS_TOKEN is not set in environment variables. " +
-            "Add it in Vercel → Project → Settings → Environment Variables."
+            "Payment system configuration update in progress. Please ensure SQUARE_ACCESS_TOKEN is configured in Vercel, or contact royalhaven@bezaleelgroup.ca."
         );
     }
 

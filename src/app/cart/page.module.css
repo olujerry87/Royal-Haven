@@ -178,3 +178,43 @@
         align-items: center;
     }
 }
+
+@media (max-width: 767px) {
+    .container {
+        padding: var(--page-top-offset, 116px) 1rem 3rem;
+    }
+
+    .grid {
+        gap: 2rem;
+    }
+
+    .summary {
+        padding: 1.25rem 1rem;
+        margin-top: 1rem;
+    }
+
+    .summaryTitle {
+        font-size: 1.4rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .row {
+        font-size: 0.95rem;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .productInfo {
+        gap: 1rem;
+    }
+
+    .imageWrapper {
+        width: 80px;
+        height: 100px;
+        flex-shrink: 0;
+    }
+
+    .details h3 {
+        font-size: 1.05rem;
+    }
+}

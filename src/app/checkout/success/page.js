@@ -1,44 +1,84 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle } from "lucide-react";
+import { Sparkles, CheckCircle2, ShoppingBag, Calendar, Mail } from "lucide-react";
 import styles from "./page.module.css";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
 
 function SuccessContent() {
     const searchParams = useSearchParams();
+    const { t } = useLanguage();
     const [orderId, setOrderId] = useState("");
+    const [buyerName, setBuyerName] = useState("");
 
     useEffect(() => {
-        // Get order ID from URL params (passed from checkout)
         const orderIdParam = searchParams.get("orderId");
+        const nameParam = searchParams.get("name") || searchParams.get("firstName");
+
         if (orderIdParam) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setOrderId(`#${orderIdParam}`);
         } else {
-            // Fallback if no order ID in URL
             setOrderId(`#RH-${Math.floor(1000 + Math.random() * 9000)}`);
         }
+
+        if (nameParam && nameParam.trim()) {
+            setBuyerName(nameParam.trim());
+        }
     }, [searchParams]);
+
+    const greeting = buyerName 
+        ? t("success.titlePersonalized", `Thank You, ${buyerName}! 👑✨`).replace("{name}", buyerName)
+        : t("success.title", "Thank You! 👑✨");
 
     return (
         <div className={styles.card}>
             <div className={styles.iconWrapper}>
-                <CheckCircle size={64} color="var(--gold)" />
+                <div className={styles.iconHalo}>
+                    <CheckCircle2 size={48} color="var(--gold, #D4AF37)" />
+                </div>
             </div>
-            <h1 className={styles.title}>Thank you!</h1>
-            <p className={styles.subtitle}>Your order is confirmed.</p>
+
+            <span className={styles.badge}>Order Confirmed 🥂</span>
+            <h1 className={styles.title}>{greeting}</h1>
+            <p className={styles.subtitle}>
+                {t("success.subtitle", "Your royal handcrafted order is officially confirmed.")}
+            </p>
+
+            <div className={styles.orderPill}>
+                <span className={styles.orderLabel}>{t("success.orderReference", "Order Reference")}</span>
+                <strong className={styles.orderNumber}>{orderId}</strong>
+            </div>
 
             <div className={styles.details}>
-                <p>Order Reference: <strong>{orderId}</strong></p>
-                <p>We&apos;ve sent a receipt to your email.</p>
-                <p className={styles.note}>You can view this order in your WordPress admin: WooCommerce → Orders</p>
+                <div className={styles.detailRow}>
+                    <Mail size={18} color="var(--gold, #D4AF37)" className={styles.detailIcon} />
+                    <p>{t("success.receiptNotice", "A detailed receipt and order confirmation have been sent to your email.")}</p>
+                </div>
+                <div className={styles.detailRow}>
+                    <Sparkles size={18} color="var(--gold, #D4AF37)" className={styles.detailIcon} />
+                    <p>{t("success.careMessage", "Each piece is intentionally designed and handcrafted with royal care. We are preparing your order now.")}</p>
+                </div>
             </div>
 
-            <Link href="/shop" className="btn-primary" style={{ display: 'inline-block', marginTop: '2rem' }}>
-                Continue Shopping
-            </Link>
+            <div className={styles.conciergeNote}>
+                <p>
+                    {t("success.supportNotice", "Questions about tailoring or delivery? Reach our concierge anytime at")}{" "}
+                    <a href="mailto:royalhaven@bezaleelgroup.ca" className={styles.conciergeLink}>
+                        royalhaven@bezaleelgroup.ca
+                    </a>
+                </p>
+            </div>
+
+            <div className={styles.ctaGroup}>
+                <Link href="/shop" className={styles.primaryBtn}>
+                    <ShoppingBag size={18} /> {t("success.continueShopping", "Continue Shopping")}
+                </Link>
+                <Link href="/services/book" className={styles.secondaryBtn}>
+                    <Calendar size={18} /> Book Custom Fitting ↗
+                </Link>
+            </div>
         </div>
     );
 }

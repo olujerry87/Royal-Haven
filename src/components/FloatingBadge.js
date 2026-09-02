@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { X, CheckCircle2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -11,8 +12,10 @@ export default function FloatingBadge() {
     const [activated, setActivated] = useState(false);
     const { applyFirstOrderCoupon, appliedCoupon } = useCart();
     const { t } = useLanguage();
+    const pathname = usePathname();
 
-    if (!isVisible) return null;
+    // Do not show floating badge on checkout or order confirmation pages
+    if (!isVisible || pathname?.startsWith('/checkout')) return null;
 
     const isApplied = activated || !!appliedCoupon;
 

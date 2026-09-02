@@ -101,12 +101,24 @@
     "quantity": "Quantity",
     "total": "Total",
     "subtotal": "Subtotal",
+    "calculatedAtCheckout": "Calculated at checkout",
     "shippingNote": "Free Canada-wide shipping on orders over $150. Taxes & exact delivery calculated at checkout.",
     "proceedToCheckout": "Proceed to Checkout",
     "couponCode": "Coupon Code",
     "apply": "Apply",
     "remove": "Remove",
     "bagSummary": "Bag Summary"
+  },
+  "success": {
+    "title": "Thank You",
+    "titlePersonalized": "Thank You, {name}! 👑✨",
+    "subtitle": "Your royal handcrafted order is officially confirmed.",
+    "orderReference": "Order Reference",
+    "receiptNotice": "A detailed receipt and order confirmation have been sent to your email.",
+    "careMessage": "Each piece is intentionally designed and handcrafted with royal care. We are preparing your order now.",
+    "supportNotice": "Questions about tailoring or delivery? Reach our concierge anytime at royalhaven@bezaleelgroup.ca",
+    "continueShopping": "Continue Shopping",
+    "exploreMore": "Explore The Collection"
   },
   "checkout": {
     "title": "Secure Checkout",

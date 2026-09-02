@@ -50,13 +50,29 @@
     justify-content: space-between;
 }
 
+.logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 .headerLogoImg {
     height: 40px;
-    /* Adjust according to logo aspect ratio */
     width: auto;
     object-fit: contain;
     /* Forces the dark logo to become crisp white, ensuring contrast on dark header/backgrounds */
     filter: brightness(0) invert(1);
+}
+
+@media (max-width: 767px) {
+    .container {
+        padding: 0 0.85rem;
+    }
+
+    .headerLogoImg {
+        height: 24px;
+        max-height: 24px;
+    }
 }
 
 .desktopMenu {
@@ -101,10 +117,10 @@
     min-height: 44px;
 }
 
-/* Mobile: hide calendar icon to save space, keep cart + hamburger */
+/* Mobile: hide calendar icon to save space, keep cart + hamburger with comfortable breathing room */
 @media (max-width: 767px) {
     .actions {
-        gap: 0.5rem;
+        gap: 0.35rem;
     }
 
     .mobileHiddenIcon {

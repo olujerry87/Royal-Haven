@@ -54,9 +54,11 @@
 
 @media (max-width: 768px) {
     .badgeWrapper {
-        font-size: 0.62rem;
-        padding: 0.4rem 1rem;
+        font-size: 0.58rem;
+        padding: 0.35rem 0.75rem;
         left: -48px;
-        top: 75%;
+        top: 60%;
+        min-height: 40px;
+        letter-spacing: 0.8px;
     }
 }

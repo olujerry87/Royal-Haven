@@ -305,8 +305,9 @@ export default function Checkout() {
 
             if (result.success) {
                 console.log("Square charge + WC order completed. Order ID:", result.orderId);
+                const buyerFirstName = formData.firstName.trim() || "";
                 clearCart();
-                router.push(`/checkout/success?orderId=${result.orderId}`);
+                router.push(`/checkout/success?orderId=${result.orderId}&name=${encodeURIComponent(buyerFirstName)}`);
             } else {
                 throw new Error(result.error);
             }

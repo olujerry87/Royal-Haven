@@ -101,12 +101,24 @@
     "quantity": "Quantité",
     "total": "Total",
     "subtotal": "Sous-total",
+    "calculatedAtCheckout": "Calculé au paiement",
     "shippingNote": "Livraison gratuite partout au Canada dès 150 $. Taxes et livraison exacte calculées au paiement.",
     "proceedToCheckout": "Passer la commande",
     "couponCode": "Code Promo",
     "apply": "Appliquer",
     "remove": "Supprimer",
     "bagSummary": "Récapitulatif du Panier"
+  },
+  "success": {
+    "title": "Merci",
+    "titlePersonalized": "Merci, {name} ! 👑✨",
+    "subtitle": "Votre commande royale artisanale est officiellement confirmée.",
+    "orderReference": "Référence de commande",
+    "receiptNotice": "Un reçu détaillé et une confirmation de commande ont été envoyés à votre adresse courriel.",
+    "careMessage": "Chaque pièce est confectionnée avec soin et souci du détail royal. Nous préparons votre commande dès maintenant.",
+    "supportNotice": "Des questions sur la confection ou la livraison ? Contactez notre conciergerie à royalhaven@bezaleelgroup.ca",
+    "continueShopping": "Continuer vos achats",
+    "exploreMore": "Découvrir la Collection"
   },
   "checkout": {
     "title": "Paiement Sécurisé",

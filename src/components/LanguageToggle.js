@@ -41,7 +41,7 @@ export default function LanguageToggle({ variant = "announcement", className = "
                 title={`Switch language to ${targetLabel}`}
             >
                 <Globe size={13} />
-                <span>{targetLabel}</span>
+                <span style={{ fontWeight: 700, letterSpacing: '0.5px' }}>{targetCode}</span>
             </button>
         );
     }
