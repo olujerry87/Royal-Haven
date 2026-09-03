@@ -14,7 +14,10 @@ export default function FeaturedSpotlight({
     description = "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.",
     ctaText = "Explore",
     ctaLink = "/shop/unisex",
-    hasGlassCard = true
+    hasGlassCard = true,
+    imagePosition = "center center",
+    imageOpacity,
+    cardAlign = "center"
 }) {
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -30,7 +33,7 @@ export default function FeaturedSpotlight({
     const spotlightId = `spotlight-${Math.random().toString(36).substr(2, 9)}`;
 
     return (
-        <section ref={ref} className={`${styles.parallaxContainer} ${spotlightId}`}>
+        <section ref={ref} className={`${styles.parallaxContainer} ${spotlightId} ${styles[cardAlign] || ""}`}>
             {/* Inject mobile-specific background via inline pseudo-stylesheet if mobile path exists */}
             {mobileImagePath && (
                 <style dangerouslySetInnerHTML={{__html: `
@@ -50,6 +53,10 @@ export default function FeaturedSpotlight({
                     fill
                     sizes="100vw"
                     className={styles.image}
+                    style={{
+                        objectPosition: imagePosition,
+                        ...(imageOpacity !== undefined ? { opacity: imageOpacity } : {})
+                    }}
                     priority={false} // Lazy load unless it's the first fold (usually not)
                 />
             </motion.div>

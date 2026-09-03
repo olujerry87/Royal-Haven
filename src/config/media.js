@@ -16,8 +16,8 @@ export const SITE_MEDIA = {
 
     // Homepage
     home: {
-        spotlight_1: "/images/spotlight-effortless.jpg",
-        spotlight_ai: "/images/ai-stylist-bg.jpg", // The AI Stylist parallax image
+        spotlight_1: "/images/spotlight-effortless-wide.jpg",
+        spotlight_ai: "/images/ai-stylist-bg-wide.jpg", // The AI Stylist parallax image
         spotlight_2: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // The image before FAQ
         spotlight_2_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // Replace with a portrait (vertical) cropped image
         wura_video: "/videos/wura-bg.mp4",
@@ -46,15 +46,15 @@ export const SITE_MEDIA = {
     services: {
         hero: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20servicedk.jpg",
         hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20servicemob.jpg",
-        hair_banner: "/images/ewa-hair.jpg",
-        makeup_banner: "/images/ewa-makeup.jpg",
+        hair_banner: "/images/hair-banner.jpg",
+        makeup_banner: "/images/makeup-banner.png",
         gele_banner: "/images/gele-banner.jpg",
 
         // Selected Works Portfolio
         portfolio: [
             { id: 1, image: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/c2.jpeg", title: "Bridal Glamour" },
             { id: 2, image: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/c1.jpg", title: "Editorial Campaign" },
-            { id: 3, image: "/images/ewa-idle.jpg", title: "Traditional Elegance" },
+            { id: 3, image: "/images/traditional-elegance.jpg", title: "Traditional Elegance" },
             { id: 4, image: "/images/journal.jpg", title: "Studio Portraits" }
         ]
     },

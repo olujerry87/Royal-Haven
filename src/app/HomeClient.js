@@ -239,6 +239,7 @@ export default function HomeClient({
                 description={data.spotlight1.description}
                 imagePath={data.spotlight1.image}
                 ctaLink={data.spotlight1.link}
+                imageOpacity={0.92}
             />
 
             <div style={{ height: '80px', backgroundColor: '#FFFFFF', width: '100%' }} className={styles.mobileDivider} />
@@ -250,6 +251,7 @@ export default function HomeClient({
                 ctaLink="/heritage#styling"
                 imagePath={SITE_MEDIA.home.spotlight_ai}
                 hasGlassCard={true}
+                imageOpacity={0.92}
             />
 
             <TrustBadges />
