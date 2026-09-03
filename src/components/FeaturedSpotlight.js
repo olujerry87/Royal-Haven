@@ -34,31 +34,36 @@ export default function FeaturedSpotlight({
 
     return (
         <section ref={ref} className={`${styles.parallaxContainer} ${spotlightId} ${styles[cardAlign] || ""}`}>
-            {/* Inject mobile-specific background via inline pseudo-stylesheet if mobile path exists */}
-            {mobileImagePath && (
-                <style dangerouslySetInnerHTML={{__html: `
-                    @media (max-width: 768px) {
-                        .${spotlightId} .${styles.image} {
-                            content: url('${mobileImagePath}');
-                            object-position: top center !important;
-                        }
-                    }
-                `}} />
-            )}
-
             <motion.div style={{ y }} className={styles.backgroundImageWrapper}>
+                {/* Desktop Image */}
                 <Image
                     src={imagePath}
                     alt={title || "Featured Image"}
                     fill
                     sizes="100vw"
-                    className={styles.image}
+                    className={`${styles.image} ${mobileImagePath ? styles.desktopImage : ""}`}
                     style={{
                         objectPosition: imagePosition,
                         ...(imageOpacity !== undefined ? { opacity: imageOpacity } : {})
                     }}
-                    priority={false} // Lazy load unless it's the first fold (usually not)
+                    priority={false}
                 />
+
+                {/* Mobile Portrait Image */}
+                {mobileImagePath && (
+                    <Image
+                        src={mobileImagePath}
+                        alt={title || "Featured Image"}
+                        fill
+                        sizes="100vw"
+                        className={`${styles.image} ${styles.mobileImage}`}
+                        style={{
+                            objectPosition: "center center",
+                            ...(imageOpacity !== undefined ? { opacity: imageOpacity } : {})
+                        }}
+                        priority={false}
+                    />
+                )}
             </motion.div>
 
             <div className={styles.overlay}>

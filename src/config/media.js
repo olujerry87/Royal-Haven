@@ -17,9 +17,10 @@ export const SITE_MEDIA = {
     // Homepage
     home: {
         spotlight_1: "/images/spotlight-effortless-wide.jpg",
-        spotlight_ai: "/images/ai-stylist-bg-wide.jpg", // The AI Stylist parallax image
-        spotlight_2: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // The image before FAQ
-        spotlight_2_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // Replace with a portrait (vertical) cropped image
+        spotlight_ai: "/images/ai-stylist-bg-wide.jpg", // The AI Stylist parallax image (desktop dual-model)
+        spotlight_ai_mobile: "/images/ai-stylist-mobile.jpg", // Mobile portrait image (Attachment 2)
+        spotlight_2: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // The image after FAQ
+        spotlight_2_mobile: "/images/faq-spotlight-mobile.jpg", // Mobile portrait image (Attachment 3)
         wura_video: "/videos/wura-bg.mp4",
         ewa_video: "/videos/ewa-bg.mp4",
     },

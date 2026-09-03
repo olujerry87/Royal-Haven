@@ -25,6 +25,23 @@
     opacity: 0.82;
 }
 
+.desktopImage {
+    display: block;
+}
+
+.mobileImage {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktopImage {
+        display: none !important;
+    }
+    .mobileImage {
+        display: block !important;
+    }
+}
+
 .center {
     justify-content: center;
 }

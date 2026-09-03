@@ -250,6 +250,7 @@ export default function HomeClient({
                 ctaText={t("spotlight.startStyling", "Start Styling")}
                 ctaLink="/heritage#styling"
                 imagePath={SITE_MEDIA.home.spotlight_ai}
+                mobileImagePath={SITE_MEDIA.home.spotlight_ai_mobile}
                 hasGlassCard={true}
                 imageOpacity={0.92}
             />
