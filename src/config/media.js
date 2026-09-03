@@ -16,8 +16,8 @@ export const SITE_MEDIA = {
 
     // Homepage
     home: {
-        spotlight_1: "/images/spotlight.jpg",
-        spotlight_ai: "/images/wura-idle.jpg", // The AI Stylist parallax image
+        spotlight_1: "/images/spotlight-effortless.jpg",
+        spotlight_ai: "/images/ai-stylist-bg.jpg", // The AI Stylist parallax image
         spotlight_2: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // The image before FAQ
         spotlight_2_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/cards/image_df99ceb7.png", // Replace with a portrait (vertical) cropped image
         wura_video: "/videos/wura-bg.mp4",
@@ -48,7 +48,7 @@ export const SITE_MEDIA = {
         hero_mobile: "https://cfrnwiwpqxmdcgsjktse.supabase.co/storage/v1/object/public/royal_haven_assets/hero/EWA%20artistry%20servicemob.jpg",
         hair_banner: "/images/ewa-hair.jpg",
         makeup_banner: "/images/ewa-makeup.jpg",
-        gele_banner: "/images/ewa-gele.jpg",
+        gele_banner: "/images/gele-banner.jpg",
 
         // Selected Works Portfolio
         portfolio: [
