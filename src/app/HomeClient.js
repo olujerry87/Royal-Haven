@@ -65,7 +65,7 @@ export default function HomeClient({
         spotlight1: {
             title: spotlight1Title || (acf?.spotlight_1_title ? acf.spotlight_1_title : t("spotlight.effortlessTitle", "Set For Effortless Intentions")),
             description: spotlight1Desc || (acf?.spotlight_1_desc ? acf.spotlight_1_desc : t("spotlight.effortlessDesc", "Move with purpose. Breathe with ease. <br /> Our new Heritage collection is designed for moments of pure clarity and effortless intention.")),
-            image: spotlight1Image || acf?.spotlight_1_image || SITE_MEDIA.home.spotlight_1,
+            image: spotlight1Image || SITE_MEDIA.home.spotlight_1,
             link: acf?.spotlight_1_link || "/shop"
         },
         spotlight2: {
