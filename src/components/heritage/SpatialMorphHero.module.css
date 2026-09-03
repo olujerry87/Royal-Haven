@@ -1,228 +1,43 @@
+/* ── Track: sticky scroll container ────────────────────────────────────────── */
 .trackContainer {
     position: relative;
-    height: 300vh;
+    height: 220vh;
     width: 100%;
     background-color: #000000;
 }
 
+/* ── Sticky viewport frame — fixed, never reflows ──────────────────────────── */
 .stickyBox {
     position: sticky;
     top: 0;
     height: 100vh;
     width: 100%;
+    /* overflow MUST be hidden to clip the full-bleed video card */
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 85px;
-    padding-bottom: 1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
     background-color: #000000;
     box-sizing: border-box;
+    /* No padding here — padding lives inside matrixContainer */
 }
 
-/* ── Isolated Content Framing Matrix (Strict grid-cols-1 md:grid-cols-3 max-w-6xl) ── */
-.matrixContainer {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: center;
-    gap: 2rem;
-    width: 100%;
-    max-width: 72rem; /* max-w-6xl */
-    height: 100%;
-    max-height: calc(100vh - 95px);
-    margin: 0 auto;
-    position: relative;
-    box-sizing: border-box;
-    overflow: hidden; /* Prevents child columns expanding the DOM canvas */
-    min-height: 0;    /* Grid/flex anti-overflow guard */
-}
-
-@media (min-width: 768px) {
-    .matrixContainer {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* ── Column 1: Left narrative text block ───────────────────────────────── */
-.leftColumn {
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    min-height: 0;
-    overflow: hidden;
-    padding-right: 1rem;
-}
-
-@media (min-width: 768px) {
-    .leftColumn {
-        display: flex;
-    }
-}
-
-/* ── Left column text styles ───────────────────────────────────────────── */
-.leftHeading {
-    font-family: var(--font-heritage, serif);
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 300;
-    color: #FAF9F6;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin: 0;
-}
-
-.leftSubtext {
-    font-family: var(--font-body, sans-serif);
-    font-size: clamp(0.85rem, 1.1vw, 0.95rem);
-    color: rgba(250, 249, 246, 0.65);
-    line-height: 1.55;
-    font-weight: 400;
-    max-width: 280px;
-    margin: 0;
-}
-
-/* ── Column 2: Center Hero Target Container (Locked to 50vh) ── */
-.centerColumn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 50vh;
-    max-height: 50vh; /* Locked strict height boundary */
-    min-height: 0;
-    overflow: hidden;
-    position: relative;
-}
-
-.heroSlotTarget {
-    width: 100%;
-    height: 100%;
-    max-height: 50vh;
-    overflow: hidden;
-    border-radius: 24px;
-    border: 1.5px dashed rgba(212, 175, 55, 0.4);
-    visibility: hidden; /* Anchor target for morphing video */
-}
-
-/* ── Column 3: Right 2x2 thumbnail card grid ───────────────────────────── */
-.rightColumn {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 0;
-    overflow: hidden;
-}
-
-@media (min-width: 768px) {
-    .rightColumn {
-        display: flex;
-    }
-}
-
-/* ── 2x2 Card grid container ───────────────────────────────────────────── */
-.cardGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 0.6rem;
-    width: 100%;
-    max-width: 260px;
-}
-
-/* ── Individual thumbnail card ──────────────────────────────────────────── */
-.gridCard {
-    background-color: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    aspect-ratio: 1 / 1;
-    padding: 0.85rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.2rem;
-    overflow: hidden;
-    cursor: default;
-    transition: background-color 0.2s ease;
-}
-
-.gridCard:hover {
-    background-color: #242424;
-}
-
-.gridCardTitle {
-    font-family: var(--font-body, sans-serif);
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #FAF9F6;
-    letter-spacing: 0.02em;
-    line-height: 1.2;
-}
-
-.gridCardSub {
-    font-family: var(--font-body, sans-serif);
-    font-size: 0.68rem;
-    color: rgba(250, 249, 246, 0.45);
-    letter-spacing: 0.03em;
-    line-height: 1.2;
-}
-
-.badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--obsidian, #0B0B0B);
-    border: 1px solid var(--gold, #D4AF37);
-    padding: 0.25rem 0.85rem;
-    border-radius: 40px;
-    margin-bottom: 0.35rem;
-    background: rgba(212, 175, 55, 0.08);
-}
-
-.heading {
-    font-family: var(--font-heritage, serif);
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    font-weight: 300;
-    color: var(--obsidian, #0B0B0B);
-    line-height: 1.1;
-    margin-bottom: 0.3rem;
-    letter-spacing: -0.01em;
-    text-align: center;
-}
-
-.subheading {
-    font-family: var(--font-body, sans-serif);
-    font-size: clamp(0.85rem, 1.2vw, 1rem);
-    color: #333333 !important;
-    line-height: 1.45;
-    font-weight: 400;
-    max-width: 420px;
-    text-align: center;
-}
-
-/* ── GPU Isolated Morphing Hero Video Module (Absolute viewport boundaries) ── */
+/* ── GPU Isolated Morphing Hero Video Card ──────────────────────────────────── */
+/*    Occupies the FULL sticky viewport at rest. Never changes width/height.     */
+/*    Only transform: scale() and translateY() are mutated by JS.               */
 .morphHeroVideoCard {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     border-radius: 0px;
     overflow: hidden;
-    z-index: 40;
+    z-index: 10;
     background: #000;
-    will-change: width, height, border-radius, opacity, top, left;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    /* transform-origin center so scale() shrinks symmetrically */
+    transform-origin: center center;
+    will-change: transform, border-radius, box-shadow;
 }
 
-/* Video target node reset: w-full h-full object-cover pointer-events-none */
+/* Video fill — covers the card always */
 .heroVideoMedia {
     width: 100%;
     height: 100%;
@@ -231,6 +46,7 @@
     display: block;
 }
 
+/* Phase 1 overlay — title + CTA, fades out on scroll */
 .videoHeroOverlay {
     position: absolute;
     inset: 0;
@@ -239,10 +55,15 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(180deg, rgba(11, 11, 11, 0.4) 0%, rgba(11, 11, 11, 0.3) 50%, rgba(11, 11, 11, 0.85) 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(11, 11, 11, 0.35) 0%,
+        rgba(11, 11, 11, 0.25) 50%,
+        rgba(11, 11, 11, 0.80) 100%
+    );
     color: #FAF9F6;
     padding: 2rem;
-    will-change: opacity;
+    will-change: opacity, transform;
 }
 
 .heroTitle {
@@ -289,7 +110,65 @@
     transform: translateY(-2px);
 }
 
-/* Scroll Helper Indicator */
+/* ── Badge ─────────────────────────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--obsidian, #0B0B0B);
+    border: 1px solid var(--gold, #D4AF37);
+    padding: 0.25rem 0.85rem;
+    border-radius: 40px;
+    margin-bottom: 0.35rem;
+    background: rgba(212, 175, 55, 0.08);
+}
+
+/* ── Scatter Cards — freely positioned around the viewport ─────────────────── */
+/*    Position is set inline via JS (top/left/right/bottom %).                  */
+/*    opacity and transform are driven by JS on scroll.                         */
+.scatterCard {
+    z-index: 20;
+    background: rgba(26, 26, 26, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 140px;
+    max-width: 200px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    /* opacity and transform driven by JS */
+}
+
+.scatterCardTitle {
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #FAF9F6;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+
+.scatterCardSub {
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.7rem;
+    color: rgba(250, 249, 246, 0.50);
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+}
+
+/* Hide scatter cards on mobile — they overlap badly at small widths */
+@media (max-width: 640px) {
+    .scatterCard {
+        display: none;
+    }
+}
+
+/* ── Scroll Indicator ───────────────────────────────────────────────────────── */
 .scrollIndicator {
     position: absolute;
     bottom: 1.5rem;
@@ -316,23 +195,7 @@
 }
 
 @keyframes scrollPulse {
-    0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
-    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    0%   { transform: scaleY(0); transform-origin: top;    opacity: 0; }
+    50%  { transform: scaleY(1); transform-origin: top;    opacity: 1; }
     100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
-}
-
-@media (max-width: 1024px) {
-    .photoTile {
-        width: 90px;
-        height: 90px;
-        border-radius: 16px;
-    }
-}
-
-@media (max-width: 640px) {
-    .photoTile {
-        width: 75px;
-        height: 75px;
-        border-radius: 14px;
-    }
 }
